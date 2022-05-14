@@ -1,0 +1,75 @@
+---
+title: "Untitled"
+output: html_document
+date: '2022-05-05'
+---
+
+
+```{r}
+library(markovifyR)
+library(dplyr)
+library(gutenbergr)
+library(tidyverse) 
+library(markovchain) 
+
+shakespeare <- gutenberg_works(title == "Shakespeare's Sonnets") %>% 
+  pull(gutenberg_id) %>% 
+  gutenberg_download(verbose = FALSE)
+
+
+#  same as above, but maintain as sentences and keep punctuation
+bills_sentences <- shakespeare %>% 
+  mutate(text = text %>% 
+    str_trim() %>% 
+    str_replace_all("--", " ") %>% 
+    str_replace_all("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$", 
+                    "") %>% 
+    str_to_lower()) %>% 
+  filter(!text %in% c("the sonnets", "by william shakespeare", "", " "))
+
+#  fit the Markov Chain
+markovify_model <-
+  generate_markovify_model(
+    input_text = bills_sentences$text,
+    markov_state_size = 2L,
+    max_overlap_total = 25,
+    max_overlap_ratio = .85
+  )
+
+#  generate a sonnet
+markovify_sonnet <- function() {
+  lines <- markovify_text(
+      markov_model = markovify_model,
+      maximum_sentence_length = 75,
+      output_column_name = 'sonnet_line',
+      count = 50,
+      tries = 1000, 
+      only_distinct = TRUE,
+      return_message = FALSE) %>% 
+    filter(str_count(sonnet_line, "\\w+") > 5 & str_count(sonnet_line, "\\w+") < 10) %>% 
+    slice(sample(1:n(), 14)) %>% 
+    mutate(id = 1:n()) %>% 
+    select(id, sonnet_line) 
+  
+   #  add a period to the last line if the last charachter isn't punctuation 
+   #  that ends a sentence  
+   last_line <- lines[lines$id == 14, "sonnet_line"]
+   lines[lines$id == 14, "sonnet_line"] <- str_replace(last_line, 
+                                                       ".$(?<!//.//!//?|[:alnum:])", ".")
+   poem <- as.vector(lines$sonnet_line)
+   q1 <- poem[1:4]
+   q2 <- poem[5:8]
+   q3 <- poem[9:12]
+   c1 <- poem[13:14]
+   formatted <- c(q1,"",q2,"",q3,"",c1)
+   return(formatted)
+}
+```
+
+```{r}
+sonnet_number <- seq(1,5000)
+for (i in sonnet_number) {
+  sonnet <- markovify_sonnet()
+  write.table(sonnet, file=paste0("\\Users\\asier\\OneDrive\\Desktop\\DesktopFiles\\Stat405\\test\\PsuedoSonnets\\sonnet_",as.character(i),".txt"),row.names=FALSE, sep = " ", quote=FALSE,col.names = FALSE)
+}
+```
