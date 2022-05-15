@@ -4,3 +4,11 @@ recognize the folders I created.
 
 
 consider extracting data from API (twitter, facebook, instagram)
+
+
+keyword extraction --> assigne keywords to groups --> text classification algorithm
+-- need to train algorithm first
+
+
+--> classifications become new variable, where each sonnet has some assoicated sentiment/feeling/emotion
+--> we find other data that has similar keywords and look for interesting findings
