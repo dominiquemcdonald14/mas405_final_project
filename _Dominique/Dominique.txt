@@ -1,3 +1,6 @@
-This is your personal folder. Put your code here for the analysis. When we reconvene a master file will be created //
-with the necessary pieces of  each person's code. This document is mostly so that GitHub will recognize the 	 //
-folders I created. 
+This is your personal folder. Put your code here for the analysis. When we reconvene a master file will be  //
+created with the necessary pieces of  each person's code. This document is mostly so that GitHub will       //
+recognize the folders I created. 
+
+
+consider extracting data from API (twitter, facebook, instagram)
