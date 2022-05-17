@@ -1,0 +1,116 @@
+---
+title: "code_data_cleanup"
+author: "Mariana Gonzalez Castro"
+date: "5/16/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readr)
+library(RMySQL)
+library(DBI)
+library(dplyr)
+library(stringr)
+```
+
+```{r}
+#establish connection to Angel's database
+drv <- dbDriver("MySQL")
+
+xdbsock <- ""
+
+
+xdbuser <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_USER")
+xpw     <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_PW")
+xdbname <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_DBNAME")
+xdbhost <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_HOST")
+xdbport <- as.integer( Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_PORT") )
+
+
+
+con <-
+  dbConnect(
+    drv,
+    user=xdbuser,
+    password=xpw,
+    dbname=xdbname,
+    host=xdbhost,
+    port=xdbport,
+    unix.sock=xdbsock
+  )
+
+dbListTables(con)
+
+```
+
+```{r}
+#acquire data
+x <-dbGetQuery(con, "SELECT * FROM Sonnets")
+
+dbDisconnect(con) #thank you Angel
+```
+
+```{r}
+#data cleanup using dplyr
+
+sonnets <- 
+  x %>% 
+  mutate_at("Sonnets", str_replace, "â€™", "\'") 
+
+#I noticed when I loaded the data, I got different special characters
+#you might need to change the special characters if you load the data and end 
+#up with a different set of special characters
+
+
+
+```
+
+
+```{r}
+#this is where I got stuck: uploading the cleaned dataset to my database.
+#I can upload the dataset untouched but when I try to upload the dataset 
+#cleaned and ready to go, R refuses *sigh*
+
+#connecting to my database:
+drv <- dbDriver("MySQL")
+
+xdbsock <- ""
+
+
+xdbuser1 <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_USER")
+xpw1     <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PW")
+xdbname1 <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_DBNAME")
+xdbhost1 <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_HOST")
+xdbport1 <- as.integer( Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PORT") )
+
+
+
+con1 <-
+  dbConnect(
+    drv,
+    user=xdbuser1,
+    password=xpw1,
+    dbname=xdbname1,
+    host=xdbhost1,
+    port=xdbport1,
+    unix.sock=xdbsock
+  )
+
+dbListTables(con1)
+
+dbWriteTable(con1,name = "Sonnets", x, overwrite=T) #data set without cleaning up
+
+dbWriteTable(con1,name = "sonnets", sonnets, overwrite=T) #data set that is cleaned
+
+#dbGetQuery(con1, "SELECT * FROM Sonnets LIMIT 10")
+
+dbDisconnect(con1)
+```
+
+
+
+
