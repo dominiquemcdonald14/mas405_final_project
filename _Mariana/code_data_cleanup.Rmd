@@ -57,9 +57,9 @@ dbDisconnect(con) #thank you Angel
 ```{r}
 #data cleanup using dplyr
 
-sonnets <- 
+sonnets<- 
   x %>% 
-  mutate_at("Sonnets", str_replace, "â€™", "\'") 
+  mutate_at("Sonnets", str_replace, "\x92", "\'") 
 
 #I noticed when I loaded the data, I got different special characters
 #you might need to change the special characters if you load the data and end 
