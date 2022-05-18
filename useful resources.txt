@@ -1,0 +1,19 @@
+For Learning NLP:
+- Keywords with BERT: https://www.youtube.com/watch?v=Ung-SWAEngc&ab_channel=AhmedBesbes
+- Keyword Algorithm: https://www.youtube.com/watch?v=O43XPHC_DEs&ab_channel=JohnWatsonRooney
+- Natural Language Processing in R: https://www.udacity.com/blog/2020/10/natural-language-processing-with-r.html
+- Text Analysis Intro: https://monkeylearn.com/text-analysis/
+- Sentiment Analysis (Python): https://www.youtube.com/watch?v=O_B7XLfx0ic
+- Emotion Detection Using NRCLex(Python): https://www.youtube.com/watch?v=dL7swWymrGk 
+
+For Learning Github:
+- Github: https://www.youtube.com/watch?v=k5D37W6h56o
+- Github Desktop: https://www.youtube.com/watch?v=0nzJXJAhlsk
+
+For Finding Data:
+- Movies: https://grouplens.org/datasets/movielens/
+- Music: https://musicbrainz.org/
+
+
+
+
