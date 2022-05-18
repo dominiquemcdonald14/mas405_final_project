@@ -2,8 +2,12 @@ This is your personal folder. Put your code here for the analysis. When we recon
 created with the necessary pieces of  each person's code. This document is mostly so that GitHub will       //
 recognize the folders I created. 
 
+Ideas
+--consider extracting data from API (twitter, facebook, instagram)
+--can analyze sentiments from movie ratings, identify ratings that are similar to our sonnets, 
+     --> can look at movie genres
+     --> movie ratings 
 
-consider extracting data from API (twitter, facebook, instagram)
 
 
 --keyword extraction --> assigne keywords to groups --> text classification algorithm
@@ -19,4 +23,4 @@ consider extracting data from API (twitter, facebook, instagram)
 
 --useful links
   --> sentiment analysis in r: https://www.red-gate.com/simple-talk/databases/sql-server/bi-sql-server/text-mining-and-sentiment-analysis-with-r/
-
+  --> 
