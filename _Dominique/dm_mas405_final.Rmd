@@ -44,11 +44,11 @@ drv <- dbDriver("MySQL")
 
 
 #############
-xdbuser <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_USER")
-xpw     <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PW")
-xdbname <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_DBNAME")
-xdbhost <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_HOST")
-xdbport <- as.integer( Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PORT") )
+xdbuser <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_USER")
+xpw     <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_PW")
+xdbname <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_DBNAME")
+xdbhost <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_HOST")
+xdbport <- as.integer( Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_PORT") )
 
 
 
@@ -97,7 +97,7 @@ x_text <- tm_map(x_text, toSpace, "/")
 x_text <- tm_map(x_text, toSpace, "@")
 x_text <- tm_map(x_text, toSpace, "\\|")
 # Convert the text to lower case
-x_text <- tm_map(x_text, content_transformer(tolower))
+#x_text <- tm_map(x_text, content_transformer(tolower))
 # Remove numbers
 x_text <- tm_map(x_text, removeNumbers)
 # Remove english common stopwords
