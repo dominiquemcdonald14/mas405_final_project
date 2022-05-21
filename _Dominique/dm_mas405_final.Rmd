@@ -1,0 +1,177 @@
+---
+title: "dm_mas405_final"
+author: "Dominique McDonald"
+date: '2022-05-18'
+output: pdf_document
+---
+
+Using the following as a guide: https://www.red-gate.com/simple-talk/databases/sql-server/bi-sql-server/text-mining-and-sentiment-analysis-with-r/
+
+
+
+
+Installing packages for text analysis.
+```{r}
+# install.packages("tm")  # for text mining
+# install.packages("SnowballC") # for text stemming
+# install.packages("wordcloud") # word-cloud generator 
+# install.packages("RColorBrewer") # color palettes
+# install.packages("syuzhet") # for sentiment analysis
+# install.packages("ggplot2")
+```
+
+```{r, warning= FALSE}
+#Now load those bad boys
+
+
+library("tm")
+library(SnowballC)
+library(wordcloud)
+library(RColorBrewer)
+library(syuzhet)
+library(ggplot2)
+library(RMySQL)
+```
+
+
+
+
+
+```{r}
+#connecting to my db
+
+drv <- dbDriver("MySQL")
+
+
+#############
+xdbuser <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_USER")
+xpw     <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PW")
+xdbname <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_DBNAME")
+xdbhost <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_HOST")
+xdbport <- as.integer( Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PORT") )
+
+
+
+con <-
+dbConnect(
+drv,
+user=xdbuser,
+password=xpw,
+dbname=xdbname,
+host=xdbhost,
+port=xdbport,
+unix.sock=xdbsock
+)
+
+
+dbListTables(con)
+
+```
+```{r}
+#getting the data
+
+qry1 <- "SELECT * FROM sonnets"
+
+x <- dbGetQuery(con, qry1)
+
+head(x)
+
+
+
+```
+
+
+```{r}
+#need to load vector of text objects as a corpus
+#VectorSource() interprets each element of a vec as a document
+x_text <- Corpus(VectorSource(x$Sonnets))
+
+
+x_text
+```
+In the future no need to use content_transformer(). That is easy to do in base and it drops documents??? 
+```{r}
+#Replacing "/", "@" and "|" with space
+toSpace <- content_transformer(function (y , pattern ) gsub(pattern, " ", y))
+x_text <- tm_map(x_text, toSpace, "/")
+x_text <- tm_map(x_text, toSpace, "@")
+x_text <- tm_map(x_text, toSpace, "\\|")
+# Convert the text to lower case
+x_text <- tm_map(x_text, content_transformer(tolower))
+# Remove numbers
+x_text <- tm_map(x_text, removeNumbers)
+# Remove english common stopwords
+x_text <- tm_map(x_text, removeWords, stopwords("english"))
+# Remove your own stop word
+# specify your custom stopwords as a character vector
+x_text <- tm_map(x_text, removeWords, c("s", "company", "team")) 
+# Remove punctuations
+x_text <- tm_map(x_text, removePunctuation)
+# Eliminate extra white spaces
+x_text <- tm_map(x_text, stripWhitespace)
+# Text stemming - which reduces words to their root form
+x_text <- tm_map(x_text, stemDocument)
+
+x_text #NO DOCUMENTS DROPPED
+
+```
+The document term matrix just contains all the words in your "documents" and their frequencies and maybe their stem, gotta check
+```{r}
+# Build a term-document matrix
+x_text_dtm <- TermDocumentMatrix(x_text)
+mat_dtm <- as.matrix(x_text_dtm)
+#mat_dtm
+# Sort by decreasing value of frequency
+dtm_v <- sort(rowSums(mat_dtm),decreasing=TRUE)
+dtm_d <- data.frame(word = names(dtm_v),freq=dtm_v)
+# Display the top 5 most frequent words
+head(dtm_d, 50)
+
+
+```
+
+```{r}
+#generate word cloud
+set.seed(314)
+wordcloud(words = dtm_d$word, freq = dtm_d$freq, min.freq = 5,
+          max.words=100, random.order=FALSE, rot.per=0.40, 
+          colors=brewer.pal(8, "Dark2"))
+
+```
+```{r}
+# Find associations 
+findAssocs(x_text_dtm, terms = c("beautiful","sweet","doth"), corlimit = 0.1)			
+
+
+
+
+```
+
+
+```{r}
+# Find associations for words that occur at least 50 times
+findAssocs(x_text_dtm, terms = findFreqTerms(x_text_dtm, lowfreq = 850), corlimit = 0.1)
+
+
+
+```
+
+```{r}
+
+# regular sentiment score using get_sentiment() function and method of your choice
+# please note that different methods may have different scales
+syuzhet_vector <- get_sentiment(x_text, method="syuzhet")
+# see the first row of the vector
+head(syuzhet_vector, n = 10)
+# see summary statistics of the vector
+summary(syuzhet_vector)
+
+
+```
+
+
+
+
+
+
+
