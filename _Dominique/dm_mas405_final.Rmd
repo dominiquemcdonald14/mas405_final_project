@@ -51,6 +51,11 @@ xdbname <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_DBNAME")
 xdbhost <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_HOST")
 xdbport <- as.integer( Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_PORT") )
 
+# xdbuser <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_USER")
+# xpw     <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PW")
+# xdbname <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_DBNAME")
+# xdbhost <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_HOST")
+# xdbport <- as.integer( Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PORT") )
 
 
 con <-
@@ -78,11 +83,14 @@ dbListTables(con)
 ```{r}
 #getting the data
 
-qry1 <- "SELECT * FROM sonnets"
+#Decided to use OG sonnets instead of pseudo sonnets
+#qry1 <- "SELECT * FROM sonnets"
+
+qry1 <- "SELECT * FROM OG"
 
 x <- dbGetQuery(con, qry1)
-
-head(x$Sonnets)
+colnames(x) <- c("row_names", "Sonnets") 
+head(x)
 
 
 
@@ -122,7 +130,7 @@ x_text <- tm_map(x_text, removePunctuation)
 # Eliminate extra white spaces
 x_text <- tm_map(x_text, stripWhitespace)
 # Text stemming - which reduces words to their root form
-x_text <- tm_map(x_text, stemDocument)
+#x_text <- tm_map(x_text, stemDocument)
 
 x_text #NO DOCUMENTS DROPPED
 
@@ -131,6 +139,10 @@ The document term matrix just contains all the words in your "documents" and the
 ```{r}
 # Build a term-document matrix
 x_text_dtm <- TermDocumentMatrix(x_text)
+
+x_text_dtm
+#number of total terms is the non sparse entries
+
 mat_dtm <- as.matrix(x_text_dtm)
 # mat_dtm
 # Sort by decreasing value of frequency
@@ -146,15 +158,18 @@ head(dtm_d, 50)
 #generate word cloud
 set.seed(314)
 wordcloud(words = dtm_d$word, freq = dtm_d$freq, min.freq = 5,
-          max.words=100, random.order=FALSE, rot.per=0.40, 
+          max.words=100, random.order=FALSE, rot.per=0.20, 
           colors=brewer.pal(8, "Dark2"))
-
+head(dtm_v)
 ##play around with shapes
 
 ```
+
+
+
 ```{r}
 # Find associations 
-findAssocs(x_text_dtm, terms = c("beauty","sweet","love", "heart", "time"), corlimit = 0.1)			
+findAssocs(x_text_dtm, terms = c("eyes","sweet","love", "heart", "time"), corlimit = 0.4)			
 
 
 
@@ -164,9 +179,7 @@ findAssocs(x_text_dtm, terms = c("beauty","sweet","love", "heart", "time"), corl
 
 ```{r}
 # Find associations for words that occur at least 50 times
-findAssocs(x_text_dtm, terms = findFreqTerms(x_text_dtm, lowfreq = 850), corlimit = 0.1)
-
-
+findAssocs(x_text_dtm, terms = findFreqTerms(x_text_dtm, lowfreq = 50), corlimit = 0.40)
 
 ```
 
@@ -174,7 +187,8 @@ findAssocs(x_text_dtm, terms = findFreqTerms(x_text_dtm, lowfreq = 850), corlimi
 
 # regular sentiment score using get_sentiment() function and method of your choice
 # please note that different methods may have different scales
-s_vector <- get_sentiment(x$Sonnets, method="syuzhet")
+#### NOTE YOU DO NOT HAVE TO USE A CORPUS FOR THE SYUZHET PACKAGE HERE. THIS IS JUST THE VECTOR OF SONNETS
+s_vector <- get_sentiment(x$Sonnets, method="syuzhet") 
 # see the first row of the vector
 head(s_vector, n = 10)
 # see summary statistics of the vector
@@ -182,12 +196,29 @@ summary(s_vector)
 hist(s_vector, col = "pink") #normal distribution 
 
 ```
+```{r}
 
+#simple_plot(s_vector) #dont think this will be useful
+head(dtm_d)
+num_terms <- length(x_text_dtm$i); num_terms #total number of terms - 7611
+nTerms(x_text_dtm) # unique terms in sonnets - 3089
+head(Terms(x_text_dtm)) #just a list of all the terms that show up
+
+prop_terms<-  dtm_d$freq/num_terms; head(prop_terms)
+
+dtm_prop <- cbind(dtm_d, prop_terms)
+
+
+
+```
 
 
 
 
 Looking into other data sets
+
+
+We have decided not to use the netflix data, but keeping this just in case.
 ```{r}
 
 qry1 <- "SELECT * FROM netflix"
@@ -215,46 +246,49 @@ netflix_text
 
 
 
-In the future no need to use content_transformer(). That is easy to do in base and it drops documents(???) 
+
 ```{r}
-#Replacing "/", "@" and "|" with space
-toSpace <- content_transformer(function (y , pattern ) gsub(pattern, " ", y))
-#to_e <- content_transformer(function (y , pattern ) gsub(pattern, "e", y)) wasnt' helpful
-netflix_text <- tm_map(netflix_text, toSpace, "/")
-netflix_text <- tm_map(netflix_text, toSpace, "@")
-netflix_text <- tm_map(netflix_text, toSpace, "\\|")
-netflix_text <- tm_map(netflix_text, to_e, "â€™")
-# Convert the text to lower case
-netflix_text <- tm_map(netflix_text, content_transformer(tolower))
-# Remove numbers
-netflix_text <- tm_map(netflix_text, removeNumbers)
-# Remove english common stopwords
-netflix_text <- tm_map(netflix_text, removeWords, stopwords("english"))
-# Remove your own stop word
-# specify your custom stopwords as a character vector
-
-netflix_text <- tm_map(netflix_text, removeWords, c("thi", "thee", "thou", "may", "still", "thus", "though", "can", "will", "hath", "doth", "thine", "like", "much", "let",
-                                        "upon", "from", "dost", "shall", "thy")) 
-# Remove punctuations
-netflix_text <- tm_map(netflix_text, removePunctuation)
-# Eliminate extra white spaces
-netflix_text <- tm_map(netflix_text, stripWhitespace)
-# Text stemming - which reduces words to their root form
-#x_text <- tm_map(x_text, stemDocument)
-
-netflix_text #NO DOCUMENTS DROPPED
+# #Replacing "/", "@" and "|" with space
+# toSpace <- content_transformer(function (y , pattern ) gsub(pattern, " ", y))
+# #to_e <- content_transformer(function (y , pattern ) gsub(pattern, "e", y)) wasnt' helpful
+# netflix_text <- tm_map(netflix_text, toSpace, "/")
+# netflix_text <- tm_map(netflix_text, toSpace, "@")
+# netflix_text <- tm_map(netflix_text, toSpace, "\\|")
+# netflix_text <- tm_map(netflix_text, to_e, "â€™")
+# # Convert the text to lower case
+# netflix_text <- tm_map(netflix_text, content_transformer(tolower))
+# # Remove numbers
+# netflix_text <- tm_map(netflix_text, removeNumbers)
+# # Remove english common stopwords
+# netflix_text <- tm_map(netflix_text, removeWords, stopwords("english"))
+# # Remove your own stop word
+# # specify your custom stopwords as a character vector
+# 
+# netflix_text <- tm_map(netflix_text, removeWords, c("thi", "thee", "thou", "may", "still", "thus", "though", "can", "will", "hath", "doth", "thine", "like", "much", "let",
+#                                         "upon", "from", "dost", "shall", "thy")) 
+# # Remove punctuations
+# netflix_text <- tm_map(netflix_text, removePunctuation)
+# # Eliminate extra white spaces
+# netflix_text <- tm_map(netflix_text, stripWhitespace)
+# # Text stemming - which reduces words to their root form
+# #x_text <- tm_map(x_text, stemDocument)
+# 
+# netflix_text #NO DOCUMENTS DROPPED
 
 ```
+
+
+
 ```{r}
 # Build a term-document matrix
-netflix_text_dtm <- TermDocumentMatrix(netflix_text)
-netflix_mat_dtm <- as.matrix(netflix_text_dtm)
-#head(netflix_mat_dtm)
-# Sort by decreasing value of frequency
-netflix_dtm_v <- sort(rowSums(netflix_mat_dtm),decreasing=TRUE)
-netflix_dtm_d <- data.frame(word = names(netflix_dtm_v),freq=netflix_dtm_v)
-# Display the top 5 most frequent words
-head(netflix_dtm_d, 50)
+# netflix_text_dtm <- TermDocumentMatrix(netflix_text)
+# netflix_mat_dtm <- as.matrix(netflix_text_dtm)
+# #head(netflix_mat_dtm)
+# # Sort by decreasing value of frequency
+# netflix_dtm_v <- sort(rowSums(netflix_mat_dtm),decreasing=TRUE)
+# netflix_dtm_d <- data.frame(word = names(netflix_dtm_v),freq=netflix_dtm_v)
+# # Display the top 5 most frequent words
+# head(netflix_dtm_d, 50)
 
 
 ```
@@ -265,13 +299,13 @@ head(netflix_dtm_d, 50)
 
 
 ```{r}
-#generate word cloud
-set.seed(314)
-wordcloud(words = netflix_dtm_d$word, freq = netflix_dtm_d$freq, min.freq = 10,
-          max.words=100, random.order=FALSE, rot.per=0.20, 
-          colors=brewer.pal(8, "Dark2"))
-
-##play around with shapes
+# #generate word cloud
+# set.seed(314)
+# wordcloud(words = netflix_dtm_d$word, freq = netflix_dtm_d$freq, min.freq = 10,
+#           max.words=100, random.order=FALSE, rot.per=0.20, 
+#           colors=brewer.pal(8, "Dark2"))
+# 
+# ##play around with shapes
 
 
 
@@ -280,17 +314,128 @@ wordcloud(words = netflix_dtm_d$word, freq = netflix_dtm_d$freq, min.freq = 10,
 
 
 ```{r}
-netflix_vector <- get_sentiment(netflix$description, method="syuzhet")
-# see the first row of the vector
-head(netflix_vector, n = 10)
-# see summary statistics of the vector
-summary(netflix_vector)
-hist(netflix_vector, col = "blue2", breaks = 20) #normal distribtion 
-
-cor(netflix_vector, netflix$imdb_score)
-
-summary(netflix$imdb_score)
+# netflix_vector <- get_sentiment(netflix$description, method="syuzhet")
+# # see the first row of the vector
+# head(netflix_vector, n = 10)
+# # see summary statistics of the vector
+# summary(netflix_vector)
+# hist(netflix_vector, col = "blue2", breaks = 20) #normal distribtion 
+# 
+# cor(netflix_vector, netflix$imdb_score)
+# 
+# summary(netflix$imdb_score)
 ```
+
+########## WORKING WITH ARTIST DATA NOW #############
+
+```{r}
+
+#DONT FORGET TO UNCOMMENT THESE LINES****
+# qry1 <- "SELECT * FROM Artists"
+# artist <- dbGetQuery(con, qry1)
+
+head(artist, n = 2)
+dim(artist)
+colnames(artist) <- c("Artist", "songs")
+
+View(artist)
+
+######THERE ARE DUPLICATES IN THE DATA REMEMBER TO COME BACK AND CHANGE THEM! RIGHT NOW I AM JUST FOCUSED ON WRITING THE LOOP#######
+#specifically observations 41 & 42
+
+#need to look into words within []
+
+
+# test<- artist$songs[1]
+# library(stringr)
+# str_extract_all(pattern = "^\\[") #use this to get rid of words in brackets
+
+
+```
+
+
+Gonna write a loop that performs key word extraction on each artist's work. 
+Result: - A list containing a df for each artists.
+        - Each artist's df will contain: top 10 keywords, frequencies, proportions
+        
+```{r}
+#creating list that will be populated by loop
+artist_keyword <- list()
+artist_keyword
+
+artist_text <- Corpus(VectorSource(artist$songs)); artist_text
+
+for(i in 1:length(artist$Artist)){
+  # #The elements in each list will be indexed by artist name. but I don't have the names yet.
+  # artist_name <- artist$Artist[i]
+  # names(artist_keyword)[i] <-  
+  # 
+  kw <- rep(NA, 10)
+  frq <- rep(NA, 10)
+  prp <- rep(NA, 10)
+  temp_mat <- cbind(kw, frq, prp)
+  artist_keyword[[i]] <-as.data.frame(temp_mat) # ea. element will be df with 10 rows and 3 columns, chose not to                                                                                           # include artist because it would just be repeated, but could be                                                                                            # useful. discuss???
+  colnames(artist_keyword[[i]]) <- c("keyword","frequency", "proportion" )
+  
+  art_doc <- artist_text[i]
+  
+  #Replacing "/", "@" and "|" with space
+  toSpace <- content_transformer(function (y , pattern ) gsub(pattern, " ", y))
+  #to_e <- content_transformer(function (y , pattern ) gsub(pattern, "e", y)) wasnt' helpful
+  art_doc <- tm_map(art_doc, toSpace, "/")
+  art_doc <- tm_map(art_doc, toSpace, "@")
+  art_doc <- tm_map(art_doc, toSpace, "\\|")
+  art_doc <- tm_map(art_doc, to_e, "â€™")
+  # Convert the text to lower case
+  art_doc <- tm_map(art_doc, content_transformer(tolower))
+  # Remove numbers
+  art_doc <- tm_map(art_doc, removeNumbers)
+  # Remove english common stopwords
+  art_doc <- tm_map(art_doc, removeWords, stopwords("english"))
+  # Remove your own stop word
+  # specify your custom stopwords as a character vector
+  
+  art_doc <- tm_map(art_doc, removeWords, c("aint", "ooh", "thou", "never", "yeah", "hey", "though", "just", "will", "dont", "gonna", "can", "like", "much", "let",
+                                  "upon", "from", "nah", "shall", "now")) 
+  # Remove punctuations
+  art_doc <- tm_map(art_doc, removePunctuation)
+  # Eliminate extra white spaces
+  art_doc <- tm_map(art_doc, stripWhitespace)
+  # Text stemming - which reduces words to their root form
+  #x_text <- tm_map(x_text, stemDocument)
+  
+  #art_doc #NO DOCUMENTS DROPPED
+
+  art_doc_dtm <- TermDocumentMatrix(art_doc)
+  
+
+  #art_doc_dtm
+  #number of total terms is the non sparse entries
+  
+  artist_mat_dtm <- as.matrix(art_doc_dtm)
+  # mat_dtm
+  # Sort by decreasing value of frequency
+  artisit_dtm_v <- sort(rowSums(artist_mat_dtm),decreasing=TRUE)
+  artist_dtm_d <- data.frame(word = names(artisit_dtm_v),freq=artisit_dtm_v)
+  artist_dtm_d
+  
+  
+  artist_keyword[[i]]$keyword[1:10] <- artist_dtm_d$word[1:10] #populating keywords
+  artist_keyword[[i]]$frequency[1:10] <- artist_dtm_d$freq[1:10]; artist_keyword #populating frequencies
+  
+  art_num_terms <- length(art_doc_dtm$i); art_num_terms #total number of terms
+  artist_keyword[[i]]$proportion[1:10] <- artist_dtm_d$freq[1:10]/art_num_terms #populating proportions
+  
+  
+}
+
+
+artist_keyword[[28]] #look at the data frame one at a time otherwise your computer won't like you
+
+
+
+```
+
 
 
 
