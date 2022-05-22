@@ -5,8 +5,10 @@ For Learning NLP:
 - Text Analysis Intro: https://monkeylearn.com/text-analysis/
 - Sentiment Analysis (Python): https://www.youtube.com/watch?v=O_B7XLfx0ic
 - Emotion Detection Using NRCLex(Python): https://www.youtube.com/watch?v=dL7swWymrGk 
-- Info on syuzhet package: https://www.rdocumentation.org/packages/syuzhet/versions/1.0.6
-
+- Syuzhet Package Documentation: https://www.rdocumentation.org/packages/syuzhet/versions/1.0.6
+- Text Mining (tm) Package Documentation:
+	- (detailed) https://www.sciencedirect.com/topics/mathematics/term-matrix#:~:text=Sparsity%20is%20the%20proportion%20of,is%20the%20term%2Dfrequency%20weighting.
+	- (package list) https://rdrr.io/rforge/tm/man/
 
 For Learning Github:
 - Github: https://www.youtube.com/watch?v=k5D37W6h56o
