@@ -14,7 +14,7 @@ xdbname <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_DBNAME")
 xdbhost <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_HOST")
 xdbport <- as.integer( Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_PORT") )
 
-
+#dbDisconnect(con)
 
 con <-
   dbConnect(
@@ -34,7 +34,7 @@ dbListTables(con)
 #Getting Artist data
 qry1 <- "SELECT * FROM  Artists"
 Artists <- dbGetQuery(con, qry1)
-
+View(Artists)
 dbDisconnect(con)
 
 
