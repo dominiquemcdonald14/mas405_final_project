@@ -31,11 +31,11 @@ con <-
 dbListTables(con)
 
 
-#Getting Artist data
-qry1 <- "SELECT * FROM  Artists"
-Artists <- dbGetQuery(con, qry1)
+#Getting Artist data from table called Lyrics. DO NOT SELECT FROM THE TABLE TITLED ARTISTS!!!
+qry1 <- "SELECT * FROM  Lyrics"
+Artists <- dbGetQuery(con, qry1) 
 View(Artists)
-dbDisconnect(con)
+dbDisconnect(con) #Thanks Angel. Bye!
 
 
 
@@ -71,6 +71,5 @@ con <-
 dbListTables(con)
 
 
-
-dbWriteTable(con, "Artists", Artists)
+dbWriteTable(con, "Lyrics", Artists)
 
