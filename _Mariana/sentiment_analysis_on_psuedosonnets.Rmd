@@ -200,11 +200,18 @@ drv <- dbDriver("MySQL")
 xdbsock <- ""
 
 
-xdbuser1 <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_USER")
-xpw1     <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PW")
-xdbname1 <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_DBNAME")
-xdbhost1 <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_HOST")
-xdbport1 <- as.integer( Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PORT") )
+# xdbuser1 <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_USER")
+# xpw1     <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PW")
+# xdbname1 <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_DBNAME")
+# xdbhost1 <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_HOST")
+# xdbport1 <- as.integer( Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PORT") )
+
+# xdbuser <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_USER")
+# xpw     <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PW")
+# xdbname <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_DBNAME")
+# xdbhost <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_HOST")
+# xdbport <- as.integer( Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PORT") )
+
 
 
 
@@ -223,7 +230,7 @@ con1 <-
 
 dbListTables(con1)
 
-dbGetQuery(con1, "SELECT * FROM Sonnets_Sentiments LIMIT 10")
+dbGetQuery(con1, "SELECT * FROM Sonnets_Sentiments LIMIT 10") #This line did not work for Dominique
 
 dbDisconnect(con1)
 
