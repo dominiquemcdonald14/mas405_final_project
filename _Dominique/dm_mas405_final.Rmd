@@ -331,12 +331,12 @@ netflix_text
 ```{r}
 
 #DONT FORGET TO UNCOMMENT THESE LINES****
-# qry1 <- "SELECT * FROM Artists"
-# artist <- dbGetQuery(con, qry1)
+ qry1 <- "SELECT * FROM Lyrics"
+ artist <- dbGetQuery(con, qry1)
 
 head(artist, n = 2)
 dim(artist)
-colnames(artist) <- c("Artist", "songs")
+colnames(artist) <- c("ID","Artist", "songs")
 
 View(artist)
 
@@ -363,13 +363,11 @@ Result: - A list containing a df for each artists.
 artist_keyword <- list()
 artist_keyword
 
+
 artist_text <- Corpus(VectorSource(artist$songs)); artist_text
 
 for(i in 1:length(artist$Artist)){
-  # #The elements in each list will be indexed by artist name. but I don't have the names yet.
-  # artist_name <- artist$Artist[i]
-  # names(artist_keyword)[i] <-  
-  # 
+ 
   kw <- rep(NA, 10)
   frq <- rep(NA, 10)
   prp <- rep(NA, 10)
@@ -385,7 +383,7 @@ for(i in 1:length(artist$Artist)){
   art_doc <- tm_map(art_doc, toSpace, "/")
   art_doc <- tm_map(art_doc, toSpace, "@")
   art_doc <- tm_map(art_doc, toSpace, "\\|")
-  art_doc <- tm_map(art_doc, to_e, "â€™")
+  #art_doc <- tm_map(art_doc, to_e, "â€™")
   # Convert the text to lower case
   art_doc <- tm_map(art_doc, content_transformer(tolower))
   # Remove numbers
@@ -395,8 +393,8 @@ for(i in 1:length(artist$Artist)){
   # Remove your own stop word
   # specify your custom stopwords as a character vector
   
-  art_doc <- tm_map(art_doc, removeWords, c("aint", "ooh", "thou", "never", "yeah", "hey", "though", "just", "will", "dont", "gonna", "can", "like", "much", "let",
-                                  "upon", "from", "nah", "shall", "now")) 
+  art_doc <- tm_map(art_doc, removeWords, c("aint", "ooh", "thou", "never", "yeah", "hey", "though", "just", "will", "dont", "gonna", "can",                                                            "let", "thing", "every", "cause", "Since", "along",  "always", "many" , "eighteen", "hundred",
+                                            "upon", "from", "nah", "shall", "now", "one", "two", "cant", "dont", "wont", "like", "much")) 
   # Remove punctuations
   art_doc <- tm_map(art_doc, removePunctuation)
   # Eliminate extra white spaces
@@ -429,8 +427,8 @@ for(i in 1:length(artist$Artist)){
   
 }
 
-
-artist_keyword[[28]] #look at the data frame one at a time otherwise your computer won't like you
+names(artist_keyword) <- artist$Artist
+artist_keyword[28] #look at the data frame one at a time otherwise your computer won't like you
 
 
 
