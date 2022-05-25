@@ -45,11 +45,11 @@ xdbsock <- ""
 
 
 #############
-xdbuser <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_USER")
-xpw     <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_PW")
-xdbname <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_DBNAME")
-xdbhost <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_HOST")
-xdbport <- as.integer( Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_PORT") )
+# xdbuser <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_USER")
+# xpw     <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_PW")
+# xdbname <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_DBNAME")
+# xdbhost <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_HOST")
+# xdbport <- as.integer( Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_PORT") )
 
 xdbuser <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_USER")
 xpw     <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PW")
@@ -352,7 +352,14 @@ netflix_text
 
 
  artists_complete <- cbind(lyrics$ID, artist_names, artist_songs)
-
+ artists_complete <- as.data.frame(artists_complete)
+ 
+ 
+ #THIS TABLE HAS BOTH THE ARTISTS' NAMES AND THE COMPLETE ENTRIES OF THE SONG LYRICS 
+ dbWriteTable(con, "artists_complete", artists_complete)
+ 
+ 
+ 
  View(artists_complete)
  
  ######THERE ARE DUPLICATES IN THE DATA REMEMBER TO COME BACK AND CHANGE THEM! RIGHT NOW I AM JUST FOCUSED ON WRITING THE LOOP#######
@@ -415,7 +422,9 @@ for(i in 1:length(artists_complete[,2])){
   # Eliminate extra white spaces
   art_doc <- tm_map(art_doc, stripWhitespace)
   # Text stemming - which reduces words to their root form
-  x_text <- tm_map(x_text, stemDocument)
+  x_text <- tm_map(art_doc, stemDocument)
+  
+  #STEMMING DOESNT WORK ON CURSE WORDS
   
   #art_doc #NO DOCUMENTS DROPPED
 
@@ -445,11 +454,16 @@ for(i in 1:length(artists_complete[,2])){
 names(artist_keyword) <- artist$Artist
 artist_keyword[28] #look at the data frame one at a time otherwise your computer won't like you
 
+dbListTables(con)
+
+artist_keyword[20:40] #run this from your console to see results more easily
+
+
 
 
 ```
 
-
+### ANDY SUGGESTED USING CLUSTERING TO CHECK SIMILIARITY IN ADDITION TO EUCLIDEAN DISTANCE ### (???)
 
 
 
