@@ -51,11 +51,11 @@ xdbname <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_DBNAME")
 xdbhost <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_HOST")
 xdbport <- as.integer( Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_PORT") )
 
-# xdbuser <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_USER")
-# xpw     <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PW")
-# xdbname <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_DBNAME")
-# xdbhost <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_HOST")
-# xdbport <- as.integer( Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PORT") )
+xdbuser <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_USER")
+xpw     <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PW")
+xdbname <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_DBNAME")
+xdbhost <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_HOST")
+xdbport <- as.integer( Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PORT") )
 
 
 con <-
@@ -331,16 +331,31 @@ netflix_text
 ```{r}
 
 #DONT FORGET TO UNCOMMENT THESE LINES****
+ 
+#The Lyrics table has the artists' names, but the songs were cutoff. The Artist table has the complete songs, but no names, so I'm gonna split them and combine the right parts
+
  qry1 <- "SELECT * FROM Lyrics"
- artist <- dbGetQuery(con, qry1)
+ lyrics <- dbGetQuery(con, qry1)
 
-head(artist, n = 2)
-dim(artist)
-colnames(artist) <- c("ID","Artist", "songs")
+ head(lyrics, n = 2)
+ dim(lyrics)
+ colnames(lyrics) <- c("ID","Artist", "songs")
+ 
+ artist_names <- lyrics$Artist
 
-View(artist)
+#View(lyrics)
 
-######THERE ARE DUPLICATES IN THE DATA REMEMBER TO COME BACK AND CHANGE THEM! RIGHT NOW I AM JUST FOCUSED ON WRITING THE LOOP#######
+
+ qry1 <- "SELECT * FROM Artists"
+ artists <- dbGetQuery(con, qry1)
+ artist_songs <- artists$`0`
+
+
+ artists_complete <- cbind(lyrics$ID, artist_names, artist_songs)
+
+ View(artists_complete)
+ 
+ ######THERE ARE DUPLICATES IN THE DATA REMEMBER TO COME BACK AND CHANGE THEM! RIGHT NOW I AM JUST FOCUSED ON WRITING THE LOOP#######
 #specifically observations 41 & 42
 
 #need to look into words within []
@@ -364,9 +379,9 @@ artist_keyword <- list()
 artist_keyword
 
 
-artist_text <- Corpus(VectorSource(artist$songs)); artist_text
+artist_text <- Corpus(VectorSource(artists_complete[,3])); artist_text
 
-for(i in 1:length(artist$Artist)){
+for(i in 1:length(artists_complete[,2])){
  
   kw <- rep(NA, 10)
   frq <- rep(NA, 10)
@@ -394,13 +409,13 @@ for(i in 1:length(artist$Artist)){
   # specify your custom stopwords as a character vector
   
   art_doc <- tm_map(art_doc, removeWords, c("aint", "ooh", "thou", "never", "yeah", "hey", "though", "just", "will", "dont", "gonna", "can",                                                            "let", "thing", "every", "cause", "Since", "along",  "always", "many" , "eighteen", "hundred",
-                                            "upon", "from", "nah", "shall", "now", "one", "two", "cant", "dont", "wont", "like", "much")) 
+                                            "upon", "from", "nah", "aint", "now", "one", "two", "cant", "dont", "wont", "like", "much")) 
   # Remove punctuations
   art_doc <- tm_map(art_doc, removePunctuation)
   # Eliminate extra white spaces
   art_doc <- tm_map(art_doc, stripWhitespace)
   # Text stemming - which reduces words to their root form
-  #x_text <- tm_map(x_text, stemDocument)
+  x_text <- tm_map(x_text, stemDocument)
   
   #art_doc #NO DOCUMENTS DROPPED
 
