@@ -463,7 +463,8 @@ artist_keyword[20:40] #run this from your console to see results more easily
 
 ```
 
-### ANDY SUGGESTED USING CLUSTERING TO CHECK SIMILIARITY IN ADDITION TO EUCLIDEAN DISTANCE ### (???)
+*********** ANDY SUGGESTED USING CLUSTERING TO CHECK SIMILIARITY IN ADDITION TO EUCLIDEAN DISTANCE ************* (???)
 
+- can use clustering for sentiment analysis comparisons
 
 
