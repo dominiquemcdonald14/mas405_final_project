@@ -1,0 +1,116 @@
+\documentclass[11pt]{article}
+
+\usepackage{graphicx} % for inputing graphics
+\usepackage{epstopdf} % Helper Package to graphix package
+\usepackage{fancyvrb} % for \VerbatimInput (the nice inline code refrences)
+\usepackage{amssymb} % American Math Society package, creates theorems and more math things 
+\usepackage{caption} %creates captions for figures and other floating objects in paper 
+\usepackage[fleqn]{amsmath} %flegn- moves equations to the left amsmath-helps with equation building other math things
+\usepackage{tipa} % imports greek characters and other random letters heres a cool cheat sheet! https://ptmartins.info/tex/tipacheatsheet.pdf
+%\usepackage{tipx} % additional font comands for the tipa package. not 100%
+\usepackage{breakcites} % an asthetics feather that makes a line break after citations 
+
+
+
+%%%%%%%%%
+%graphics rule found from prof zes code from previous workshop. i added it thinking it can help when were ready for graphics input ? 
+\DeclareCaptionLabelSeparator{space}
+
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+\textwidth = 6.5 in
+\textheight = 8.2 in
+\oddsidemargin = 0.0 in
+\evensidemargin = 0.0 in
+\topmargin = 0.0 in
+\headheight = 0.0 in
+\headsep = 0.7 in
+\parskip = 0.2in
+\parindent = 0.0in
+
+%%%%%%%%%%
+% defining thorems corollarys and definitions 
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}{Definition}
+
+%%%%%
+%this was the abstract defining code i got form the overleaf template document i sent. it seems too make it look 
+% more alligned than just defining the abstract after \beging{document}
+\setlength{\parindent}{1cm}
+\newcommand{\abstractinenglishname}{Abstract}
+\newenvironment{abstractinenglish}{
+        \def\abstractname{\abstractinenglishname}
+	\begin{abstract}
+}{
+        \end{abstract}
+}
+
+%%%%%%%%%%%
+%title, author, date defineing
+
+\title {Title goes here?????????????????????\\[1ex]}
+\author{
+Angle Sierra, 
+Dominique McDonald,
+Mariana Castro-Gonzalez, \\
+Danny Ying,
+and Carina Kalaydjian \\[1ex]
+}
+\date{June 7th, 2022}
+
+%%%%%%%%%%%%%%%%%
+%\usepackage[utf8]{inputenc}
+%\usepackage[english]{babel}
+
+%\usepackage[backend=biber]{biblatex}
+%\addbibresource{FinalArticle.bib}
+
+%\usepackage[english]{babel}\addto\captionsenglish  
+%{\renewcommand{\bibname}{References}}  
+%\usepackage[backend=bibtex,style=numeric]{biblatex}
+
+%\usepackage{babel,blindtext}
+%\addbibresource{FinalArticle.bib}
+
+\usepackage{color}
+\definecolor{MyDarkGreen}{rgb}{0.0,0.4,0.0}
+\definecolor{MyDarkRed}{rgb}{0.4,0.0,0.0} 
+\definecolor{MyBlue}{rgb}{0.0, 0.0, 0.5} 
+\definecolor{MyOrange1}{rgb}{1.0, 0.9, 0.0} 
+
+\usepackage[colorlinks=true, urlcolor= MyDarkRed, linkcolor= MyBlue, citecolor=MyDarkGreen ]{hyperref}
+
+\usepackage{makeidx}
+\makeindex
+
+%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+\vspace{6pt}
+
+\begin{abstractinenglish}
+\emph{Texto do resumo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ut elementum libero, tincidunt pellentesque quam. Cras id vulputate diam. Curabitur metus lorem, feugiat vel ipsum vulputate, mattis mollis lacus. Duis lectus velit, dignissim et neque ac, venenatis mattis quam. Duis commodo vestibulum sapien at volutpat. Phasellus pretium ipsum magna, porta mollis metus venenatis eu. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla facilisis arcu nibh, viverra blandit tellus feugiat a. Proin porttitor ex vel dolor vestibulum varius ut ut ante.}
+\end{abstractinenglish}
+
+\section{Introduction}
+here we cite \cite{Web1} our glorius leader 
+
+
+\section{Methods}
+
+\section{Results}
+
+\section{Conclusions}
+
+\include{appendicitis}
+
+\newpage{}
+
+\printbibliography
+
+%\bibliographystyle{plain}
+%\bibliography{FinalArticle} 
+
+\end{document}
