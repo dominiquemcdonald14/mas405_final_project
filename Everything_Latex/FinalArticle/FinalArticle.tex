@@ -11,8 +11,23 @@
 \usepackage{breakcites} % an asthetics feather that makes a line break after citations 
 
 
+\usepackage{makeidx}
+\usepackage[hyperpageref]{backref}
 
 %%%%%%%%%
+\usepackage{color}
+\definecolor{MyDarkGreen}{rgb}{0.0,0.4,0.0}
+\definecolor{MyDarkRed}{rgb}{0.4,0.0,0.0} 
+\definecolor{MyBlue}{rgb}{0.0, 0.0, 0.5} 
+\definecolor{MyOrange1}{rgb}{1.0, 0.9, 0.0} 
+
+\usepackage[colorlinks=true, urlcolor= MyBlue, linkcolor= MyBlue, citecolor=MyDarkGreen ]{hyperref}
+
+%
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\makeindex
+
 %graphics rule found from prof zes code from previous workshop. i added it thinking it can help when were ready for graphics input ? 
 \DeclareCaptionLabelSeparator{space}
 
@@ -47,7 +62,6 @@
 
 %%%%%%%%%%%
 %title, author, date defineing
-
 \title {Title goes here?????????????????????\\[1ex]}
 \author{
 Angle Sierra, 
@@ -58,38 +72,6 @@ and Carina Kalaydjian \\[1ex]
 }
 \date{June 7th, 2022}
 
-%%%%%%%%%%%%%%%%%
-%\usepackage[utf8]{inputenc}
-%\usepackage[english]{babel}
-
-%\usepackage[backend=biber]{biblatex}
-%\addbibresource{FinalArticle.bib}
-
-%\usepackage[english]{babel}\addto\captionsenglish  
-%{\renewcommand{\bibname}{References}}  
-%\usepackage[backend=bibtex,style=numeric]{biblatex}
-
-%\usepackage{babel,blindtext}
-%\addbibresource{FinalArticle.bib}
-
-\usepackage{color}
-\definecolor{MyDarkGreen}{rgb}{0.0,0.4,0.0}
-\definecolor{MyDarkRed}{rgb}{0.4,0.0,0.0} 
-\definecolor{MyBlue}{rgb}{0.0, 0.0, 0.5} 
-\definecolor{MyOrange1}{rgb}{1.0, 0.9, 0.0} 
-
-\usepackage[colorlinks=true, urlcolor= MyBlue, linkcolor= MyBlue, citecolor=MyDarkGreen ]{hyperref}
-
-\usepackage{makeidx}
-
-
-\setcounter{secnumdepth}{3}
-\setcounter{tocdepth}{3}
-\makeindex
-
-
-\usepackage[hyperpageref]{backref}
-%\usepackage[alf]{abntex2cite}
 
 %%%%%%%%%%%%%%%%%
 %	HELPFUL BIBLIOGRAPHY KEY
@@ -105,7 +87,9 @@ and Carina Kalaydjian \\[1ex]
 % briney2015data - the briney book from class? i added it but not sure if we will need it 
 % syuzhet - syuzhet package in R documentation 
 %tm - ??? 
-
+% sonnetsData - refrences all of shakespears sonnets from the gutenberg project
+% musicData - Refrences kaggle dataset with the music artists and their lyrics
+%%%%%%%%%%%%%%%%%%
 
 
 \begin{document}
@@ -121,7 +105,7 @@ and Carina Kalaydjian \\[1ex]
 \section{Introduction}
 here we cite \cite{web1} our glorius leader \cite{web2} yeah yeah cool cool \cite{briney2015data}
 
-and this too \cite{web3}
+and this too \cite{monkey} this as well \cite{sonnetsData} woohooo!!! \cite{musicData} and \cite{syuzhet} and 
 
 \section{Methods}
 
