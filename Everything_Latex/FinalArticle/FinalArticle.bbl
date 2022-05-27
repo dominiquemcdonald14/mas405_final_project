@@ -1,0 +1,26 @@
+\begin{thebibliography}{1}
+
+\bibitem{web1}
+Natural {L}anguage {P}rocessing {W}ith {R}.
+\newblock
+  \url{https://www.udacity.com/blog/2020/10/natural-language-processing-with-r.html}.
+\newblock Accessed: 05-20-2022.
+
+\bibitem{web3}
+Text {M}ining and {S}entiment {A}nalysis: {A}nalysis with {R}.
+\newblock
+  \url{https://www.red-gate.com/simple-talk/databases/sql-server/bi-sql-server/text-mining-and-sentiment-analysis-with-r/}.
+\newblock Accessed: 05-20-2022.
+
+\bibitem{web2}
+What is {T}ext {A}nalysis? {A} {B}eginner's {G}uide.
+\newblock \url{https://monkeylearn.com/text-analysis/}.
+\newblock Accessed: 05-20-2022.
+
+\bibitem{briney2015data}
+Kristin Briney.
+\newblock {\em Data Management for Researchers: Organize, maintain and share
+  your data for research success}.
+\newblock Pelagic Publishing Ltd, 2015.
+
+\end{thebibliography}
