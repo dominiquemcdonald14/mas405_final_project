@@ -264,7 +264,6 @@ kfit$centers
 fviz_cluster(kfit, data = tdm,
              palette = c("deepskyblue", "cyan3", "gold1"), 
              geom = "point",
-             shape = NULL,
              ellipse = F,
              ellipse.type = "t", 
              ggtheme = theme_bw()
@@ -287,7 +286,8 @@ kfit2 <- kmeans(tdm2, 3)
 fviz_cluster(kfit2, data = tdm2,
              palette = c("#2E9FDF", "#00AFBB", "#E7B800"), 
              geom = "point",
-             ellipse.type = "convex", 
+              ellipse = F,
+             ellipse.type = "t", 
              ggtheme = theme_bw()
              )
 
