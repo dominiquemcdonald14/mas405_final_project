@@ -178,7 +178,7 @@ comparison.cloud(tdm, random.order=F,
                                   "green", "orange", "blue", "brown"), 
                  colors = c("#00B2FF", "red", "#FF0099", "#6600CC", "green", 
                             "orange", "blue", "brown"),
-                 title.size=1, max.words=400,scale=c(2.5, 0.4),rot.per=0.4)
+                 title.size=1, max.words=400,scale=c(2, 0.4),rot.per=0.5)
 
 ```
 
@@ -213,7 +213,7 @@ colnames(tdm2) = c('negative', 'positive')
 comparison.cloud(tdm2, random.order=F,
                  title.colors = c("red","#00B2FF"), 
                  colors = c("red","#00B2FF"),
-                 title.size=1, max.words=400,scale=c(2.5, 0.5),rot.per=0.4)
+                 title.size=1, max.words=400,scale=c(2, 0.4),rot.per=0.5)
 
 ```
 
@@ -252,15 +252,16 @@ plot(1:k, varper, xlab = "# of clusters", ylab = "explained variance")
 ```{r}
 
 kfit <- kmeans(tdm, 3)
-#kfit
-#clustering means were given for each of the eight emotions...
 
-anger <- kfit$centers[,1] #centers of the 3 clusters for emotion: anger
+#clustering means were given for each of the eight emotions...
+kfit$centers
 
 fviz_cluster(kfit, data = tdm,
-             palette = c("#2E9FDF", "#00AFBB", "#E7B800"), 
+             palette = c("deepskyblue", "cyan3", "gold1"), 
              geom = "point",
-             ellipse.type = "convex", 
+             shape = NULL,
+             ellipse = F,
+             ellipse.type = "t", 
              ggtheme = theme_bw()
              )
 
@@ -283,6 +284,7 @@ fviz_cluster(kfit2, data = tdm2,
 #conform to one cluster mean
 
 ```
+
 
 ## Artists
 
