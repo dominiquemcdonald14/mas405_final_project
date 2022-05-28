@@ -222,9 +222,14 @@ comparison.cloud(tdm2, random.order=F,
 ```{r}
 total <- rowSums(tdm)
 termdoc <- cbind(tdm, total)
+head(termdoc)
 
-findFreqTerms(m, lowfreq = 300)
-findMostFreqTerms(m)
+total2 <- rowSums(tdm2)
+termdoc2 <- cbind(tdm2, total2)
+head(termdoc2)
+
+#findFreqTerms(m, lowfreq = 300)
+#findMostFreqTerms(m)
 ```
 
 
@@ -242,7 +247,7 @@ for (i in 1:k) {
 }
 vpc
 
-plot(1:k, varper, xlab = "# of clusters", ylab = "explained variance")
+plot(1:k, vpc, xlab = "# of clusters", ylab = "explained variance")
 
 
 ```
@@ -265,6 +270,12 @@ fviz_cluster(kfit, data = tdm,
              ggtheme = theme_bw()
              )
 
+
+kfit
+```
+```{r}
+cluster_tdm <- cbind(tdm, kfit$cluster)
+cluster_tdm
 ```
 
 
