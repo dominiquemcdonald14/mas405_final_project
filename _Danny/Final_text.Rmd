@@ -23,8 +23,9 @@ library(SnowballC)
 library(wordcloud)
 library(RColorBrewer)
 library(syuzhet)
-library(ggplot2)
 library(RMySQL)
+library(DBI)
+library(tidyverse)
 ```
 
 ## Obtain the data
@@ -126,15 +127,54 @@ sonnet_data <- head(dtm_prop, 10); sonnet_data
 ```
 Here, we have the table summarizing Shakepeare's top 10 most used words. 
 
+
+## Sentiment Analysis
+
+```{r}
+
+#data cleanup using dplyr
+sonnets <- 
+  data %>% 
+  mutate_at("Sonnets", str_replace, "â€™", "\'") 
+
+sonnets_df1 <- data.frame(matrix(ncol=1,nrow=154, 
+                                 dimnames=list(NULL, "Sonnets")))
+
+#I manually removed the punctuation except for apostrophes
+n <- 154
+for (i in 1:n) {
+  sonnets_df1[i,]<- gsub("[,.;:?!]", "", sonnets[i,2])
+  rbind(sonnets_df1[i,])
+} 
+
+
+#create an empty dataframe
+emotions <- data.frame(matrix(ncol=10,nrow=0, dimnames=list(NULL, 
+      c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
+        "surprise", "trust", "negative", "positive"))))
+
+n <- 154
+
+#ran a for loop to conduct sentiment analysis to each individual psuedosonnet
+#beware: it might take a lil while to run
+for (i in 1:n) {
+  emotions[i,]<- get_nrc_sentiment(sonnets_df1[i,1])
+  rbind(emotions[i,])
+}
+
+s <- colSums(emotions)
+s_prop <- s / sum(s)
+```
+
+## Now create the table for 49 artists
+
 Gonna write a loop that performs key word extraction on each artist's work. 
 Result: - A list containing a df for each artists.
         - Each artist's df will contain: top 10 keywords, frequencies, proportions
         
 ```{r}
-library(dplyr)
-
 #creating list that will be populated by loop
-artist_keyword <- data.frame(artist = artists_complete$artist_names, word = rep(NA,49), freq_df = rep(NA,49), prop_df = rep(NA,49), keyword = rep(NA,49))
+artist_keyword <- data.frame(artist = artists_complete$artist_names, sent = rep(NA, 49), word = rep(NA,49), freq_df = rep(NA,49), prop_df = rep(NA,49), keyword = rep(NA,49))
 
 
 artist_text <- Corpus(VectorSource(artists_complete[,4])); artist_text
@@ -202,15 +242,27 @@ for(i in 1:length(artists_complete[,2])){
   }
 
   artist_keyword[i,]$keyword <- temp_word
+  
+  ## Sentiment Analysis
+  art_data <- gsub("[,.;:?!]", "", artists_complete[i,4])
+  
+  emotions <- data.frame(matrix(ncol=10,nrow=0, dimnames=list(NULL, 
+      c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
+        "surprise", "trust", "negative", "positive"))))
+
+  emotions <- get_nrc_sentiment(art_data)
+  emotions_prop <- emotions / sum(emotions)
+  
+  artist_keyword[i,]$sent <- sum((s_prop - emotions_prop)^2)
 }
 ```
 
 ```{r}
 artist_keyword[order(artist_keyword$word, decreasing = TRUE),] 
+artist_keyword[order(artist_keyword$sent),] 
 ```
 
 *********** ANDY SUGGESTED USING CLUSTERING TO CHECK SIMILIARITY IN ADDITION TO EUCLIDEAN DISTANCE ************* (???)
 
 - can use clustering for sentiment analysis comparisons
-
 
