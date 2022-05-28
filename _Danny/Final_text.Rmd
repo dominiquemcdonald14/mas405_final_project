@@ -1,0 +1,216 @@
+---
+title: "MAS405_Final_Text"
+author: "Mersenne Twister"
+date: '2022-05-18'
+output: pdf_document
+---
+
+Installing packages for text analysis.
+
+```{r}
+#install.packages("tm")  # for text mining
+#install.packages("SnowballC") # for text stemming
+#install.packages("wordcloud") # word-cloud generator
+#install.packages("RColorBrewer") # color palettes
+#install.packages("syuzhet") # for sentiment analysis
+#install.packages("ggplot2")
+```
+
+```{r, warning= FALSE}
+#Now load those bad boys
+library(tm)
+library(SnowballC)
+library(wordcloud)
+library(RColorBrewer)
+library(syuzhet)
+library(ggplot2)
+library(RMySQL)
+```
+
+## Obtain the data
+
+```{r}
+#connecting to Dominique's db
+
+drv <- dbDriver("MySQL")
+xdbsock <- ""
+
+#############
+xdbuser <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_USER")
+xpw     <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_PW")
+xdbname <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_DBNAME")
+xdbhost <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_HOST")
+xdbport <- as.integer( Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_PORT") )
+
+con <-
+dbConnect(
+drv,
+user=xdbuser,
+password=xpw,
+dbname=xdbname,
+host=xdbhost,
+port=xdbport,
+unix.sock=xdbsock
+)
+
+dbListTables(con)
+
+# dbDisconnect()
+```
+
+```{r}
+qry1 <- "SELECT * FROM OG" # OG contains 154 original sonnets
+
+data <- dbGetQuery(con, qry1)
+colnames(data) <- c("row_names", "Sonnets") 
+head(data)
+
+artists_complete <- dbGetQuery(con, "SELECT * FROM artists_complete")
+
+head(artists_complete)
+
+dbDisconnect(con)
+```
+
+## Data Cleaning
+
+```{r}
+#need to load vector of text objects as a corpus
+#VectorSource() interprets each element of a vec as a document
+x_text <- Corpus(VectorSource(data$Sonnets))
+
+x_text
+```
+
+Clean the data
+
+```{r}
+#Replacing "/", "@" and "|" with space
+toSpace <- content_transformer(function (y , pattern ) gsub(pattern, " ", y))
+x_text <- tm_map(x_text, toSpace, "/")
+x_text <- tm_map(x_text, toSpace, "@")
+x_text <- tm_map(x_text, toSpace, "\\|")
+x_text <- tm_map(x_text, removeNumbers)
+x_text <- tm_map(x_text, removeWords, stopwords("english"))
+x_text <- tm_map(x_text, removeWords, c("thi", "thee", "thou", "may", "still", "thus", "though", "can", "will", "hath", "doth", "thine", "like", "much", "let", "upon", "from", "dost", "shall", "thy")) 
+x_text <- tm_map(x_text, removePunctuation)
+x_text <- tm_map(x_text, stripWhitespace)
+```
+The document term matrix just contains all the words in your "documents" and their frequencies and maybe their stem, gotta check
+
+```{r}
+# Build a term-document matrix
+x_text_dtm <- TermDocumentMatrix(x_text)
+x_text_dtm
+#number of total terms is the non sparse entries
+
+mat_dtm <- as.matrix(x_text_dtm)
+# mat_dtm
+# Sort by decreasing value of frequency
+dtm_v <- sort(rowSums(mat_dtm),decreasing=TRUE)
+dtm_d <- data.frame(word = names(dtm_v),freq=dtm_v)
+# Display the top 50 most frequent words
+head(dtm_d, 50)
+
+num_terms <- length(x_text_dtm$i); num_terms #total number of terms - 7611
+nTerms(x_text_dtm) # unique terms in sonnets - 3089
+head(Terms(x_text_dtm)) #just a list of all the terms that show up
+
+prop_terms<-  dtm_d$freq/num_terms; head(prop_terms)
+
+dtm_prop <- cbind(dtm_d, prop_terms)
+
+sonnet_data <- head(dtm_prop, 10); sonnet_data
+
+## Idea: divide each by top 10 frequencies, instead of using total
+```
+Here, we have the table summarizing Shakepeare's top 10 most used words. 
+
+Gonna write a loop that performs key word extraction on each artist's work. 
+Result: - A list containing a df for each artists.
+        - Each artist's df will contain: top 10 keywords, frequencies, proportions
+        
+```{r}
+library(dplyr)
+
+#creating list that will be populated by loop
+artist_keyword <- data.frame(artist = artists_complete$artist_names, word = rep(NA,49), freq_df = rep(NA,49), prop_df = rep(NA,49), keyword = rep(NA,49))
+
+
+artist_text <- Corpus(VectorSource(artists_complete[,4])); artist_text
+
+for(i in 1:length(artists_complete[,2])){
+ 
+  kw <- rep(NA, 10)
+  frq <- rep(NA, 10)
+  prp <- rep(NA, 10)
+  temp_mat <- cbind(kw, frq, prp) #temp_mat is the current artist
+  #artist_keyword[[i]] <-as.data.frame(temp_mat) 
+  #colnames(artist_keyword[[i]]) <- c("keyword","frequency", "proportion" )
+  temp_df <- as.data.frame(temp_mat)
+  colnames(temp_df) <- c("word","frequency", "proportion" )
+  
+  art_doc <- artist_text[i]
+  
+  ## Data cleaning
+  toSpace <- content_transformer(function (y , pattern ) gsub(pattern, " ", y))
+  art_doc <- tm_map(art_doc, toSpace, "/")
+  art_doc <- tm_map(art_doc, toSpace, "@")
+  art_doc <- tm_map(art_doc, toSpace, "\\|")
+  art_doc <- tm_map(art_doc, content_transformer(tolower))
+  art_doc <- tm_map(art_doc, removeNumbers)
+  art_doc <- tm_map(art_doc, removeWords, stopwords("english"))
+  art_doc <- tm_map(art_doc, removeWords, c("aint", "ooh", "thou", "never", "yeah", "hey", "though", "just", "will", "dont", "gonna", "can", "let", "thing", "every", "cause", "Since", "along",  "always", "many" , "eighteen", "hundred", "upon", "from", "nah", "aint", "now", "one", "two", "cant", "dont", "wont", "like", "much")) 
+  art_doc <- tm_map(art_doc, removePunctuation)
+  art_doc <- tm_map(art_doc, stripWhitespace)
+  x_text <- tm_map(art_doc, stemDocument)
+
+  art_doc_dtm <- TermDocumentMatrix(art_doc)
+  
+
+  #art_doc_dtm
+  #number of total terms is the non sparse entries
+  
+  artist_mat_dtm <- as.matrix(art_doc_dtm)
+  # mat_dtm
+  # Sort by decreasing value of frequency
+  artisit_dtm_v <- sort(rowSums(artist_mat_dtm),decreasing=TRUE)
+  artist_dtm_d <- data.frame(word = names(artisit_dtm_v),freq=artisit_dtm_v)
+  artist_dtm_d
+  
+  
+  #artist_keyword[[i]]$keyword[1:10] <- artist_dtm_d$word[1:10] #populating keywords
+  #artist_keyword[[i]]$frequency[1:10] <- artist_dtm_d$freq[1:10]; artist_keyword #populating frequencies
+  temp_df$word[1:10] <- artist_dtm_d$word[1:10]
+  temp_df$frequency[1:10] <- artist_dtm_d$freq[1:10]; 
+  
+  art_num_terms <- length(art_doc_dtm$i); art_num_terms #total number of terms
+ # artist_keyword[[i]]$proportion[1:10] <- artist_dtm_d$freq[1:10]/art_num_terms #populating proportions
+  temp_df$proportion[1:10] <- artist_dtm_d$freq[1:10]/art_num_terms
+  
+  compare <- sonnet_data %>%
+    left_join(temp_df, by = "word") %>%
+    filter(!is.na(frequency))
+  
+  artist_keyword[i,]$word <- nrow(compare)
+  artist_keyword[i,]$freq_df <- sum((compare$freq - compare$frequency)^2)
+  artist_keyword[i,]$prop_df <- sum((compare$prop_terms - compare$proportion)^2)
+  
+  temp_word <- ""
+  for (j in 1:length(compare$word)) {
+    temp_word <- paste0(temp_word," ",compare$word[j])
+  }
+
+  artist_keyword[i,]$keyword <- temp_word
+}
+```
+
+```{r}
+artist_keyword[order(artist_keyword$word, decreasing = TRUE),] 
+```
+
+*********** ANDY SUGGESTED USING CLUSTERING TO CHECK SIMILIARITY IN ADDITION TO EUCLIDEAN DISTANCE ************* (???)
+
+- can use clustering for sentiment analysis comparisons
+
+
