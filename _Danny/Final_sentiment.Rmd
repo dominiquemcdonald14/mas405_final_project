@@ -1,0 +1,239 @@
+---
+title: "sentiment_analysis_attempt2"
+author: "Mariana Gonzalez Castro"
+date: "5/19/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Acquiring the Data
+
+```{r}
+library(readr)
+library(RMySQL)
+library(DBI)
+library(dplyr)
+library(stringr)
+```
+
+
+```{r}
+#establish connection to Angel's database
+drv <- dbDriver("MySQL")
+
+xdbsock <- ""
+
+
+xdbuser <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_USER")
+xpw     <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_PW")
+xdbname <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_DBNAME")
+xdbhost <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_HOST")
+xdbport <- as.integer( Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_PORT") )
+
+
+
+con <-
+  dbConnect(
+    drv,
+    user=xdbuser,
+    password=xpw,
+    dbname=xdbname,
+    host=xdbhost,
+    port=xdbport,
+    unix.sock=xdbsock
+  )
+
+dbListTables(con)
+
+#acquire data
+x <-dbGetQuery(con, "SELECT * FROM Sonnets")
+
+dbDisconnect(con) 
+
+#data cleanup using dplyr
+sonnets <- 
+  x %>% 
+  mutate_at("Sonnets", str_replace, "â€™", "\'") 
+
+sonnets_df1 <- data.frame(matrix(ncol=1,nrow=5000, 
+                                 dimnames=list(NULL, "Sonnets")))
+
+#I manually removed the punctuation except for apostrophes
+n <- 5000
+for (i in 1:n) {
+  sonnets_df1[i,]<- gsub("[,.;:?!]", "", sonnets[i,1])
+  rbind(sonnets_df1[i,])
+} 
+
+sonnets_df1[1,1] #did this to take a glimpse how the data looks so far
+
+```
+
+
+## Sentiment Analysis Attempt
+
+```{r}
+library(tm)
+library(syuzhet)
+library(wordcloud)
+```
+
+\newpage
+
+After many tedious and unfruitful attempts, I figured out how to do a sentiment analysis to each individual sonnet and merge each row into one dataframe with no repeat columns...yay me...
+
+```{r}
+#create an empty dataframe
+emotions <- data.frame(matrix(ncol=10,nrow=0, dimnames=list(NULL, 
+      c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
+        "surprise", "trust", "negative", "positive"))))
+
+n <- 5000
+
+#ran a for loop to conduct sentiment analysis to each individual psuedosonnet
+#beware: it might take a lil while to run
+for (i in 1:n) {
+  emotions[i,]<- get_nrc_sentiment(sonnets_df1[i,1])
+  rbind(emotions[i,])
+}
+
+head(emotions) 
+
+```
+
+
+```{r}
+#Very ROUGH barplot 
+s <- colSums(emotions)
+ss <- s[c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
+        "surprise", "trust")]
+sss <- s[c("negative", "positive")]
+barplot(ss,
+        main = "Frequency of Each Emotion",
+        las = 2,
+        col = terrain.colors(15))
+barplot(sss,
+        main = "Frequency of Positive and Negative Sentiments",
+        las = 2,
+        col = rainbow(15))
+```
+
+
+
+```{r}
+#Synopsis: I took all the words from the sonnets that were categorized in one of
+#the 8 emotions, removed stop words (aka commonly used words), created a corpus 
+#(structured set of texts I think), created a term document matrix (word 
+#frequency matrix I think) of said corpus and created a word cloud all for the 
+#ultimate goal to visualize what words fell under the 8 emotion categories
+
+all = c(
+  paste(sonnets_df1[emotions$anger > 0,], collapse=" "),
+  paste(sonnets_df1[emotions$anticipation > 0,], collapse=" "),
+  paste(sonnets_df1[emotions$disgust > 0,], collapse=" "),
+  paste(sonnets_df1[emotions$fear > 0,], collapse=" "),
+  paste(sonnets_df1[emotions$joy > 0,], collapse=" "),
+  paste(sonnets_df1[emotions$sadness > 0,], collapse=" "),
+  paste(sonnets_df1[emotions$surprise > 0,], collapse=" "),
+  paste(sonnets_df1[emotions$trust > 0,], collapse=" ")
+)
+
+all <- removeWords(all, stopwords("english"))
+# create corpus
+corpus = Corpus(VectorSource(all))
+#
+# create term-document matrix
+tdm = TermDocumentMatrix(corpus)
+#
+# convert as matrix
+tdm = as.matrix(tdm)
+tdm1 <- tdm[nchar(rownames(tdm)) < 11,]
+#
+# add column names
+colnames(tdm) = c('anger', 'anticipation', 'disgust', 'fear', 'joy', 'sadness', 
+                  'surprise', 'trust')
+colnames(tdm1) <- colnames(tdm)
+comparison.cloud(tdm1, random.order=F,
+                 title.colors = c("#00B2FF", "red", "#FF0099", "#6600CC", 
+                                  "green", "orange", "blue", "brown"), 
+                 colors = c("#00B2FF", "red", "#FF0099", "#6600CC", "green", 
+                            "orange", "blue", "brown"),
+                 title.size=1, max.words=400,scale=c(2.5, 0.4),rot.per=0.4)
+
+
+```
+
+```{r}
+#I wanted to glimpse at the Term Document Matrix, I still don't know what it 
+#entirely means but it is on my to-do list
+tdm1[1:25,]
+
+```
+
+
+
+
+```{r}
+#try adding a sentiment "value" to the dataframe 
+#where sentiment = positive - negative
+
+sentiment <- emotions$positive - emotions$negative
+emotions_new <- cbind(emotions, sentiment)
+
+library(ggplot2)
+
+ggplot(emotions_new[1:100,],aes(rownames(emotions_new[1:100,]), sentiment[1:100]))+geom_bar(stat="identity", fill = "darkblue") +
+  ylab("Sentiment Value") + xlab("First 100 Sonnets") +
+  ggtitle("Sentiment Values of the First 100 Sonnets as an Example")
+
+```
+
+
+```{r}
+#let's try adding this to my db
+#connecting to my database:
+drv <- dbDriver("MySQL")
+
+xdbsock <- ""
+
+
+# xdbuser1 <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_USER")
+# xpw1     <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PW")
+# xdbname1 <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_DBNAME")
+# xdbhost1 <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_HOST")
+# xdbport1 <- as.integer( Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PORT") )
+
+# xdbuser <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_USER")
+# xpw     <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PW")
+# xdbname <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_DBNAME")
+# xdbhost <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_HOST")
+# xdbport <- as.integer( Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PORT") )
+
+
+
+
+con1 <-
+  dbConnect(
+    drv,
+    user=xdbuser1,
+    password=xpw1,
+    dbname=xdbname1,
+    host=xdbhost1,
+    port=xdbport1,
+    unix.sock=xdbsock
+  )
+
+#dbWriteTable(con1, name = "Sonnets_Sentiments", y, overwrite=T)
+
+dbListTables(con1)
+
+dbGetQuery(con1, "SELECT * FROM Sonnets_Sentiments LIMIT 10") #This line did not work for Dominique
+
+dbDisconnect(con1)
+
+```
+
+
