@@ -279,6 +279,9 @@ fviz_cluster(kfit2, data = tdm2,
              ggtheme = theme_bw()
              )
 
+#I don't like how this looks, there's an outlier, love, that doesn't want to 
+#conform to one cluster mean
+
 ```
 
 ## Artists
@@ -328,4 +331,4 @@ artists_complete$artist_songs <- gsub("[^[:alnum:][:space:]']", "",
 
 
 
-**Sentiment Analysis**
+**Sentiment Analysis: Artist Data**
