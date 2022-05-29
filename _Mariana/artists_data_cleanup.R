@@ -39,6 +39,9 @@ dbDisconnect(con)
 #table is loaded with an extra and useless column
 artists_complete <- select(artists_complete,-c(1))
 
+###this code will take all the non-lyrical strings contained in a set of 
+#parenthesis and compile it into some vector of lists thing...trust me, you'll see
+#
 df  <- vector(mode = "list", length = 49)
 names(df) <- artists_complete$artist_names
 
@@ -55,6 +58,29 @@ df
 #############
 ###need to input code that will remove the phrases that are not lyrics
 
+#I looked through the lists and roughly 10 artists contained these wannabe lyrics
+#Of those 10, about 17 wannabe lyrics were discovered and now must be eliminated
+
+artists_complete <- 
+  artists_complete %>% 
+  mutate_at("artist_songs", str_remove_all, pattern = c("Verse 1|Chorus 2|Verse 3|Chorus 3|x2|vocal solo|Saxophone solo|fadeout|chorus|Repeat 4 times|bv=|scat singing|4x|x8|x7|x4|2x")) 
+
+#can run this line of code again to verify if the strings are gone
+#I would check adele, she had "Verse 1, Chorus 2, Verse 3, and Chorus 3
+#you'll find that those phrases are no longer there and what remains is just 
+#empty quotations...it's like you can still feel its presence but it's GONE
+
+df2  <- vector(mode = "list", length = 49)
+names(df2) <- artists_complete$artist_names
+
+for (i in 1:49) {
+  
+  df2[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$artist_songs[i],
+                                            gregexpr("\\(.*?\\)", 
+                                            artists_complete$artist_songs[i]))))
+}
+
+df2[["adele"]]
 
 ############
 #the last thing to do is to remove unwanted punctuation
