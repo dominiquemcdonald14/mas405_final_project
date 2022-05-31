@@ -258,8 +258,17 @@ for(i in 1:length(artists_complete[,2])){
 ```
 
 ```{r}
-artist_keyword[order(artist_keyword$word, decreasing = TRUE),] 
-artist_keyword[order(artist_keyword$sent),] 
+table_word <- artist_keyword[order(artist_keyword$word, decreasing = TRUE),] %>%
+  mutate(rank_word = 1:nrow(artist_keyword))
+table_sent <- artist_keyword[order(artist_keyword$sent),]  %>%
+  mutate(rank_sent = 1:nrow(artist_keyword))
+
+rank_table <- table_word %>%
+  left_join(table_sent, by = "artist") %>%
+  select(artist, rank_word, rank_sent) %>%
+  mutate(rank = rank_word + rank_sent)
+
+rank_table[order(rank_table$rank),]
 ```
 
 *********** ANDY SUGGESTED USING CLUSTERING TO CHECK SIMILIARITY IN ADDITION TO EUCLIDEAN DISTANCE ************* (???)
