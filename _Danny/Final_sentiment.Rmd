@@ -1,0 +1,106 @@
+---
+title: "MAS405_Final_Text"
+author: "Mersenne Twister"
+date: "5/19/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Acquiring the Data
+
+```{r}
+library(readr)
+library(RMySQL)
+library(DBI)
+library(dplyr)
+library(stringr)
+```
+
+
+```{r}
+#establish connection to Angel's database
+drv <- dbDriver("MySQL")
+
+xdbsock <- ""
+
+
+xdbuser <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_USER")
+xpw     <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_PW")
+xdbname <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_DBNAME")
+xdbhost <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_HOST")
+xdbport <- as.integer( Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_PORT") )
+
+
+
+con <-
+  dbConnect(
+    drv,
+    user=xdbuser,
+    password=xpw,
+    dbname=xdbname,
+    host=xdbhost,
+    port=xdbport,
+    unix.sock=xdbsock
+  )
+
+dbListTables(con)
+
+#acquire data
+x <-dbGetQuery(con, "SELECT * FROM OG")
+
+dbDisconnect(con) 
+
+#data cleanup using dplyr
+sonnets <- 
+  x %>% 
+  mutate_at("rep.NA..154.", str_replace, "â€™", "\'") 
+
+sonnets_df1 <- data.frame(matrix(ncol=1,nrow=154, 
+                                 dimnames=list(NULL, "Sonnets")))
+
+#I manually removed the punctuation except for apostrophes
+n <- 154
+for (i in 1:n) {
+  sonnets_df1[i,]<- gsub("[,.;:?!]", "", sonnets[i,1])
+  rbind(sonnets_df1[i,])
+} 
+
+sonnets_df1[1,1] #did this to take a glimpse how the data looks so far
+
+```
+
+
+## Sentiment Analysis Attempt
+
+```{r}
+library(tm)
+library(syuzhet)
+library(wordcloud)
+```
+
+\newpage
+
+After many tedious and unfruitful attempts, I figured out how to do a sentiment analysis to each individual sonnet and merge each row into one dataframe with no repeat columns...yay me...
+
+```{r}
+#create an empty dataframe
+emotions <- data.frame(matrix(ncol=10,nrow=0, dimnames=list(NULL, 
+      c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
+        "surprise", "trust", "negative", "positive"))))
+
+n <- 154
+
+#ran a for loop to conduct sentiment analysis to each individual psuedosonnet
+#beware: it might take a lil while to run
+for (i in 1:n) {
+  emotions[i,]<- get_nrc_sentiment(sonnets_df1[i,1])
+  rbind(emotions[i,])
+}
+
+s <- colSums(emotions)
+s_prop <- s / sum(s); s_prop
+```
+
