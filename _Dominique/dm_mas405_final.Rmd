@@ -374,6 +374,20 @@ netflix_text
 
 
 ```
+```{r}
+
+library(stringr)
+qry1 <- "SELECT * FROM artists_complete"
+test <- dbGetQuery(con, qry1)
+
+head(test$artist_songs)
+
+
+vec <- str_sub(test$artist_songs[1], start = "\\[", end = "\\]", omit_na = TRUE)
+vec
+
+
+```
 
 
 Gonna write a loop that performs key word extraction on each artist's work. 
@@ -451,7 +465,7 @@ for(i in 1:length(artists_complete[,2])){
   
 }
 
-names(artist_keyword) <- artist$Artist
+names(artist_keyword) <- artists_complete$Artist
 artist_keyword[28] #look at the data frame one at a time otherwise your computer won't like you
 
 dbListTables(con)
