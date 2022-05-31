@@ -1,0 +1,373 @@
+ ---
+title: "Sentiment Analysis on OG Sonnets and Artists"
+author: "Mariana Gonzalez Castro"
+date: "5/22/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(RMySQL)
+library(DBI)
+
+library(dplyr)
+library(stringr)
+
+library(tm)
+library(syuzhet)
+library(wordcloud)
+
+library(cluster)
+library(factoextra)
+
+library(ggplot2)
+```
+
+
+```{r}
+drv <- dbDriver("MySQL")
+xdbsock <- ""
+
+
+#############
+xdbuser <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_USER")
+xpw     <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PW")
+xdbname <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_DBNAME")
+xdbhost <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_HOST")
+xdbport <- as.integer( Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PORT") )
+
+
+
+con <-
+  dbConnect(
+    drv,
+    user=xdbuser,
+    password=xpw,
+    dbname=xdbname,
+    host=xdbhost,
+    port=xdbport,
+    unix.sock=xdbsock
+  )
+
+
+dbListTables(con)
+
+original_sonnets <- dbGetQuery(con, "SELECT * FROM OG")
+
+#dbWriteTable(con, name = "artists_complete", artists_complete, overwrite=T)
+
+artists_complete <- dbGetQuery(con, "SELECT * FROM artists_complete")
+
+dbDisconnect(con)
+
+
+```
+
+## Original Sonnets
+
+**Data Cleanup** 
+```{r}
+#*sigh* Idk why dbWriteTable creates a column of row numbers
+og <- select(original_sonnets,-c(1)) 
+
+og[1,1] #it appears that the special characters are back again...so stubborn
+
+#R, wtf is up with the column name? 
+og <- rename(og, "og_sonnets" = "rep.NA..154.")
+
+og <- 
+  og %>% 
+  mutate_at("og_sonnets", str_replace, "â€™", "\'") 
+
+og_sonnets <- data.frame(matrix(ncol=1,nrow=154, 
+                                 dimnames=list(NULL, "Sonnets")))
+
+#I manually removed the punctuation except for apostrophes
+n <- 154
+for (i in 1:154) {
+  og_sonnets[i,]<- gsub("[,.;:?!]", "", og[i,1])
+  rbind(og_sonnets[i,])
+} 
+
+og_sonnets[1,1]
+
+```
+
+
+**Sentiment Analysis** 
+og_sonnets is the dataframe we are working with. (I know I use too many names lol)
+```{r}
+#create an empty dataframe
+emotions <- data.frame(matrix(ncol=10,nrow=0, dimnames=list(NULL, 
+      c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
+        "surprise", "trust", "negative", "positive"))))
+
+n <- 154
+
+#ran a for loop to conduct sentiment analysis to each individual sonnet
+for (i in 1:n) {
+  emotions[i,]<- get_nrc_sentiment(og_sonnets[i,1])
+  rbind(emotions[i,])
+}
+
+head(emotions) 
+
+#should write this into my db...at some point
+
+
+```
+
+```{r}
+#Very ROUGH barplot 
+s <- colSums(emotions)
+ss <- s[c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
+        "surprise", "trust")]
+sss <- s[c("negative", "positive")]
+barplot(ss,
+        main = "Frequency of Each Emotion",
+        las = 2,
+        col = terrain.colors(15))
+barplot(sss,
+        main = "Frequency of Positive and Negative Sentiments",
+        las = 2,
+        col = rainbow(15))
+
+
+```
+
+```{r}
+#visualize what words fell under the 8 emotion categories
+
+all = c(
+  paste(og_sonnets[emotions$anger > 0,], collapse=" "),
+  paste(og_sonnets[emotions$anticipation > 0,], collapse=" "),
+  paste(og_sonnets[emotions$disgust > 0,], collapse=" "),
+  paste(og_sonnets[emotions$fear > 0,], collapse=" "),
+  paste(og_sonnets[emotions$joy > 0,], collapse=" "),
+  paste(og_sonnets[emotions$sadness > 0,], collapse=" "),
+  paste(og_sonnets[emotions$surprise > 0,], collapse=" "),
+  paste(og_sonnets[emotions$trust > 0,], collapse=" ")
+)
+
+all <- removeWords(all, stopwords("english"))
+
+all <- removeWords(all, c("thi", "thee", "thou", "may", "still", "thus", 
+                          "though", "can", "will", "hath", "doth", "thine", 
+                          "like", "much", "let", "upon", "from", "dost", 
+                          "shall", "thy"))
+all <- stripWhitespace(all)
+all <- removeNumbers(all)
+
+# create corpus
+corpus = Corpus(VectorSource(all))
+
+# create term-document matrix
+tdm = TermDocumentMatrix(corpus)
+#
+# convert as matrix
+tdm = as.matrix(tdm)
+#
+# add column names
+colnames(tdm) = c('anger', 'anticipation', 'disgust', 'fear', 'joy', 'sadness', 
+                  'surprise', 'trust')
+comparison.cloud(tdm, random.order=F,
+                 title.colors = c("#00B2FF", "red", "#FF0099", "#6600CC", 
+                                  "green", "orange", "blue", "brown"), 
+                 colors = c("#00B2FF", "red", "#FF0099", "#6600CC", "green", 
+                            "orange", "blue", "brown"),
+                 title.size=1, max.words=400,scale=c(2, 0.4),rot.per=0.5)
+
+```
+
+
+
+```{r}
+#something doesn't feel right...checking the sentiments now
+
+sentiments = c(
+  paste(og_sonnets[emotions$negative > 0,], collapse=" "),
+  paste(og_sonnets[emotions$positive > 0,], collapse=" ")
+)
+
+sentiments <- removeWords(sentiments, stopwords("english"))
+
+sentiments <- removeWords(sentiments, c("thi", "thee", "thou", "may", "still", "thus", "though", "can", "will", "hath", "doth", "thine", "like", "much", "let",
+                                        "upon", "from", "dost", "shall", "thy"))
+sentiments <- stripWhitespace(sentiments)
+sentiments <- removeNumbers(sentiments)
+
+# create corpus
+corpus2 = Corpus(VectorSource(sentiments))
+
+# create term-document matrix
+tdm2 = TermDocumentMatrix(corpus2)
+#
+# convert as matrix
+tdm2 = as.matrix(tdm2)
+#
+# add column names
+colnames(tdm2) = c('negative', 'positive')
+comparison.cloud(tdm2, random.order=F,
+                 title.colors = c("red","#00B2FF"), 
+                 colors = c("red","#00B2FF"),
+                 title.size=1, max.words=400,scale=c(2, 0.4),rot.per=0.5)
+
+```
+
+
+
+```{r}
+total <- rowSums(tdm)
+termdoc <- cbind(tdm, total)
+head(termdoc)
+
+total2 <- rowSums(tdm2)
+termdoc2 <- cbind(tdm2, total2)
+head(termdoc2)
+
+#findFreqTerms(m, lowfreq = 300)
+#findMostFreqTerms(m)
+```
+
+
+## Clustering Algorithm
+
+I want to attempt a k-means clustering and see what happens. I am going to first determine the ideal number of clusters by checking how much variance of the data would be explained with the total number of clusters. 
+
+```{r}
+#will be applying k-means clustering to the Term Document Matrix or tdm 
+k <- 8
+vpc <- NULL #vpc here means "variance per cluster"
+for (i in 1:k) {
+    kfit <- kmeans(tdm, i)
+    vpc <- c(vpc, kfit$betweenss/kfit$totss)
+}
+vpc
+
+plot(1:k, vpc, xlab = "# of clusters", ylab = "explained variance")
+
+
+```
+
+**It appears that after 3 clusters, the increase in variance explained slows down. Thus, I'll be going with 3 clusters.**
+
+```{r}
+
+kfit <- kmeans(tdm, 3)
+
+#clustering means were given for each of the eight emotions...
+kfit$centers
+
+fviz_cluster(kfit, data = tdm,
+             palette = c("deepskyblue", "cyan3", "gold1"), 
+             #geom = "point",
+             ellipse = F,
+             ellipse.type = "t", 
+             ggtheme = theme_bw()
+             )
+
+
+kfit
+```
+```{r}
+cluster_tdm <- cbind(tdm, kfit$cluster)
+cluster_tdm
+```
+
+
+```{r}
+#trying kmeans clustering with the two sentiments: negative and positive
+
+kfit2 <- kmeans(tdm2, 3)
+
+fviz_cluster(kfit2, data = tdm2,
+             palette = c("#2E9FDF", "#00AFBB", "#E7B800"), 
+             geom = "point",
+              ellipse = F,
+             ellipse.type = "t", 
+             ggtheme = theme_bw()
+             )
+
+#I don't like how this looks...
+#there's an outlier, love, that doesn't want to conform to one cluster mean
+
+```
+
+
+## Artists
+
+**Data Cleanup** 
+```{r}
+#*sigh* idk why dbWriteTable creates a column of row numbers
+#table is loaded with an extra and useless column
+artists_complete <- select(artists_complete,-c(1))
+
+###this code will take all the non-lyrical strings contained in a set of 
+#parenthesis and compile it into some vector of lists thing...trust me, you'll see
+#
+df  <- vector(mode = "list", length = 49)
+names(df) <- artists_complete$artist_names
+
+for (i in 1:49) {
+  
+  df[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$artist_songs[i],
+                                            gregexpr("\\(.*?\\)", 
+                                            artists_complete$artist_songs[i]))))
+}
+
+df
+
+
+#############
+###need to input code that will remove the phrases that are not lyrics
+
+#I looked through the lists and roughly 10 artists contained these wannabe lyrics
+#Of those 10, about 17 wannabe lyrics were discovered and now must be eliminated
+
+artists_complete <- 
+  artists_complete %>% 
+  mutate_at("artist_songs", str_remove_all, pattern = c("Verse 1|Chorus 2|Verse 3|Chorus 3|x2|vocal solo|Saxophone solo|fadeout|chorus|Repeat 4 times|bv=|scat singing|4x|x8|x7|x4 |2x")) 
+
+#can run this line of code again to verify if the strings are gone
+#I would check adele, she had "Verse 1, Chorus 2, Verse 3, and Chorus 3
+#you'll find that those phrases are no longer there and what remains is just 
+#empty quotations...it's like you can still feel its presence but it's GONE
+
+df2  <- vector(mode = "list", length = 49)
+names(df2) <- artists_complete$artist_names
+
+for (i in 1:49) {
+  
+  df2[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$artist_songs[i],
+                                            gregexpr("\\(.*?\\)", 
+                                            artists_complete$artist_songs[i]))))
+}
+
+df2[["adele"]]
+
+############
+#the last thing to do is to remove unwanted punctuation
+
+#this removes everything inside brackets, brackets included
+artists_complete$artist_songs <- gsub("\\[.+?\\]", "", 
+                                      artists_complete$artist_songs)
+
+#now with parenthesis that includes lyrics being sung...
+#this removes all the parenthesis BUT without removing the text inside
+artists_complete$artist_songs <- gsub("\\s*\\([^\\)]+\\)","", 
+                                        artists_complete$artist_songs)
+
+
+#This replaces everything that's not alphanumeric signs, space or apostrophe 
+#with an empty string...yes please
+artists_complete$artist_songs <- gsub("[^[:alnum:][:space:]']", "", 
+                                      artists_complete$artist_songs)
+
+```
+
+
+
+**Sentiment Analysis: Artist Data**

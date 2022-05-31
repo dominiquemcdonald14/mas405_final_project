@@ -1,0 +1,26 @@
+Requierments andy gave us for the article from discussion week 5 and 6
+
+Abstract: Summarize in a few sentences what your project is about. This is somewhat similar to the executive summary --- 5-7 sentence overview of your project
+
+Introduction: What prior research or techniques are you basing your project on? Start very general and then slowly get more specific (closer to your project). Why is your project of importance? What gap in knowledge/application is your project fulfilling? You should have many citations in your bibliography section based on topics discussed in this section.
+1)Start more general --- explain about the issue of climate change in general. Remember, for every fact that you didn’t come up with (even if it’s engrained in memory), cite it!
+2)Get slightly more specific --- discuss the general trend worldwide with precipitation trends (you’re now starting to tailor your intro to the topic you want)
+3)Narrow further --- what is the research collected so far regarding the specific issue in California specifically. 
+4)Remember, cite, cite, cite! There should be probably 20-30 references in your bibliography when you’re done… most of which you reference in the Intro section! One technique is to build up the bibliography section as you come across the reference proactively! 
+5)You justify the research “gap” your analysis seeks to close (though yours is likely less than that of say PhD level research).
+
+Methodology: Now you’ve discussed where your project fits in. In this section, you tell me how you incorporate the research done previously in your application. Then, if applicable, what are you introducing in this analysis? In other words --- what methods are you using here and why? This is one of the most important sections of your article.
+1)Explore the methodologies past authors have used to examine such data --- whether it’s a time series analysis, what benchmarks/response variables they use, etc (cite here too)
+2)State your methods and how they are similar/different to that of past authors. What statistical methods are you using?
+3)Either before or after this section, since this is a database management class, this is where you would mention all of your back-end database management solutions as this isn’t normal for a standard research paper. This “extra” section should be detailed as it is a focus for this class specifically.
+4)Remember, the entire paper is either providing the background research (intro), justifying your methods (results) or describing the impact of your paper (conclusion). The Methods section is the most important!
+
+Data/Results:  This is where you share your results in context. What happens when you apply your methodology? Probably include the data you use and include several tables and figures. Note --- a lot of colorful graphics here, but it isn’t as important as your Methods section.
+1)Now analyze the dataset --- provide the tables and figures necessary and describe the results. This can largely be citation free! (We see that there was a large decline in snowpack 2012-2017 and 2020-2022 as we see here in Figure 1 measuring snowpack levels)…
+2)A great figure is worth 1000 words! However, a misleading figure or conclusion can be detrimental to your paper. Be careful with the tables and figures you include and the statements you make describing them.
+
+Conclusion: Now that you’ve backed up your methodology (Methods section) via your introduction and results, now step back and describe what advances your study has made as well as any limitations and your recommendations as to any future research/application that should be done.
+1)First, in a few sentences, reiterate what you found in your analysis
+2)Describe any limitations in your methodology or your analysis
+3)Recommend some future research in the area that builds upon your analysis.
+4)Close the paper by getting more general again and by stating why the research (in this case climate change) is important.
