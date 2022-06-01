@@ -15,7 +15,7 @@ xdbuser <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_USER")
 xpw     <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PW")
 xdbname <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_DBNAME")
 xdbhost <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_HOST")
-xdbport <- as.integer( Sys.getenv("MAS405_AWS_ANGEL_ROUSER_PORT") )
+xdbport <- as.integer( Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PORT") )
 
 con <-
   dbConnect(
