@@ -59,7 +59,7 @@ original_sonnets <- dbGetQuery(con, "SELECT * FROM OG")
 
 #dbWriteTable(con, name = "artists_complete", artists_complete, overwrite=T)
 
-artists_complete <- dbGetQuery(con, "SELECT * FROM artists_complete")
+artists_complete <- dbGetQuery(con, "SELECT * FROM Artists_noDuplicates")
 
 dbDisconnect(con)
 
@@ -129,11 +129,13 @@ sss <- s[c("negative", "positive")]
 barplot(ss,
         main = "Frequency of Each Emotion",
         las = 2,
-        col = terrain.colors(15))
+        col = terrain.colors(15),
+        ylim = c(0,700))
 barplot(sss,
         main = "Frequency of Positive and Negative Sentiments",
         las = 2,
-        col = rainbow(15))
+        col = rainbow(15),
+        ylim = c(0, 1200))
 
 
 ```
@@ -157,7 +159,7 @@ all <- removeWords(all, stopwords("english"))
 all <- removeWords(all, c("thi", "thee", "thou", "may", "still", "thus", 
                           "though", "can", "will", "hath", "doth", "thine", 
                           "like", "much", "let", "upon", "from", "dost", 
-                          "shall", "thy"))
+                          "shall", "thy", "yet"))
 all <- stripWhitespace(all)
 all <- removeNumbers(all)
 
@@ -195,7 +197,7 @@ sentiments = c(
 sentiments <- removeWords(sentiments, stopwords("english"))
 
 sentiments <- removeWords(sentiments, c("thi", "thee", "thou", "may", "still", "thus", "though", "can", "will", "hath", "doth", "thine", "like", "much", "let",
-                                        "upon", "from", "dost", "shall", "thy"))
+                                        "upon", "from", "dost", "shall", "thy", "yet"))
 sentiments <- stripWhitespace(sentiments)
 sentiments <- removeNumbers(sentiments)
 
@@ -309,13 +311,13 @@ artists_complete <- select(artists_complete,-c(1))
 #parenthesis and compile it into some vector of lists thing...trust me, you'll see
 #
 df  <- vector(mode = "list", length = 49)
-names(df) <- artists_complete$artist_names
+names(df) <- artists_complete$Artist
 
 for (i in 1:49) {
   
-  df[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$artist_songs[i],
+  df[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$Lyrics[i],
                                             gregexpr("\\(.*?\\)", 
-                                            artists_complete$artist_songs[i]))))
+                                            artists_complete$Lyrics[i]))))
 }
 
 df
@@ -329,7 +331,7 @@ df
 
 artists_complete <- 
   artists_complete %>% 
-  mutate_at("artist_songs", str_remove_all, pattern = c("Verse 1|Chorus 2|Verse 3|Chorus 3|x2|vocal solo|Saxophone solo|fadeout|chorus|Repeat 4 times|bv=|scat singing|4x|x8|x7|x4 |2x")) 
+  mutate_at("Lyrics", str_remove_all, pattern = c("Verse 1|Chorus 2|Verse 3|Chorus 3|x2|vocal solo|Saxophone solo|fadeout|chorus|Repeat 4 times|bv=|scat singing|4x|x8|x7|x4 |2x")) 
 
 #can run this line of code again to verify if the strings are gone
 #I would check adele, she had "Verse 1, Chorus 2, Verse 3, and Chorus 3
@@ -337,13 +339,13 @@ artists_complete <-
 #empty quotations...it's like you can still feel its presence but it's GONE
 
 df2  <- vector(mode = "list", length = 49)
-names(df2) <- artists_complete$artist_names
+names(df2) <- artists_complete$Lyrics
 
 for (i in 1:49) {
   
-  df2[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$artist_songs[i],
+  df2[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$Lyrics[i],
                                             gregexpr("\\(.*?\\)", 
-                                            artists_complete$artist_songs[i]))))
+                                            artists_complete$Lyrics[i]))))
 }
 
 df2[["adele"]]
@@ -352,22 +354,106 @@ df2[["adele"]]
 #the last thing to do is to remove unwanted punctuation
 
 #this removes everything inside brackets, brackets included
-artists_complete$artist_songs <- gsub("\\[.+?\\]", "", 
-                                      artists_complete$artist_songs)
+artists_complete$Lyrics <- gsub("\\[.+?\\]", "", 
+                                      artists_complete$Lyrics)
 
 #now with parenthesis that includes lyrics being sung...
 #this removes all the parenthesis BUT without removing the text inside
-artists_complete$artist_songs <- gsub("\\s*\\([^\\)]+\\)","", 
-                                        artists_complete$artist_songs)
+artists_complete$Lyrics <- gsub("\\s*\\([^\\)]+\\)","", 
+                                        artists_complete$Lyrics)
 
 
 #This replaces everything that's not alphanumeric signs, space or apostrophe 
 #with an empty string...yes please
-artists_complete$artist_songs <- gsub("[^[:alnum:][:space:]']", "", 
-                                      artists_complete$artist_songs)
+artists_complete$Lyrics <- gsub("[^[:alnum:][:space:]']", "", 
+                                      artists_complete$Lyrics)
 
 ```
 
 
 
 **Sentiment Analysis: Artist Data**
+
+```{r}
+art_emotions <- data.frame(matrix(ncol=10,nrow=0, dimnames=list(NULL, 
+      c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
+        "surprise", "trust", "negative", "positive"))))
+
+n <- 45
+
+#ran a for loop to conduct sentiment analysis to each individual sonnet
+for (i in 1:n) {
+  art_emotions[i,]<- get_nrc_sentiment(artists_complete[i,2])
+  rbind(art_emotions[i,])
+}
+
+head(art_emotions) 
+```
+
+
+```{r}
+art_bar <- colSums(art_emotions)
+art_barss <- art_bar[c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
+        "surprise", "trust")]
+art_barsss <- art_bar[c("negative", "positive")]
+barplot(art_barss,
+        main = "Frequency of Each Emotion",
+        las = 2,
+        col = terrain.colors(15),
+        ylim = c(0, 4000))
+barplot(art_barsss,
+        main = "Frequency of Positive and Negative Sentiments",
+        las = 2,
+        col = rainbow(15),
+        ylim = c(0, 7000))
+
+```
+
+
+```{r}
+#visualize what words fell under the 8 emotion categories
+artists_complete <- select(artists_complete,-c(1))
+
+art_all = c(
+  paste(artists_complete[art_emotions$anger > 0,], collapse=" "),
+  paste(artists_complete[art_emotions$anticipation > 0,], collapse=" "),
+  paste(artists_complete[art_emotions$disgust > 0,], collapse=" "),
+  paste(artists_complete[art_emotions$fear > 0,], collapse=" "),
+  paste(artists_complete[art_emotions$joy > 0,], collapse=" "),
+  paste(artists_complete[art_emotions$sadness > 0,], collapse=" "),
+  paste(artists_complete[art_emotions$surprise > 0,], collapse=" "),
+  paste(artists_complete[art_emotions$trust > 0,], collapse=" ")
+)
+
+art_all <- removeWords(art_all, stopwords("english"))
+
+art_all <- removeWords(art_all, c("thi", "thee", "thou", "may", "still", "thus", 
+                          "though", "can", "will", "hath", "doth", "thine", 
+                          "like", "much", "let", "upon", "from", "dost", 
+                          "shall", "thy", "yet"))
+art_all <- stripWhitespace(art_all)
+art_all <- removeNumbers(art_all)
+
+# create corpus
+art_corpus = Corpus(VectorSource(art_all))
+
+# create term-document matrix
+art_tdm = TermDocumentMatrix(art_corpus)
+#
+# convert as matrix
+art_tdm = as.matrix(art_tdm)
+#
+# add column names
+colnames(art_tdm) = c('anger', 'anticipation', 'disgust', 'fear', 'joy', 'sadness', 
+                  'surprise', 'trust')
+comparison.cloud(art_tdm, random.order=F,
+                 title.colors = c("#00B2FF", "red", "#FF0099", "#6600CC", 
+                                  "green", "orange", "blue", "brown"), 
+                 colors = c("#00B2FF", "red", "#FF0099", "#6600CC", "green", 
+                            "orange", "blue", "brown"),
+                 title.size=1, max.words=400, scale=c(2, 0.4), rot.per=0.5)
+
+barplot(art_tdm)
+
+```
+
