@@ -11,11 +11,11 @@ xdbsock <- ""
 
 
 #############
-xdbuser <- Sys.getenv("MAS405_AWS_MY_DB_ROUSER_USER")
-xpw     <- Sys.getenv("MAS405_AWS_MY_DB_ROUSER_PW")
-xdbname <- Sys.getenv("MAS405_AWS_MY_DB_ROUSER_DBNAME")
-xdbhost <- Sys.getenv("MAS405_AWS_MY_DB_ROUSER_HOST")
-xdbport <- as.integer( Sys.getenv("MAS405_AWS_MY_DB_ROUSER_PORT") )
+xdbuser <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_USER")
+xpw     <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PW")
+xdbname <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_DBNAME")
+xdbhost <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_HOST")
+xdbport <- as.integer( Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PORT") )
 
 con <-
   dbConnect(
@@ -30,7 +30,7 @@ con <-
 
 dbListTables(con)
 
-artists_complete <- dbGetQuery(con, "SELECT * FROM artists_complete")
+artists_complete <- dbGetQuery(con, "SELECT * FROM Artists_noDuplicates")
 
 dbDisconnect(con)
 
@@ -43,13 +43,13 @@ artists_complete <- select(artists_complete,-c(1))
 #parenthesis and compile it into some vector of lists thing...trust me, you'll see
 #
 df  <- vector(mode = "list", length = 49)
-names(df) <- artists_complete$artist_names
+names(df) <- artists_complete$Artist
 
 for (i in 1:49) {
   
-  df[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$artist_songs[i],
+  df[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$Lyrics[i],
                                             gregexpr("\\(.*?\\)", 
-                                            artists_complete$artist_songs[i]))))
+                                            artists_complete$Lyrics[i]))))
 }
 
 df
@@ -63,7 +63,7 @@ df
 
 artists_complete <- 
   artists_complete %>% 
-  mutate_at("artist_songs", str_remove_all, pattern = c("Verse 1|Chorus 2|Verse 3|Chorus 3|x2|vocal solo|Saxophone solo|fadeout|chorus|Repeat 4 times|bv=|scat singing|4x|x8|x7|x4|2x")) 
+  mutate_at("Lyrics", str_remove_all, pattern = c("Verse 1|Chorus 2|Verse 3|Chorus 3|x2|vocal solo|Saxophone solo|fadeout|chorus|Repeat 4 times|bv=|scat singing|4x|x8|x7|x4|2x")) 
 
 #can run this line of code again to verify if the strings are gone
 #I would check adele, she had "Verse 1, Chorus 2, Verse 3, and Chorus 3
@@ -71,13 +71,13 @@ artists_complete <-
 #empty quotations...it's like you can still feel its presence but it's GONE
 
 df2  <- vector(mode = "list", length = 49)
-names(df2) <- artists_complete$artist_names
+names(df2) <- artists_complete$Artist
 
 for (i in 1:49) {
   
-  df2[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$artist_songs[i],
+  df2[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$Lyrics[i],
                                             gregexpr("\\(.*?\\)", 
-                                            artists_complete$artist_songs[i]))))
+                                            artists_complete$Lyrics[i]))))
 }
 
 df2[["adele"]]
@@ -86,18 +86,18 @@ df2[["adele"]]
 #the last thing to do is to remove unwanted punctuation
 
 #this removes everything inside brackets, brackets included
-artists_complete$artist_songs <- gsub("\\[.+?\\]", "", 
-                                      artists_complete$artist_songs)
+artists_complete$Lyrics <- gsub("\\[.+?\\]", "", 
+                                      artists_complete$Lyrics)
 
 #now with parenthesis includes lyrics being sung...
 #this removes all the parenthesis BUT without removing the text inside
-artists_complete$artist_songs <- gsub("\\s*\\([^\\)]+\\)","", 
-                                        artists_complete$artist_songs)
+artists_complete$Lyrics <- gsub("\\s*\\([^\\)]+\\)","", 
+                                        artists_complete$Lyrics)
 
 
 #This replaces everything that's not alphanumeric signs, space or apostrophe 
 #with an empty string...yes please
-artists_complete$artist_songs <- gsub("[^[:alnum:][:space:]']", "", 
-                                      artists_complete$artist_songs)
+artists_complete$Lyrics <- gsub("[^[:alnum:][:space:]']", "", 
+                                      artists_complete$Lyrics)
 
 
