@@ -43,9 +43,10 @@ names(og) <-  "Sonnets"
 head(og)
 
 #clean up sonnets if you haven't already
-test<- 
-  og %>% 
-  mutate_at("Sonnets", str_replace, "#ADD_SPECIAL_CHARS", "\'") 
+
+
+og <- og %>% 
+  mutate_at("Sonnets", str_replace_all, "â", "\'") #the pattern for the special character may vary from computer to computer
 
 
 artists_complete <- dbGetQuery(con, "SELECT * FROM Artists_noDuplicates")
@@ -185,6 +186,7 @@ kfit3 <- kmeans(prop_8sent[,2:9], 3)
 
 kfit4 <- kmeans(prop_8sent[,2:9], 4)  #there is a considerable difference in groupings when using 3 groups vs 4 groups
 
+kfit7 <- kmeans(prop_8sent[,2:9],7)
 
 #clustering means were given for each of the eight emotions...
 kfit$centers
@@ -196,8 +198,8 @@ library(factoextra)
 row.names(prop_8sent) <- all_8sent$names_8sent #changing the row names so they will show up as labels for each point
 
 
-fviz_cluster(kfit4, data = prop_8sent[,2:9],
-             palette = c("deepskyblue", "cyan3", "gold1", "pink3"), 
+fviz_cluster(kfit7, data = prop_8sent[,2:9],
+             palette = c("deepskyblue", "cyan3", "gold1", "pink3", "purple2", "red", "salmon4"), 
              geom = c("point", "text"),
              ellipse = F,
              ellipse.type = "t", 
