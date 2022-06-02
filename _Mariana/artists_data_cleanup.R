@@ -1,3 +1,5 @@
+#dbDisconnect(con)
+
 
 #loading necessary packages
 library(RMySQL)
@@ -11,11 +13,11 @@ xdbsock <- ""
 
 
 #############
-xdbuser <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_USER")
-xpw     <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PW")
-xdbname <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_DBNAME")
-xdbhost <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_HOST")
-xdbport <- as.integer( Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PORT") )
+xdbuser <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_USER")
+xpw     <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_PW")
+xdbname <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_DBNAME")
+xdbhost <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_HOST")
+xdbport <- as.integer( Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_PORT") )
 
 con <-
   dbConnect(
@@ -99,5 +101,5 @@ artists_complete$Lyrics <- gsub("\\s*\\([^\\)]+\\)","",
 #with an empty string...yes please
 artists_complete$Lyrics <- gsub("[^[:alnum:][:space:]']", "", 
                                       artists_complete$Lyrics)
-
+artists_complete$Lyrics[2]
 

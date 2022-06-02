@@ -31,6 +31,9 @@ library(RColorBrewer)
 library(syuzhet)
 library(ggplot2)
 library(RMySQL)
+library(dplyr)
+library(stringr)
+library(DBI)
 ```
 
 
@@ -74,9 +77,34 @@ dbListTables(con)
 
 ```
 
+I'm getting rid of all these extra tables. I'll comment these out, but they're here if you're sick of the clutter like me.
 
+```{r}
+# 
+# #dbListTables(con)
+# 
+# qry1 <- "DROP TABLE Artists"
+# 
+# dbGetQuery(con, qry1)
+# #dbListTables(con)
+# 
+# qry1 <- "DROP TABLE Lyrics"
+# 
+# dbGetQuery(con, qry1)
+# #dbListTables(con)
+# 
+# qry1 <- "DROP TABLE Sonnets"
+# dbGetQuery(con, qry1)
+# 
+# qry1 <- "DROP TABLE sonnets"
+# dbGetQuery(con, qry1)
+# 
+# qry1 <- "DROP TABLE artists_complete "
+# dbGetQuery(con, qry1)
+# 
+# #dbListTables(con)
 
-
+```
 
 
 
@@ -89,7 +117,7 @@ dbListTables(con)
 qry1 <- "SELECT * FROM OG"
 
 x <- dbGetQuery(con, qry1)
-colnames(x) <- c("row_names", "Sonnets") 
+names(x) <- c("row_names", "Sonnets") 
 head(x)
 
 
@@ -98,9 +126,13 @@ head(x)
 
 
 ```{r}
+x1 <- 
+  x %>% 
+  mutate_at("Sonnets", str_replace, "â€™", "") 
+
 #need to load vector of text objects as a corpus
 #VectorSource() interprets each element of a vec as a document
-x_text <- Corpus(VectorSource(x$Sonnets))
+x_text <- Corpus(VectorSource(x1$Sonnets))
 
 
 x_text
@@ -109,11 +141,11 @@ In the future no need to use content_transformer(). That is easy to do in base a
 ```{r}
 #Replacing "/", "@" and "|" with space
 toSpace <- content_transformer(function (y , pattern ) gsub(pattern, " ", y))
-#to_e <- content_transformer(function (y , pattern ) gsub(pattern, "e", y)) wasnt' helpful
+
 x_text <- tm_map(x_text, toSpace, "/")
 x_text <- tm_map(x_text, toSpace, "@")
 x_text <- tm_map(x_text, toSpace, "\\|")
-x_text <- tm_map(x_text, to_e, "â€™")
+
 # Convert the text to lower case
 #x_text <- tm_map(x_text, content_transformer(tolower))
 # Remove numbers
@@ -195,7 +227,10 @@ head(s_vector, n = 10)
 summary(s_vector)
 hist(s_vector, col = "pink") #normal distribution 
 
+
 ```
+
+
 ```{r}
 
 #simple_plot(s_vector) #dont think this will be useful
@@ -254,7 +289,7 @@ netflix_text
 # netflix_text <- tm_map(netflix_text, toSpace, "/")
 # netflix_text <- tm_map(netflix_text, toSpace, "@")
 # netflix_text <- tm_map(netflix_text, toSpace, "\\|")
-# netflix_text <- tm_map(netflix_text, to_e, "â€™")
+# netflix_text <- tm_map(netflix_text, to_, "â€™")
 # # Convert the text to lower case
 # netflix_text <- tm_map(netflix_text, content_transformer(tolower))
 # # Remove numbers
@@ -328,66 +363,188 @@ netflix_text
 
 ########## WORKING WITH ARTIST DATA NOW #############
 
+This was my code to combine the artists with their complete lyrics. Don't need anymore, but will comment out just in case.
 ```{r}
 
-#DONT FORGET TO UNCOMMENT THESE LINES****
  
-#The Lyrics table has the artists' names, but the songs were cutoff. The Artist table has the complete songs, but no names, so I'm gonna split them and combine the right parts
-
- qry1 <- "SELECT * FROM Lyrics"
- lyrics <- dbGetQuery(con, qry1)
-
- head(lyrics, n = 2)
- dim(lyrics)
- colnames(lyrics) <- c("ID","Artist", "songs")
- 
- artist_names <- lyrics$Artist
-
-#View(lyrics)
-
-
- qry1 <- "SELECT * FROM Artists"
- artists <- dbGetQuery(con, qry1)
- artist_songs <- artists$`0`
-
-
- artists_complete <- cbind(lyrics$ID, artist_names, artist_songs)
- artists_complete <- as.data.frame(artists_complete)
- 
- 
- #THIS TABLE HAS BOTH THE ARTISTS' NAMES AND THE COMPLETE ENTRIES OF THE SONG LYRICS 
- dbWriteTable(con, "artists_complete", artists_complete)
- 
- 
- 
- View(artists_complete)
- 
- ######THERE ARE DUPLICATES IN THE DATA REMEMBER TO COME BACK AND CHANGE THEM! RIGHT NOW I AM JUST FOCUSED ON WRITING THE LOOP#######
-#specifically observations 41 & 42
-
-#need to look into words within []
-
-
-# test<- artist$songs[1]
+# #The Lyrics table has the artists' names, but the songs were cutoff. The Artist table has the complete songs, but no names, so I'm gonna split them and combine the right parts
+# 
+#  qry1 <- "SELECT * FROM Lyrics"
+#  lyrics <- dbGetQuery(con, qry1)
+# 
+#  head(lyrics, n = 2)
+#  dim(lyrics)
+#  colnames(lyrics) <- c("ID","Artist", "songs")
+#  
+#  artist_names <- lyrics$Artist
+# 
+# #View(lyrics)
+# 
+# 
+#  
+#  qry1 <- "SELECT * FROM Artists"
+#  artists <- dbGetQuery(con, qry1)
+#  artist_songs <- artists$`0`
+# 
+# 
+#  artists_complete <- cbind(lyrics$ID, artist_names, artist_songs)
+#  artists_complete <- as.data.frame(artists_complete)
+#  
+#  
+#  #THIS TABLE HAS BOTH THE ARTISTS' NAMES AND THE COMPLETE ENTRIES OF THE SONG LYRICS 
+#  dbWriteTable(con, "artists_complete", artists_complete)
+#  
+#  
+#  
+#  View(artists_complete)
+#  
+# 
+#   
+#  ######THERE ARE DUPLICATES IN THE DATA REMEMBER TO COME BACK AND CHANGE THEM! RIGHT NOW I AM JUST FOCUSED ON WRITING THE LOOP#######
+# #specifically observations 41 & 42
+# 
+# #need to look into words within []
+# 
+# 
+# # test<- artist$songs[1]
+# # library(stringr)
+# # str_extract_all(pattern = "^\\[") #use this to get rid of words in brackets
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
 # library(stringr)
-# str_extract_all(pattern = "^\\[") #use this to get rid of words in brackets
+# qry1 <- "SELECT * FROM artists_complete"
+# test <- dbGetQuery(con, qry1)
+# 
+# head(test$artist_songs)
+# 
+# 
+# vec <- str_sub(test$artist_songs[1], start = "\\[", end = "\\]", omit_na = TRUE)
+# vec
 
 
 ```
+
+
 ```{r}
+#getting final (hopefully) artist data
 
-library(stringr)
-qry1 <- "SELECT * FROM artists_complete"
-test <- dbGetQuery(con, qry1)
+#dbDisconnect(con)    #just in case you're already connected somewhere else
 
-head(test$artist_songs)
+xdbuser <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_USER")
+xpw     <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_PW")
+xdbname <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_DBNAME")
+xdbhost <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_HOST")
+xdbport <- as.integer( Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_PORT") )
+
+con <-
+dbConnect(
+drv,
+user=xdbuser,
+password=xpw,
+dbname=xdbname,
+host=xdbhost,
+port=xdbport,
+unix.sock=xdbsock
+)
 
 
-vec <- str_sub(test$artist_songs[1], start = "\\[", end = "\\]", omit_na = TRUE)
-vec
+dbListTables(con)
+
+
+
+qry1 <- "SELECT * FROM Artists_noDuplicates"
+
+artists_complete <- dbGetQuery(con, qry1)
+
+View(artists_complete)
+
+names(artists_complete) <- c("artist_names", "artist_songs") #changing the names to match MG's code (names were different in table from AS's db)
+
+```
+
+
+```{r}
+#using MG's code to clean data. Thanks, Cuata <3
+
+#############
+#*sigh* idk why dbWriteTable creates a column of row numbers
+#table is loaded with an extra and useless column
+
+#artists_complete <- select(artists_complete,-c(1)) ### I commented this line out bc I didn't write table to my db bc laziness/time constraints - DM
+
+###this code will take all the non-lyrical strings contained in a set of 
+#parenthesis and compile it into some vector of lists thing...trust me, you'll see
+#
+df  <- vector(mode = "list", length = 49)
+names(df) <- artists_complete$artist_names
+
+for (i in 1:49) {
+  
+  df[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$artist_songs[i],
+                                            gregexpr("\\(.*?\\)", 
+                                            artists_complete$artist_songs[i]))))
+}
+
+#df      #commented this bc it's a lot to print - DM 
+
+
+#############
+###need to input code that will remove the phrases that are not lyrics
+
+#I looked through the lists and roughly 10 artists contained these wannabe lyrics
+#Of those 10, about 17 wannabe lyrics were discovered and now must be eliminated
+
+artists_complete <- 
+  artists_complete %>% 
+  mutate_at("artist_songs", str_remove_all, pattern = c("Verse 1|Chorus 2|Verse 3|Chorus 3|x2|vocal solo|Saxophone solo|fadeout|chorus|Repeat 4 times|bv=|scat singing|4x|x8|x7|x4|2x")) 
+
+#can run this line of code again to verify if the strings are gone
+#I would check adele, she had "Verse 1, Chorus 2, Verse 3, and Chorus 3
+#you'll find that those phrases are no longer there and what remains is just 
+#empty quotations...it's like you can still feel its presence but it's GONE
+
+df2  <- vector(mode = "list", length = 49)
+names(df2) <- artists_complete$artist_names
+
+for (i in 1:49) {
+  
+  df2[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$artist_songs[i],
+                                            gregexpr("\\(.*?\\)", 
+                                            artists_complete$artist_songs[i]))))
+}
+
+df2[["adele"]]
+
+############
+#the last thing to do is to remove unwanted punctuation
+
+#this removes everything inside brackets, brackets included
+artists_complete$artist_songs <- gsub("\\[.+?\\]", "", 
+                                      artists_complete$artist_songs)
+
+#now with parenthesis includes lyrics being sung...
+#this removes all the parenthesis BUT without removing the text inside
+artists_complete$artist_songs <- gsub("\\s*\\([^\\)]+\\)","", 
+                                        artists_complete$artist_songs)
+
+
+#This replaces everything that's not alphanumeric signs, space or apostrophe 
+#with an empty string...yes please
+artists_complete$artist_songs <- gsub("[^[:alnum:][:space:]']", "", 
+                                      artists_complete$artist_songs)
+
+
+
 
 
 ```
+
 
 
 Gonna write a loop that performs key word extraction on each artist's work. 
@@ -400,7 +557,7 @@ artist_keyword <- list()
 artist_keyword
 
 
-artist_text <- Corpus(VectorSource(artists_complete[,3])); artist_text
+artist_text <- Corpus(VectorSource(artists_complete[,2])); artist_text
 
 for(i in 1:length(artists_complete[,2])){
  
@@ -465,12 +622,12 @@ for(i in 1:length(artists_complete[,2])){
   
 }
 
-names(artist_keyword) <- artists_complete$Artist
+names(artist_keyword) <- artists_complete$artist_names
 artist_keyword[28] #look at the data frame one at a time otherwise your computer won't like you
 
 dbListTables(con)
 
-artist_keyword[20:40] #run this from your console to see results more easily
+artist_keyword[1:45] #run this from your console to see results more easily
 
 
 
@@ -480,5 +637,117 @@ artist_keyword[20:40] #run this from your console to see results more easily
 *********** ANDY SUGGESTED USING CLUSTERING TO CHECK SIMILIARITY IN ADDITION TO EUCLIDEAN DISTANCE ************* (???)
 
 - can use clustering for sentiment analysis comparisons
+
+##
+
+```{r}
+#using syuzhet package for sentiment analysis
+
+sent_scores<- get_sentiment(artists_complete$artist_songs) #returns overall sentiment value
+summary(sents)
+
+artists_8sent <- get_nrc_sentiment(artists_complete$artist_songs) #returns classification into each 8 sentiments + pos/neg
+artists_8sent
+
+
+all_sonnets <- paste(x$Sonnets[1:154], collapse = " ") #the collapse argument allows you to create a single string by concatenating ea element of the vector
+all_sonnets
+
+shake_8sent <- get_nrc_sentiment(all_sonnets)
+
+shake_8sent
+
+
+all_8sent <- rbind(artists_8sent, shake_8sent)
+
+names_8sent <- c(artists_complete$artist_names, "shakespeare")
+names_8sent
+
+all_8sent <- cbind(names_8sent, all_8sent)
+all_8sent
+
+
+prop_8sent <- data.frame(matrix(ncol = 9, nrow = 46))
+
+prop_8sent[,1] <- all_8sent$names_8sent
+
+
+for(i in 1:46){
+  
+  
+  prop_8sent[i,2:9] <- all_8sent[i,2:9]/sum(all_8sent[i,2:9])
+  
+  }
+
+prop_8sent
+
+```
+Now that we have the sentiments in a table kmeans clustering will be straightforward. I will use MG's lovely code for this part :*
+
+```{r}
+
+
+k <- 8
+vpc <- NULL #vpc here means "variance per cluster"
+for (i in 1:k) {
+    kfit <- kmeans(prop_8sent[,2:9], i)
+    vpc <- c(vpc, kfit$betweenss/kfit$totss)
+}
+vpc
+
+plot(1:k, vpc, xlab = "# of clusters", ylab = "explained variance")
+
+#looks like 3 or 4 cluster will be best
+
+kfit3 <- kmeans(prop_8sent[,2:9], 3)
+
+
+kfit4 <- kmeans(prop_8sent[,2:9], 4)  #there is a considerable difference in groupings when using 3 groups vs 4 groups
+
+
+#clustering means were given for each of the eight emotions...
+kfit$centers
+
+#install.packages("factoextra")
+
+library(factoextra)
+
+row.names(prop_8sent) <- all_8sent$names_8sent #changing the row names so they will show up as labels for each point
+
+
+fviz_cluster(kfit4, data = prop_8sent[,2:9],
+             palette = c("deepskyblue", "cyan3", "gold1", "pink3"), 
+             geom = c("point", "text"),
+             ellipse = F,
+             ellipse.type = "t", 
+             ggtheme = theme_bw()
+             )
+
+
+
+
+
+
+test <- cbind (all_8sent, kfit$cluster)
+test[test$`kfit$cluster` == 4,]
+test[test$`kfit$cluster` == 3,]
+test[test$`kfit$cluster` == 2,]  
+test[test$`kfit$cluster` == 1,] #these are the artists in shakespeare's cluster
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

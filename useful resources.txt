@@ -9,7 +9,7 @@ For Learning NLP:
 - Text Mining (tm) Package Documentation:
 	- (detailed) https://www.sciencedirect.com/topics/mathematics/term-matrix#:~:text=Sparsity%20is%20the%20proportion%20of,is%20the%20term%2Dfrequency%20weighting.
 	- (package list) https://rdrr.io/rforge/tm/man/
-
+- Kmeans Clustering - https://towardsdatascience.com/k-means-clustering-algorithm-applications-evaluation-methods-and-drawbacks-aa03e644b48a
 For Learning Github:
 - Github: https://www.youtube.com/watch?v=k5D37W6h56o
 - Github Desktop: https://www.youtube.com/watch?v=0nzJXJAhlsk
