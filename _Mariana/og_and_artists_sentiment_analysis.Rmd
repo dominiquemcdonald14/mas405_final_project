@@ -33,11 +33,11 @@ xdbsock <- ""
 
 
 #############
-xdbuser <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_USER")
-xpw     <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PW")
-xdbname <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_DBNAME")
-xdbhost <- Sys.getenv("MAS405_AWS_MY_DB_ADMIN_HOST")
-xdbport <- as.integer( Sys.getenv("MAS405_AWS_MY_DB_ADMIN_PORT") )
+xdbuser <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_USER")
+xpw     <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PW")
+xdbname <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_DBNAME")
+xdbhost <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_HOST")
+xdbport <- as.integer( Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PORT") )
 
 
 
@@ -235,7 +235,7 @@ head(termdoc2)
 ```
 
 
-## Clustering Algorithm
+## Clustering Algorithm Attempt
 
 I want to attempt a k-means clustering and see what happens. I am going to first determine the ideal number of clusters by checking how much variance of the data would be explained with the total number of clusters. 
 
@@ -320,7 +320,7 @@ for (i in 1:49) {
                                             artists_complete$Lyrics[i]))))
 }
 
-df
+#df 
 
 
 #############
@@ -388,6 +388,7 @@ for (i in 1:n) {
 }
 
 head(art_emotions) 
+tail(art_emotions)
 ```
 
 
@@ -412,7 +413,7 @@ barplot(art_barsss,
 
 ```{r}
 #visualize what words fell under the 8 emotion categories
-artists_complete <- select(artists_complete,-c(1))
+#artists_complete <- select(artists_complete,-c(1))
 
 art_all = c(
   paste(artists_complete[art_emotions$anger > 0,], collapse=" "),
@@ -438,7 +439,7 @@ art_all <- removeNumbers(art_all)
 art_corpus = Corpus(VectorSource(art_all))
 
 # create term-document matrix
-art_tdm = TermDocumentMatrix(art_corpus)
+art_tdm = TermDocumentMatrix(art_corpus, control = list(wordLengths=c(0,Inf)))
 #
 # convert as matrix
 art_tdm = as.matrix(art_tdm)
@@ -453,7 +454,7 @@ comparison.cloud(art_tdm, random.order=F,
                             "orange", "blue", "brown"),
                  title.size=1, max.words=400, scale=c(2, 0.4), rot.per=0.5)
 
-barplot(art_tdm)
+#barplot(art_tdm)
 
 ```
 
