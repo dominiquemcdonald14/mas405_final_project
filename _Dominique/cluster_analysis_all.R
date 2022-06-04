@@ -249,13 +249,15 @@ unique(ed_shake) #there are only 5 unique values which is.... interesting
 prop_8sent[7,1]
 
 
-reg_data <- cbind(prop_8sent[2:9], ed_shake)
-reg_data
+reg_data <- cbind(prop_8sent[,2:9], ed_shake)
+reg_data[-25,]
 
-mod1 <- lm(data = reg_data, ed_shake ~ .)
+mod1 <- lm(data = reg_data, reg_data$ed_shake ~ .)
 
 summary(mod1)  
 
+
+par(mfrow = c(2,2))
 plot(mod1)
 #two or more of your predictor variables have an exact linear relationship between them - known as perfect multicollinearity.
 
@@ -264,4 +266,8 @@ cor(reg_data)
 
 plot(ed_shake, reg_data$anger)
 plot(ed_shake, reg_data$anticipation)
-plot(ed_shake, reg_data$anticipation)
+plot(ed_shake, reg_data$trust)
+
+
+prop_8sent[25,1]
+max(ed_shake)
