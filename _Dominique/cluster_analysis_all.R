@@ -16,6 +16,8 @@ library(stringr)
 
 
 #dbDisconnect(con)
+drv <- dbDriver("MySQL")
+xdbsock <- ""
 
 xdbuser <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_USER")
 xpw     <- Sys.getenv("MAS405_AWS_ANGEL_DB_ROUSER_PW")
@@ -164,7 +166,15 @@ for(i in 1:46){
   
 }
 
+names(prop_8sent) <- names(all_8sent)[1:9] #making col names the 8 sentiments
+
+names(prop_8sent)[1] <- "artist"
+
 prop_8sent
+
+
+
+
 
 ## Now that we have the sentiments in a table kmeans clustering will be straightforward. I will use MG's lovely code for this part 
 
@@ -179,14 +189,13 @@ vpc
 
 plot(1:k, vpc, xlab = "# of clusters", ylab = "explained variance")
 
-#looks like 3 or 4 cluster will be best
 
 kfit3 <- kmeans(prop_8sent[,2:9], 3)
 
 
-kfit4 <- kmeans(prop_8sent[,2:9], 4)  #there is a considerable difference in groupings when using 3 groups vs 4 groups
+kfit4 <- kmeans(prop_8sent[,2:9], 4)  
 
-kfit7 <- kmeans(prop_8sent[,2:9],7)
+kfit7 <- kmeans(prop_8sent[,2:9],7) #7 clusters performs better
 
 #clustering means were given for each of the eight emotions...
 kfit$centers
@@ -211,10 +220,48 @@ fviz_cluster(kfit7, data = prop_8sent[,2:9],
 
 
 
+
 test <- cbind (all_8sent, kfit$cluster)
 test[test$`kfit$cluster` == 4,]
 test[test$`kfit$cluster` == 3,]
 test[test$`kfit$cluster` == 2,]  
 test[test$`kfit$cluster` == 1,] #these are the artists in shakespeare's cluster
 
+########## Trying out linear regression for shits and gigs ############
 
+#essentially going to calculate ea. artists euclidian distance from shakespeare. This will be my response, the 8 sentiments proportions
+#will be the explanatory vars. Obvi gonna remove shakespeare from the artist data
+
+
+
+test <- sum(prop_8sent[46,2:9] - prop_8sent[22,2:9])^2
+test
+
+ed_shake <- rep(NA, nrow(prop_8sent)) #euclidean distance from shakespeare
+
+for(i in 1:46){ 
+  ed_shake[i] <- (sum(prop_8sent[46, 2:9] - prop_8sent[i, 2:9])^2) 
+  
+}
+ed_shake
+unique(ed_shake) #there are only 5 unique values which is.... interesting 
+
+prop_8sent[7,1]
+
+
+reg_data <- cbind(prop_8sent[2:9], ed_shake)
+reg_data
+
+mod1 <- lm(data = reg_data, ed_shake ~ .)
+
+summary(mod1)  
+
+plot(mod1)
+#two or more of your predictor variables have an exact linear relationship between them - known as perfect multicollinearity.
+
+cor(reg_data)
+
+
+plot(ed_shake, reg_data$anger)
+plot(ed_shake, reg_data$anticipation)
+plot(ed_shake, reg_data$anticipation)
