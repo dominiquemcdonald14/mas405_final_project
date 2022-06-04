@@ -238,7 +238,7 @@ avg_col_dend <- color_branches(avg_dend_obj, k = 4)
 plot(avg_col_dend)
 
 avg_col_dend <- color_branches(avg_dend_obj, k = 7)
-plot(avg_col_dend)
+plot(avg_col_dend) #Does this mean shakespeare is grouped with Nirvana???
 
 ```
 
