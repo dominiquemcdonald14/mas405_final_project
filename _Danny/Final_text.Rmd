@@ -174,9 +174,9 @@ emotions <- data.frame(matrix(ncol=8,nrow=0, dimnames=list(NULL,
 #s <- colSums(emotions)
 all_sonnets <- paste(sonnets_df1, collapse = " ") #the collapse argument allows you to create a single string by concatenating ea element of the vector
 
-s <- get_nrc_sentiment(all_sonnets) #getting shakespeare sentiments
+emotions <- get_nrc_sentiment(all_sonnets) #getting shakespeare sentiments
 
-s_prop <- s / sum(s)
+s_prop <- emotions[1,1:8] / sum(emotions[1,1:8])
 ```
 
 ## Now create the table for 49 artists
@@ -264,7 +264,7 @@ for(i in 1:length(artists_complete[,2])){
         "surprise", "trust"))))
 
   emotions <- get_nrc_sentiment(art_data)
-  emotions_prop <- emotions / sum(emotions)
+  emotions_prop <- emotions[1,1:8] / sum(emotions[1,1:8])
   
   artist_keyword[i,]$sent <- sum((s_prop - emotions_prop)^2)
 }
