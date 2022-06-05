@@ -43,6 +43,15 @@ xdbname <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_DBNAME")
 xdbhost <- Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_HOST")
 xdbport <- as.integer( Sys.getenv("MAS405_AWS_DOMINIQUE_DB_ROUSER_PORT") )
 
+
+#xdbuser <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_USER")
+#xpw     <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PW")
+#xdbname <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_DBNAME")
+#xdbhost <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_HOST")
+#xdbport <- as.integer( Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PORT") )
+
+
+
 con <-
 dbConnect(
 drv,
@@ -66,7 +75,7 @@ data <- dbGetQuery(con, qry1)
 colnames(data) <- c("row_names", "Sonnets") 
 head(data)
 
-artists_complete <- dbGetQuery(con, "SELECT * FROM artists_complete")
+#artists_complete <- dbGetQuery(con, "SELECT * FROM artists_complete")
 
 head(artists_complete)
 
@@ -149,21 +158,25 @@ for (i in 1:n) {
 
 
 #create an empty dataframe
-emotions <- data.frame(matrix(ncol=10,nrow=0, dimnames=list(NULL, 
+emotions <- data.frame(matrix(ncol=8,nrow=0, dimnames=list(NULL, 
       c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
-        "surprise", "trust", "negative", "positive"))))
+        "surprise", "trust"))))
 
-n <- 154
+#n <- 154
 
 #ran a for loop to conduct sentiment analysis to each individual psuedosonnet
 #beware: it might take a lil while to run
-for (i in 1:n) {
-  emotions[i,]<- get_nrc_sentiment(sonnets_df1[i,1])
-  rbind(emotions[i,])
-}
+#for (i in 1:n) {
+  #emotions[i,]<- get_nrc_sentiment(sonnets_df1[i,1])
+  #rbind(emotions[i,])
+#}
 
-s <- colSums(emotions)
-s_prop <- s / sum(s)
+#s <- colSums(emotions)
+all_sonnets <- paste(sonnets_df1, collapse = " ") #the collapse argument allows you to create a single string by concatenating ea element of the vector
+
+emotions <- get_nrc_sentiment(all_sonnets) #getting shakespeare sentiments
+
+s_prop <- emotions[1,1:8] / sum(emotions[1,1:8])
 ```
 
 ## Now create the table for 49 artists
@@ -174,10 +187,10 @@ Result: - A list containing a df for each artists.
         
 ```{r}
 #creating list that will be populated by loop
-artist_keyword <- data.frame(artist = artists_complete$artist_names, sent = rep(NA, 49), word = rep(NA,49), freq_df = rep(NA,49), prop_df = rep(NA,49), keyword = rep(NA,49))
+artist_keyword <- data.frame(artist = artists_complete$Artist, sent = rep(NA, 45), word = rep(NA,45), freq_df = rep(NA,45), prop_df = rep(NA,45), keyword = rep(NA,45))
 
 
-artist_text <- Corpus(VectorSource(artists_complete[,4])); artist_text
+artist_text <- Corpus(VectorSource(artists_complete[,2])); artist_text
 
 for(i in 1:length(artists_complete[,2])){
  
@@ -244,14 +257,14 @@ for(i in 1:length(artists_complete[,2])){
   artist_keyword[i,]$keyword <- temp_word
   
   ## Sentiment Analysis
-  art_data <- gsub("[,.;:?!]", "", artists_complete[i,4])
+  art_data <- gsub("[,.;:?!]", "", artists_complete[i,2])
   
-  emotions <- data.frame(matrix(ncol=10,nrow=0, dimnames=list(NULL, 
+  emotions <- data.frame(matrix(ncol=8,nrow=0, dimnames=list(NULL, 
       c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
-        "surprise", "trust", "negative", "positive"))))
+        "surprise", "trust"))))
 
   emotions <- get_nrc_sentiment(art_data)
-  emotions_prop <- emotions / sum(emotions)
+  emotions_prop <- emotions[1,1:8] / sum(emotions[1,1:8])
   
   artist_keyword[i,]$sent <- sum((s_prop - emotions_prop)^2)
 }
