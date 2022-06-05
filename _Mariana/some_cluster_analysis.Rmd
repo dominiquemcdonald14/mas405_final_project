@@ -52,11 +52,10 @@ qry1 <- "SELECT * FROM OG"
 og <- dbGetQuery(con, qry1)
 
 names(og) <-  "Sonnets"
-head(og)
 
 og <- og %>% 
   mutate_at("Sonnets", str_replace_all, "â€™", "\'") #the pattern for the special character may vary from computer to computer
-
+og[1,1]
 
 artists_complete <- dbGetQuery(con, "SELECT * FROM Artists_noDuplicates")
 names(artists_complete)
@@ -76,7 +75,7 @@ for (i in 1:49) {
                                                              artists_complete$Lyrics[i]))))
 }
 
-head(df)
+#head(df)
 
 
 #I looked through the lists and roughly 10 artists contained these wannabe lyrics
@@ -238,7 +237,7 @@ avg_col_dend <- color_branches(avg_dend_obj, k = 4)
 plot(avg_col_dend)
 
 avg_col_dend <- color_branches(avg_dend_obj, k = 7)
-plot(avg_col_dend)
+plot(avg_col_dend) #Does this mean shakespeare is grouped with Nirvana???
 
 ```
 

@@ -57,11 +57,13 @@ dbListTables(con)
 
 original_sonnets <- dbGetQuery(con, "SELECT * FROM OG")
 
-#dbWriteTable(con, name = "artists_complete", artists_complete, overwrite=T)
+#dbWriteTable(con, name = "OG_Sonnets_complete", og_sonnets, overwrite=T)
 
 artists_complete <- dbGetQuery(con, "SELECT * FROM Artists_noDuplicates")
 
 dbDisconnect(con)
+
+
 
 
 ```
@@ -94,6 +96,16 @@ for (i in 1:154) {
 
 og_sonnets[1,1]
 
+#capture.output(og_sonnets, file = "OG_Sonnets_clean2.txt")
+
+#lapply(og_sonnets, function(x) write.table( data.frame(x), 'OG_Sonnets_clean3.csv'  , append= T, sep=',' ))
+
+
+
+
+
+
+
 ```
 
 
@@ -119,6 +131,8 @@ head(emotions)
 
 
 ```
+
+
 
 ```{r}
 #Very ROUGH barplot 
@@ -310,17 +324,17 @@ artists_complete <- select(artists_complete,-c(1))
 ###this code will take all the non-lyrical strings contained in a set of 
 #parenthesis and compile it into some vector of lists thing...trust me, you'll see
 #
-df  <- vector(mode = "list", length = 49)
+df  <- vector(mode = "list", length = 45)
 names(df) <- artists_complete$Artist
 
-for (i in 1:49) {
+for (i in 1:45) {
   
   df[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$Lyrics[i],
                                             gregexpr("\\(.*?\\)", 
                                             artists_complete$Lyrics[i]))))
 }
 
-#df 
+head(df) 
 
 
 #############
@@ -338,10 +352,10 @@ artists_complete <-
 #you'll find that those phrases are no longer there and what remains is just 
 #empty quotations...it's like you can still feel its presence but it's GONE
 
-df2  <- vector(mode = "list", length = 49)
+df2  <- vector(mode = "list", length = 45)
 names(df2) <- artists_complete$Lyrics
 
-for (i in 1:49) {
+for (i in 1:45) {
   
   df2[[i]] <- gsub("[\\(\\)]", "", unlist(regmatches(artists_complete$Lyrics[i],
                                             gregexpr("\\(.*?\\)", 
@@ -387,8 +401,7 @@ for (i in 1:n) {
   rbind(art_emotions[i,])
 }
 
-head(art_emotions) 
-tail(art_emotions)
+art_emotions
 ```
 
 
@@ -428,10 +441,8 @@ art_all = c(
 
 art_all <- removeWords(art_all, stopwords("english"))
 
-art_all <- removeWords(art_all, c("thi", "thee", "thou", "may", "still", "thus", 
-                          "though", "can", "will", "hath", "doth", "thine", 
-                          "like", "much", "let", "upon", "from", "dost", 
-                          "shall", "thy", "yet"))
+art_all <- removeWords(art_all, c("aint", "ooh", "thou", "never", "yeah", "hey", "though", "just", "will", "dont", "gonna", "can",                                                            "let", "thing", "every", "cause", "Since", "along",  "always", "many" , "eighteen", "hundred",
+                                            "upon", "from", "nah", "aint", "now", "one", "two", "cant", "dont", "wont", "like", "much","yet"))
 art_all <- stripWhitespace(art_all)
 art_all <- removeNumbers(art_all)
 
@@ -458,3 +469,16 @@ comparison.cloud(art_tdm, random.order=F,
 
 ```
 
+
+
+```{r}
+#Dominique's code for Sentiment Analysis
+
+sent_scores <- get_sentiment(og_sonnets$Sonnets)
+summary(sent_scores)
+
+sent_artists <- get_sentiment(artists_complete$Lyrics)
+summary(sent_artists)
+
+
+```
