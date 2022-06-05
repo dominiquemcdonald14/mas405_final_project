@@ -151,20 +151,22 @@ artists_complete
 #clean up is all done!
 
 ##############################################################
-# METHODOLOGY
-##################
+#                     METHODOLOGY
+##############################################################
 #finalized cleaned datasets 
 og_sonnets
 artists_complete
-###################
-#Key Word extraction
 
-##### Further data cleaning before keyword extraction
+##############################################################
+#                 Key Word Extraction
+##############################################################
+# Shakespeare Key Word Extraction
+##########################################
+# Further data cleaning before keyword extraction
 og_sonnets <- og_sonnets %>% 
   mutate_at("Sonnets", str_replace_all, "â???T", "\'") #the pattern for the special character may vary from computer to computer
 
-#need to load vector of text objects as a corpus
-#VectorSource() interprets each element of a vec as a document
+# need to load vector of text objects as a corpus. VectorSource() interprets each element of a vec as a document
 x_text <- Corpus(VectorSource(og_sonnets$Sonnets))
 x_text
 
@@ -192,7 +194,7 @@ x_text <- tm_map(x_text, stripWhitespace)
 
 x_text #NO DOCUMENTS DROPPED
 
-#### Creating The document term matrix and extracting keywords
+##### Creating The document term matrix and extracting keywords
 # The term matrix contains all the words in your "documents" and their frequencies
 # Build a term-document matrix
 x_text_dtm <- TermDocumentMatrix(x_text)
@@ -222,11 +224,21 @@ wordcloud(words = dtm_d$word,
 
 dev.off()
 
-#################
-# Extracting Shakespears sentiments from the 154 sonets 
+
+##### proportion calculation 
+head(dtm_d)
+num_terms <- length(x_text_dtm$i); num_terms #total number of terms - 7611
+nTerms(x_text_dtm) # unique terms in sonnets - 3089
+head(Terms(x_text_dtm)) #just a list of all the terms that show up
+
+prop_terms<-  dtm_d$freq/num_terms; head(prop_terms)
+
+dtm_prop <- cbind(dtm_d, prop_terms)
+
 
 
 #############################do we need this???############################################
+# Extracting Shakespears sentiments from the 154 sonets 
 # regular sentiment score using get_sentiment() function and method of your choice
 # please note that different methods may have different scales
 #### NOTE YOU DO NOT HAVE TO USE A CORPUS FOR THE SYUZHET PACKAGE HERE. THIS IS JUST THE VECTOR OF SONNETS
@@ -237,16 +249,78 @@ head(s_vector, n = 10)
 summary(s_vector)
 hist(s_vector, col = "pink", main = "Sentiments Scores for each Sonnet", xlab = "Sentiment Scores") #normal distribution 
 
-####################################################
-#porportion calculation 
-head(dtm_d)
-num_terms <- length(x_text_dtm$i); num_terms #total number of terms - 7611
-nTerms(x_text_dtm) # unique terms in sonnets - 3089
-head(Terms(x_text_dtm)) #just a list of all the terms that show up
+###########################################################################################
 
-prop_terms<-  dtm_d$freq/num_terms; head(prop_terms)
 
-dtm_prop <- cbind(dtm_d, prop_terms)
+##########################################
+# Music Artist Key Word Extraction
+##########################################
+# This loop performs key word extraction on each artist's work 
+# Result: - A list containing a df for each artists.
+#         - Each artist's df will contain: top 10 keywords, frequencies, proportions
+
+#creating list that will be populated by loop
+artist_keyword <- list()
+artist_keyword
+
+artist_text <- Corpus(VectorSource(artists_complete[,2])); artist_text
+
+for(i in 1:length(artists_complete[,2])){
+  kw <- rep(NA, 10)
+  frq <- rep(NA, 10)
+  prp <- rep(NA, 10)
+  temp_mat <- cbind(kw, frq, prp)
+  artist_keyword[[i]] <-as.data.frame(temp_mat) # ea. element will be df with 10 rows and 3 columns, chose not to                                                                                           # include artist because it would just be repeated, but could be                                                                                            # useful. discuss???
+  colnames(artist_keyword[[i]]) <- c("keyword","frequency", "proportion")
+  
+  art_doc <- artist_text[i]
+  
+  #Replacing "/", "@" and "|" with space
+  toSpace <- content_transformer(function (y , pattern ) gsub(pattern, " ", y))
+  art_doc <- tm_map(art_doc, toSpace, "/")
+  art_doc <- tm_map(art_doc, toSpace, "@")
+  art_doc <- tm_map(art_doc, toSpace, "\\|")
+  #art_doc <- tm_map(art_doc, to_e, "â???T")
+  
+  # Convert the text to lower case
+  art_doc <- tm_map(art_doc, content_transformer(tolower))
+  
+  # Remove numbers
+  art_doc <- tm_map(art_doc, removeNumbers)
+  
+  # Remove english common stopwords
+  art_doc <- tm_map(art_doc, removeWords, stopwords("english"))
+  
+  # Removing custom stop words, specify stopwords as a character vector
+  art_doc <- tm_map(art_doc, removeWords, c("aint", "ooh", "thou", "never", "yeah", "hey", "though", "just", "will", "dont", "gonna", "can",                                                            "let", "thing", "every", "cause", "Since", "along",  "always", "many" , "eighteen", "hundred",
+                                            "upon", "from", "nah", "aint", "now", "one", "two", "cant", "dont", "wont", "like", "much")) 
+  # Remove punctuation
+  art_doc <- tm_map(art_doc, removePunctuation)
+  
+  # Eliminate extra white spaces
+  art_doc <- tm_map(art_doc, stripWhitespace)
+
+  #art_doc #NO DOCUMENTS DROPPED
+  
+  #number of total terms is the non sparse entries
+  art_doc_dtm <- TermDocumentMatrix(art_doc)
+  artist_mat_dtm <- as.matrix(art_doc_dtm)
+  
+  # Sort by decreasing value of frequency
+  artisit_dtm_v <- sort(rowSums(artist_mat_dtm),decreasing=TRUE)
+  artist_dtm_d <- data.frame(word = names(artisit_dtm_v),freq=artisit_dtm_v)
+  artist_dtm_d
+  
+  artist_keyword[[i]]$keyword[1:10] <- artist_dtm_d$word[1:10] #populating keywords
+  artist_keyword[[i]]$frequency[1:10] <- artist_dtm_d$freq[1:10]; artist_keyword #populating frequencies
+  
+  art_num_terms <- length(art_doc_dtm$i); art_num_terms #total number of terms
+  artist_keyword[[i]]$proportion[1:10] <- artist_dtm_d$freq[1:10]/art_num_terms #populating proportions
+}
+
+names(artist_keyword) <- artists_complete$artist_names
+artist_keyword[28] #look at the data frame one at a time otherwise your computer won't like you
+artist_keyword[1:45] #run this from your console to see results more easily
 
 
 
