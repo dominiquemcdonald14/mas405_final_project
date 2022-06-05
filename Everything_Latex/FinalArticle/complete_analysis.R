@@ -5,12 +5,8 @@ if(!dir.exists("_assets")) {
     dir.create("_assets")
 }
 
-####might need to remove this later, ask Carina later about hard coding
-pathtoRenviron <- "C:/Users/Mariana/Documents/.Renviron"
-readRenviron(pathtoRenviron)
-
-##########
-#list of libraries that we might use
+###############################################
+#list of libraries that we use
 library(RMySQL)
 library(DBI)
 
@@ -26,22 +22,18 @@ library(factoextra)
 
 library(ggplot2)
 
-##########
-#access my database to get the datasets
+########################################################
+#access database to acquire datasets
+
 drv <- dbDriver("MySQL")
 xdbsock <- ""
 
-
-##########
-#access database to acquire datasets
-
-xdbuser <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_USER")
-xpw     <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PW")
-xdbname <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_DBNAME")
-xdbhost <- Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_HOST")
-xdbport <- as.integer( Sys.getenv("MAS405_AWS_MARIANA_DB_ROUSER_PORT") )
-
-
+#Marianas ROUSER Account
+xdbuser <-'ROuser'
+xpw     <- 'Nom59trpy03'
+xdbname <- 'MyDB' 
+xdbhost <- 'database-1.cjv4ba2ytv1n.us-west-1.rds.amazonaws.com'
+xdbport <- 3306
 
 con <-
   dbConnect(
@@ -63,7 +55,7 @@ artists_complete <- dbGetQuery(con, "SELECT * FROM Artists_noDuplicates")
 
 dbDisconnect(con)
 
-##########
+############################################
 #DATA CLEANUP
 
 #FIRST UP: OG SONNETS
@@ -93,7 +85,11 @@ for (i in 1:154) {
 
 og_sonnets[1,1] #checking to see if it worked
 
-#NOW THE ARTIST DATA
+
+
+#################################
+#NOW CLEAN UP OF THE ARTIST DATA
+
 #removing the column of row numbers
 artists_complete <- select(artists_complete,-c(1))
 
@@ -151,12 +147,120 @@ artists_complete$Lyrics <- gsub("\\s*\\([^\\)]+\\)","",
 #This replaces everything that's not alphanumeric signs, space or apostrophe with an empty string
 artists_complete$Lyrics <- gsub("[^[:alnum:][:space:]']", "", 
                                       artists_complete$Lyrics)
-
+artists_complete
 #clean up is all done!
 
+##############################################################
+# METHODOLOGY
+##################
+#finalized cleaned datasets 
+og_sonnets
+artists_complete
+###################
+#Key Word extraction
+
+##### Further data cleaning before keyword extraction
+og_sonnets <- og_sonnets %>% 
+  mutate_at("Sonnets", str_replace_all, "â???T", "\'") #the pattern for the special character may vary from computer to computer
+
+#need to load vector of text objects as a corpus
+#VectorSource() interprets each element of a vec as a document
+x_text <- Corpus(VectorSource(og_sonnets$Sonnets))
+x_text
+
+#Replacing "/", "@" and "|" with space
+toSpace <- content_transformer(function (y , pattern ) gsub(pattern, " ", y))
+x_text <- tm_map(x_text, toSpace, "/")
+x_text <- tm_map(x_text, toSpace, "@")
+x_text <- tm_map(x_text, toSpace, "\\|")
+
+# Remove numbers
+x_text <- tm_map(x_text, removeNumbers)
+
+# Remove English common stop words
+x_text <- tm_map(x_text, removeWords, stopwords("english"))
+
+# Removing custom Shakespearean Stop words
+# specify your custom stop words as a character vector
+x_text <- tm_map(x_text, removeWords, c("thi", "thee", "thou", "may", "still", "thus", "though", "can", "will", "hath", "doth", "thine", "like", "much", "let",
+                                        "upon", "from", "dost", "shall", "thy")) 
+# Remove punctuation
+x_text <- tm_map(x_text, removePunctuation)
+
+# Eliminate extra white spaces
+x_text <- tm_map(x_text, stripWhitespace)
+
+x_text #NO DOCUMENTS DROPPED
+
+#### Creating The document term matrix and extracting keywords
+# The term matrix contains all the words in your "documents" and their frequencies
+# Build a term-document matrix
+x_text_dtm <- TermDocumentMatrix(x_text)
+x_text_dtm
+
+#number of total terms is the non sparse entries
+mat_dtm <- as.matrix(x_text_dtm)
+
+# Sort by decreasing value of frequency
+dtm_v <- sort(rowSums(mat_dtm),decreasing=TRUE)
+dtm_d <- data.frame(word = names(dtm_v),freq=dtm_v)
+# Display the top 50 most frequent words
+head(dtm_d, 50)
+
+####### Generate word cloud of Shakespeare Keywords from Sonnets and Write it out as a PNG 
+set.seed(314)
+png("_assets/Sonnets_Keywords_WC.png", width=1920, height=1080, pointsize=35)
+plot.new()
+
+wordcloud(words = dtm_d$word, 
+          freq = dtm_d$freq, 
+          min.freq = 5,
+          max.words=100, 
+          random.order=FALSE, 
+          rot.per=0.20, 
+          colors=brewer.pal(8, "Dark2"))
+
+dev.off()
+
+#################
+# Extracting Shakespears sentiments from the 154 sonets 
+
+
+#############################do we need this???############################################
+# regular sentiment score using get_sentiment() function and method of your choice
+# please note that different methods may have different scales
+#### NOTE YOU DO NOT HAVE TO USE A CORPUS FOR THE SYUZHET PACKAGE HERE. THIS IS JUST THE VECTOR OF SONNETS
+s_vector <- get_sentiment(og_sonnets$Sonnets, method="syuzhet") 
+# see the first row of the vector
+head(s_vector, n = 10)
+# see summary statistics of the vector
+summary(s_vector)
+hist(s_vector, col = "pink", main = "Sentiments Scores for each Sonnet", xlab = "Sentiment Scores") #normal distribution 
+
+####################################################
+#porportion calculation 
+head(dtm_d)
+num_terms <- length(x_text_dtm$i); num_terms #total number of terms - 7611
+nTerms(x_text_dtm) # unique terms in sonnets - 3089
+head(Terms(x_text_dtm)) #just a list of all the terms that show up
+
+prop_terms<-  dtm_d$freq/num_terms; head(prop_terms)
+
+dtm_prop <- cbind(dtm_d, prop_terms)
 
 
 
+
+
+
+
+
+
+
+
+
+
+##################
 #Sentiment Analysis for the Sonnets
 emotions <- data.frame(matrix(ncol=10,nrow=0, dimnames=list(NULL, 
       c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
@@ -204,7 +308,8 @@ dev.off()
 
 #IMPORTANT: need to change the colors so they're not that bold/glaring
 
-
+################
+# Cluster Analysis
 
 
 
