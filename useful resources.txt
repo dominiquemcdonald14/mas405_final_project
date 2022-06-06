@@ -11,10 +11,11 @@ For Learning NLP:
 	- (package list) https://rdrr.io/rforge/tm/man/
 - Kmeans Clustering - https://towardsdatascience.com/k-means-clustering-algorithm-applications-evaluation-methods-and-drawbacks-aa03e644b48a
 
-Applications of NLP to Music:
+Applications of NLP to Music: (https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&as_vis=1&q=natural+language+processing+applied+to+music&btnG=)
 - Basic Pipeline Structure: https://www.tandfonline.com/doi/pdf/10.1080/09298215.2018.1488878?casa_token=qT4wtALWx4sAAAAA:AQScsz5aiyRYkLTYoogHW1P4gn0hfNwER7DCI1N1pxagR7mKycocuA7IgQ72zrur9qo3VoSQb7G97g
 - Similarity Searches: https://dl.acm.org/doi/pdf/10.1145/1101149.1101255?casa_token=XbR0Fh9KJCwAAAAA:vgveslkoD-WlIaYaluHG-cAF-BHLWE1UInfuKaaiF9lHWyZsauYJUeHM_Y43fhY6mCnzXK9irpjyzA
 	- uses cosine distance measure where we use euclidean distance
+- Knowledge Graphs: http://ai.stanford.edu/blog/introduction-to-knowledge-graphs/
 
 
 
