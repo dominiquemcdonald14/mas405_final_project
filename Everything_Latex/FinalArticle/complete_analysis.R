@@ -210,10 +210,11 @@ dtm_d <- data.frame(word = names(dtm_v),freq=dtm_v)
 head(dtm_d, 50)
 
 ####### Generate word cloud of Shakespeare Keywords from Sonnets and Write it out as a PNG 
-set.seed(314)
-png("_assets/Sonnets_Keywords_WC.png", width=1920, height=1080, pointsize=35)
+png("_assets/Shakespear_Keywords_WordCloud.png", width=1920, height=1080, pointsize=35)
+
 plot.new()
 
+set.seed(314)
 wordcloud(words = dtm_d$word, 
           freq = dtm_d$freq, 
           min.freq = 5,
@@ -288,10 +289,10 @@ for(i in 1:length(artists_complete[,2])){
   # Remove numbers
   art_doc <- tm_map(art_doc, removeNumbers)
   
-  # Remove english common stopwords
+  # Remove common English stop words
   art_doc <- tm_map(art_doc, removeWords, stopwords("english"))
   
-  # Removing custom stop words, specify stopwords as a character vector
+  # Removing custom stop words, specify stop words as a character vector
   art_doc <- tm_map(art_doc, removeWords, c("aint", "ooh", "thou", "never", "yeah", "hey", "though", "just", "will", "dont", "gonna", "can",                                                            "let", "thing", "every", "cause", "Since", "along",  "always", "many" , "eighteen", "hundred",
                                             "upon", "from", "nah", "aint", "now", "one", "two", "cant", "dont", "wont", "like", "much")) 
   # Remove punctuation
@@ -322,6 +323,49 @@ names(artist_keyword) <- artists_complete$artist_names
 artist_keyword[28] #look at the data frame one at a time otherwise your computer won't like you
 artist_keyword[1:45] #run this from your console to see results more easily
 
+
+#########################################
+#
+##
+############### Check that these are the top artists #### Loop to generate top artists key words World Clouds
+##
+##
+top_artists_df <- artists_complete[artists_complete$Artist %in% c("al-green", "amy-winehouse", "adele", "beiber", "bjork", "cake", "alicia-keys", 
+                                                                        "joni-mitchell", "paul-simon"), ]
+top_artists_df #check check check !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+for(i in 1:nrow(top_artists_df)){
+  song_doc <- Corpus(VectorSource(top_artists_df[i,2])) #convert the artists songs into document
+  
+  song_doc <- tm_map(song_doc, removeWords, stopwords("english"))
+  # Remove your own stop word
+  # specify your custom stopwords as a character vector
+  song_doc <- tm_map(song_doc, removePunctuation)
+  #remove Stop words 
+  song_doc <- tm_map(song_doc, removeWords, c("aint", "ooh", "and", "but", "never", "yeah", "hey", "though", "just", "will",  "dont", "gonna", "can", "let", "thing", "every", "cause", "Since", "along",  "always", "many" , "eighteen", "hundred", 
+                                              "upon", "from", "nah", "aint", "now", "one", "two", "cant", "dont", "wont", "like", "much")) 
+  # make term matrix 
+  song_doc_dtm <- TermDocumentMatrix(song_doc)
+  song_mat_dtm <- as.matrix(song_doc_dtm)
+  
+  # Sort by decreasing value of frequency
+  song_dtm_v <- sort(rowSums(song_mat_dtm),decreasing=TRUE)
+  song_dtm_d <- data.frame(word = names(song_dtm_v),freq=song_dtm_v)
+
+  #word cloud generation for artist 
+  artistName <- top_artists_df$Artist[i]
+  wc_Filename <- paste0("_assets/", artistName, "_KeyWord_WordCloud.png")
+  png(wc_Filename, width=1920, height=1080, pointsize=35)
+  
+  plot.new()
+  
+  set.seed(314)
+  wordcloud(words = song_dtm_d$word, freq = song_dtm_d$freq, min.freq = 5,
+            max.words=100, random.order=FALSE, rot.per=0.20, 
+            colors=brewer.pal(8, "Dark2"))
+  
+  dev.off()
+}
 
 
 
