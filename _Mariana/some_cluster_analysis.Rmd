@@ -221,7 +221,7 @@ test[test$`kfit$cluster` == 1,] #these are the artists in shakespeare's cluster
 ```{r}
 library(cluster)
 library(dendextend)
-
+#need to run Dominique's cluster analysis code first
 summary(prop_8sent)
 
 dist_mat <- dist(prop_8sent[,2:9], method = 'euclidean')
@@ -238,6 +238,13 @@ plot(avg_col_dend)
 
 avg_col_dend <- color_branches(avg_dend_obj, k = 7)
 plot(avg_col_dend) #Does this mean shakespeare is grouped with Nirvana???
+
+#10 and 12 clusters respectively
+avg_col_dend <- color_branches(avg_dend_obj, k = 10)
+plot(avg_col_dend, main = "Dendrogram with 10 Clusters")
+
+avg_col_dend <- color_branches(avg_dend_obj, k = 12)
+plot(avg_col_dend, main = "Dendrogram with 12 Clusters")
 
 ```
 
