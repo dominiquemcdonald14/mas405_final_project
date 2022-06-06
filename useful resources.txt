@@ -10,6 +10,8 @@ For Learning NLP:
 	- (detailed) https://www.sciencedirect.com/topics/mathematics/term-matrix#:~:text=Sparsity%20is%20the%20proportion%20of,is%20the%20term%2Dfrequency%20weighting.
 	- (package list) https://rdrr.io/rforge/tm/man/
 - Kmeans Clustering - https://towardsdatascience.com/k-means-clustering-algorithm-applications-evaluation-methods-and-drawbacks-aa03e644b48a
+- NRC Sentiments - https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm
+
 
 Applications of NLP to Music: (https://scholar.google.com/scholar?hl=en&as_sdt=0%2C5&as_vis=1&q=natural+language+processing+applied+to+music&btnG=)
 - Basic Pipeline Structure: https://www.tandfonline.com/doi/pdf/10.1080/09298215.2018.1488878?casa_token=qT4wtALWx4sAAAAA:AQScsz5aiyRYkLTYoogHW1P4gn0hfNwER7DCI1N1pxagR7mKycocuA7IgQ72zrur9qo3VoSQb7G97g
@@ -29,6 +31,6 @@ For Finding Data:
 
 ####################################
 ADD NEW CITATION TO BIB HERE
-1)
+1)- NRC Sentiments - https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm (nrc-sentiments)
 
 
