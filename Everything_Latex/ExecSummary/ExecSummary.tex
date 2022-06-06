@@ -1,0 +1,68 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+
+\title{Executive Summary}
+\author[*]{Mariana Gonzalez Castro}
+\author[*]{Carina Kalaydjian}
+\author[*]{Dominique McDonal}
+\author[*]{Angel Sierra}
+\author[*]{DuoDuo Ying}
+\affil[*]{Department of Statistics, UCLA}
+
+\date{June 2022}
+
+\begin{document}
+
+\maketitle
+
+\section{Overview}
+
+We hypothesize that we can detect outstanding and timeless modern-day artists by comparing their music with Shakespearian sonnets. Using 154 sonnets and Natural Language Processing, we found Amy Winehouse, Joni Mitchell, and Cake to be the top 3 artists most similar to Shakespeare out of our sample of 45 artists. Therefore, we encourage more attention and investment for these artists and their works for hundreds of years.
+
+\section{The Problem}
+
+The music industry has been growing in popularity over the last few decades. In 2021, worldwide recorded music revenues totaled \$25.9 billion, up 18.5 percent from 2020. [citation] There are more and more artists representing different genres, different styles, and different personalities within these styles. As a prominent music label, how do you which artist is outstanding, and more importantly, consistent? How can we tell apart the cultural fads from timeless classics? What are some metrics we can use to measure and predict the outstanding and timelessness of music artists? [insert music trend graph here]
+
+\section{The Solution}
+
+In this project, we proposed a method for measuring artists’ timelessness using their relevancy with Shakespeare. Our theory is that because of William Shakespeare’s relevancy and impact as a Literary Artist if a modern-day artist’s work is close to that of William Shakespeare’s, there’s a high likelihood that the artist will have relevance and impact long into the future as well.
+
+After comparing songs of 45 artists with Shakespeare's 154 sonnets, we found that Amy Winehouse, Joni Mitchell, Cake, Nickelback, and Bob Dylan are closest with Shakespeare using Natural Langauge Processing. We derived our result using text extraction and sentiment analysis. A more detailed result is following:
+
+\begin{itemize}
+
+\item Using Key Word extraction, we compared the top 10 most frequent key words in both Shakepeare sonnets and artist songs. We found that Adele and Disney both share 3 same key words: “love”, “time”, and “heart”
+\item Using Sentiment Analysis, we compared emotions such as anger, anticipation, disgust, fear, joy, sadness, surprise, and trust within the sonnets and songs. We found that Bob Dylan is the closest in emotions with Shakespeare. Some of Dylan’s famous songs include “Like a Rolling Stone” and “A Hard Rain’s A-Gonna-Fall”. Dylan was also the first musician to win Nobel Prize in Literature "for having created new poetic expressions within the great American song tradition".
+\item Despite being number one on keyword, Adele was not amongst the top 10 closest artists to Shakespeare because Adele’s use of love is more of a fear and trust while Shakespeare uses love in a fear and sadness way.
+\item Amy Winehouse and Joni Mithcell are tied for number one spot closest to Shakespeare. Amy Winehouse scored 4th in Word Extraction and 5th in Sentiment, while Joni Mitchell socred 5th in Word Extraction and 4th in Sentiment.  [insert the 3 ranking tables]
+
+\end{itemize}
+
+
+\section{Limitations \& Recommendations}
+\begin{itemize}
+
+\item The R package for analyzing sentiment offers different results when used differently. We would get more accurate results analyzing each song for the artist but do not have such data.
+\item Shakespeare’s language usage is different from the modern day language, we would improve our result using modern translation of Shakepeare’s sonnets.
+\item While the analysis suggest the top ranking artists are outstanding, this does not conclude that the bottom artists are not. Beatles are ranked 43 out of 45, but are successful in their own ways and own style. We need to thus be careful when using the metric to determine which artist is not good.
+
+\end{itemize}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{ll}
+  \hline
+Name & GameVenue \\ 
+  \hline
+Klay Thompson & United Center, Chicago, Illinois \\ 
+  Stephen Curry & Oracle Arena, Oakland, California \\ 
+  Zach LaVine & Spectrum Center, Charlotte, North Carolina \\ 
+   \hline
+\end{tabular}
+\caption{Venues where Players Made more than 12 Three-Point Shots.} 
+\label{tab:nbaTable}
+\end{table}
+
+\end{document}
