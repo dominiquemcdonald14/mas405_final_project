@@ -21,7 +21,7 @@ library(cluster)
 library(factoextra)
 
 library(ggplot2)
-
+library(xtable)
 ########################################################
 #access database to acquire datasets
 
@@ -418,8 +418,6 @@ dev.off()
 
 #############################################################################
 
-
-
 ##################################
 #  Music Artist Sentient Analysis 
 ####################################
@@ -446,25 +444,21 @@ names_8sent
 all_8sent <- cbind(names_8sent, all_8sent) #adding names
 all_8sent #quick check
 
-###################################
-#creating a table of proportions instead of frequencies
+####### Creating a table of proportions instead of frequencies
 prop_8sent <- data.frame(matrix(ncol = 9, nrow = 46))
 
 prop_8sent[,1] <- all_8sent$names_8sent
 
-
 for(i in 1:46){ #this loop divides each element in a row bu the row sum
-  
   
   prop_8sent[i,2:9] <- all_8sent[i,2:9]/sum(all_8sent[i,2:9])
   
 }
 
-prop_8sent #another quick checl
+prop_8sent #another quick check
 
-
-#Now that we have the sentiments in a table kmeans clustering will be straightforward. I will use MG's lovely code for this part :*
-
+#Now that we have the sentiments in a table kmeans clustering will be straightforward. 
+#I will use MG's lovely code for this part :*
 #identifying optimal number of clusters
 k <- 12
 vpc <- NULL #vpc here means "variance per cluster"
@@ -474,28 +468,31 @@ for (i in 1:k) {
 }
 vpc
 
+#writing plot out as a png 
+png("_assets/Variance_Explained_VS_Number_Clusters.png", width=1920, height=1080, pointsize=35)
+plot.new()
 plot(1:k, vpc, xlab = "# of clusters", ylab = "explained variance")
-
+dev.off()
 
 kfit7 <- kmeans(prop_8sent[,2:9], 7)
 kfit8 <- kmeans(prop_8sent[,2:9], 8)  
 kfit10 <- kmeans(prop_8sent[,2:9], 10)
 kfit12 <- kmeans(prop_8sent[,2:9], 12)
 
-
-#clustering means were given for each of the eight emotions...
+#clustering means were given for each of the eight emotions
 kfit7$centers
 kfit8$centers
 kfit10$centers
 kfit12$centers
 
-#install.packages("factoextra")
+########### Making Cluster Plots
+##changing the row names so they will show up as labels for each point
+row.names(prop_8sent) <- all_8sent$names_8sent 
 
-library(factoextra)
-
-row.names(prop_8sent) <- all_8sent$names_8sent ###*changing the row names so they will show up as labels for each poin
-
-
+{ #Run this to generate plot all at once 
+  
+png("_assets/ClusterAnalysis_Fit7.png", width=1920, height=1080, pointsize=35)
+plot.new()
 fviz_cluster(kfit7, data = prop_8sent[,2:9],
              palette = c("deepskyblue", "cyan3", "violet", "pink3", "red", "purple", "green3", "lightpink", "salmon3", "gray", "orange3", "olivedrab3"), 
              geom = c("point", "text"),
@@ -503,14 +500,21 @@ fviz_cluster(kfit7, data = prop_8sent[,2:9],
              ellipse.type = "t", 
              ggtheme = theme_bw()
              )
-fviz_cluster(kfit8, data = prop_8sent[,2:9],
+dev.off()
+
+png("_assets/ClusterAnalysis_Fit.png", width=1920, height=1080, pointsize=35)
+plot.new()
+fviz_cluster(kfit, data = prop_8sent[,2:9],
              palette = c("deepskyblue", "cyan3", "violet", "pink3", "red", "purple", "green3", "lightpink", "salmon3", "gray", "orange3", "olivedrab3"), 
              geom = c("point", "text"),
              ellipse = F,
              ellipse.type = "t", 
              ggtheme = theme_bw()
              )
+dev.off()
 
+png("_assets/ClusterAnalysis_Fit10png", width=1920, height=1080, pointsize=35)
+plot.new()
 fviz_cluster(kfit10, data = prop_8sent[,2:9],
              palette = c("deepskyblue", "cyan3", "violet", "pink3", "red", "purple", "green3", "lightpink", "salmon3", "gray", "orange3", "olivedrab3"), 
              geom = c("point", "text"),
@@ -518,33 +522,32 @@ fviz_cluster(kfit10, data = prop_8sent[,2:9],
              ellipse.type = "t", 
              ggtheme = theme_bw()
              )
+dev.off()
 
+png("_assets/ClusterAnalysis_Fit12.png", width=1920, height=1080, pointsize=35)
+plot.new()
 fviz_cluster(kfit12, data = prop_8sent[,2:9],
-             palette = c("deepskyblue", "cyan3", "violet", "pink3", "red", "purple", "green3", "lightpink", "salmon3", "gray", "orange", "olivedrab3"), 
+             palette = c("deepskyblue", "cyan3", "violet", "pink3", "red", "purple", "green3", "lightpink", "salmon3", "gray", "orange3", "olivedrab3"), 
              geom = c("point", "text"),
              ellipse = F,
              ellipse.type = "t", 
              ggtheme = theme_bw()
              )
+dev.off()
 
-## Not sure what plot we want to go with for the results 
-
+}
 
 test <- cbind (all_8sent, kfit$cluster) #Appended the clusters to all artists sentiments to get table of artist in same group
 #need to check which cluster shakespeare is in each time, because different groups might be formed each time you run the cluster analysis
 
 # test[test$`kfit$cluster` == 4,] #these are the artists in shakespeare's cluster
 
-
-
-################
-# Dannys code 
-
+####################################
+# Sentiment Ranking of Shakespeare vs Artists
+####################################
 x_text <- Corpus(VectorSource(og_sonnets$Sonnets))
 
 x_text
-
-#Clean the data
 
 #Replacing "/", "@" and "|" with space
 toSpace <- content_transformer(function (y , pattern ) gsub(pattern, " ", y))
@@ -557,19 +560,18 @@ x_text <- tm_map(x_text, removeWords, c("thi", "thee", "thou", "may", "still", "
 x_text <- tm_map(x_text, removePunctuation)
 x_text <- tm_map(x_text, stripWhitespace)
 
-#The document term matrix just contains all the words in your "documents" and their frequencies and maybe their stem, gotta check
-
-
 # Build a term-document matrix
 x_text_dtm <- TermDocumentMatrix(x_text)
 x_text_dtm
-#number of total terms is the non sparse entries
 
+#number of total terms is the non sparse entries
 mat_dtm <- as.matrix(x_text_dtm)
 # mat_dtm
+
 # Sort by decreasing value of frequency
 dtm_v <- sort(rowSums(mat_dtm),decreasing=TRUE)
 dtm_d <- data.frame(word = names(dtm_v),freq=dtm_v)
+
 # Display the top 50 most frequent words
 head(dtm_d, 50)
 
@@ -577,20 +579,10 @@ num_terms <- length(x_text_dtm$i); num_terms #total number of terms - 7611
 nTerms(x_text_dtm) # unique terms in sonnets - 3089
 head(Terms(x_text_dtm)) #just a list of all the terms that show up
 
+
 prop_terms<-  dtm_d$freq/num_terms; head(prop_terms)
-
 dtm_prop <- cbind(dtm_d, prop_terms)
-
 sonnet_data <- head(dtm_prop, 10); sonnet_data
-
-## Idea: divide each by top 10 frequencies, instead of using total
-
-#Here, we have the table summarizing Shakepeare's top 10 most used words. 
-
-
-## Sentiment Analysis
-
-
 
 #data cleanup using dplyr
 sonnets <- 
@@ -607,38 +599,30 @@ for (i in 1:n) {
   rbind(sonnets_df1[i,])
 } 
 
-
 #create an empty dataframe
 emotions <- data.frame(matrix(ncol=8,nrow=0, dimnames=list(NULL, 
       c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
         "surprise", "trust"))))
 
 #n <- 154
-
 #ran a for loop to conduct sentiment analysis to each individual psuedosonnet
 #beware: it might take a lil while to run
 #for (i in 1:n) {
   #emotions[i,]<- get_nrc_sentiment(sonnets_df1[i,1])
   #rbind(emotions[i,])
 #}
-
 #s <- colSums(emotions)
-all_sonnets <- paste(sonnets_df1, collapse = " ") #the collapse argument allows you to create a single string by concatenating ea element of the vector
 
-emotions <- get_nrc_sentiment(all_sonnets) #getting shakespeare sentiments
+##### Loop calcuates proportions and frequencies of the different emotions used by artist and Shakespeare
+#the collapse argument allows you to create a single string by concatenating ea element of the vector
+all_sonnets <- paste(sonnets_df1, collapse = " ") 
+
+#getting shakespeare sentiments
+emotions <- get_nrc_sentiment(all_sonnets) 
 
 s_prop <- emotions[1,1:8] / sum(emotions[1,1:8])
 
-
-## Now create the table for 49 artists
-
-#Gonna write a loop that performs key word extraction on each artist's work. 
-#Result: - A list containing a df for each artists.
-#- Each artist's df will contain: top 10 keywords, frequencies, proportions
-        
-#creating list that will be populated by loop
 artist_keyword <- data.frame(artist = artists_complete$Artist, sent = rep(NA, 45), word = rep(NA,45), freq_df = rep(NA,45), prop_df = rep(NA,45), keyword = rep(NA,45))
-
 
 artist_text <- Corpus(VectorSource(artists_complete[,2])); artist_text
 
@@ -647,9 +631,9 @@ for(i in 1:length(artists_complete[,2])){
   kw <- rep(NA, 10)
   frq <- rep(NA, 10)
   prp <- rep(NA, 10)
-  temp_mat <- cbind(kw, frq, prp) #temp_mat is the current artist
-  #artist_keyword[[i]] <-as.data.frame(temp_mat) 
-  #colnames(artist_keyword[[i]]) <- c("keyword","frequency", "proportion" )
+  temp_mat <- cbind(kw, frq, prp) 
+  
+  #temp_mat is the information of the current artist
   temp_df <- as.data.frame(temp_mat)
   colnames(temp_df) <- c("word","frequency", "proportion" )
   
@@ -669,11 +653,8 @@ for(i in 1:length(artists_complete[,2])){
   x_text <- tm_map(art_doc, stemDocument)
 
   art_doc_dtm <- TermDocumentMatrix(art_doc)
-  
-
-  #art_doc_dtm
   #number of total terms is the non sparse entries
-  
+  #art_doc_dtm
   artist_mat_dtm <- as.matrix(art_doc_dtm)
   # mat_dtm
   # Sort by decreasing value of frequency
@@ -681,14 +662,9 @@ for(i in 1:length(artists_complete[,2])){
   artist_dtm_d <- data.frame(word = names(artisit_dtm_v),freq=artisit_dtm_v)
   artist_dtm_d
   
-  
-  #artist_keyword[[i]]$keyword[1:10] <- artist_dtm_d$word[1:10] #populating keywords
-  #artist_keyword[[i]]$frequency[1:10] <- artist_dtm_d$freq[1:10]; artist_keyword #populating frequencies
   temp_df$word[1:10] <- artist_dtm_d$word[1:10]
   temp_df$frequency[1:10] <- artist_dtm_d$freq[1:10]; 
-  
   art_num_terms <- length(art_doc_dtm$i); art_num_terms #total number of terms
- # artist_keyword[[i]]$proportion[1:10] <- artist_dtm_d$freq[1:10]/art_num_terms #populating proportions
   temp_df$proportion[1:10] <- artist_dtm_d$freq[1:10]/art_num_terms
   
   compare <- sonnet_data %>%
@@ -728,6 +704,20 @@ rank_table <- table_word %>%
   left_join(table_sent, by = "artist") %>%
   select(artist, rank_word, rank_sent) %>%
   mutate(rank = rank_word + rank_sent)
+  rank_table[order(rank_table$rank),]
+  
+## Writing resulting top 10 most similar artist to Shakespeare out as a write able .tex file 
+t <- rank_table[order(rank_table$rank),]
+#selecting top ten
+t1 <- t[1:10,]
 
-rank_table[order(rank_table$rank),]
+####make bottom 5 least similar to shakespear 
+
+t1 <- as.data.frame(t1)
+#rename column name so table looks nice in latex
+names(t1) <- c('Artist', 'Word Rank', 'Sent. Rank', 'Overall Rank') 
+#making xtable to .tex file 
+xttbl <- xtable(t1, caption="Ranked Top 10 Most Similar Music Artist to Shakespear", label="tab:ranktable")
+xxx <- print(xttbl, include.rownames=FALSE)
+writeLines( xxx, file.path("_assets", "rankTable_top10_Similar.tex") )
 
