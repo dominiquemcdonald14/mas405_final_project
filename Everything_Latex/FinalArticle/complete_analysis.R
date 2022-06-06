@@ -56,9 +56,10 @@ artists_complete <- dbGetQuery(con, "SELECT * FROM Artists_noDuplicates")
 dbDisconnect(con)
 
 ############################################
-#DATA CLEANUP
-
-#FIRST UP: OG SONNETS
+#               DATA CLEANUP
+############################################
+# Cleaning Shakespeare sonnets: OG SONNETS
+############################################
 #going to remove of the column of row numbers
 og <- select(original_sonnets,-c(1)) 
 
@@ -85,17 +86,14 @@ for (i in 1:154) {
 
 og_sonnets[1,1] #checking to see if it worked
 
-
-
-#################################
-#NOW CLEAN UP OF THE ARTIST DATA
-
+############################################
+#   CLEAN UP OF THE ARTIST DATA
+############################################
 #removing the column of row numbers
 artists_complete <- select(artists_complete,-c(1))
 
 ###this code will take all the non-lyrical strings contained in a set of 
 #parenthesis and compile it into a vector of lists
-#
 df  <- vector(mode = "list", length = 45)
 names(df) <- artists_complete$Artist
 
@@ -108,17 +106,13 @@ for (i in 1:45) {
 
 df[["adele"]] #look at the first element as an example
 
-#I looked through the lists and roughly 10 artists contained these wannabe lyrics
-#Of those 10, about 17 wannabe lyrics were discovered and now must be eliminated
 
+# had to remove "Verse 1, Chorus 2, Verse 3, and Chorus 3
+#you'll find that those phrases are no longer there and what remains is just empty quotations
 artists_complete <- 
   artists_complete %>% 
   mutate_at("Lyrics", str_remove_all, pattern = c("Verse 1|Chorus 2|Verse 3|Chorus 3|x2|vocal solo|Saxophone solo|fadeout|chorus|Repeat 4 times|bv=|scat singing|4x|x8|x7|x4 |2x")) 
 
-#can run this line of code again to verify if the strings are gone
-#We can check the first element:adele
-#she had "Verse 1, Chorus 2, Verse 3, and Chorus 3
-#you'll find that those phrases are no longer there and what remains is just empty quotations
 
 df2  <- vector(mode = "list", length = 45)
 names(df2) <- artists_complete$Artist
@@ -132,8 +126,8 @@ for (i in 1:45) {
 
 df2[["adele"]]
 
-#the last thing to do is to remove unwanted punctuation
 
+#the last thing to do is to remove unwanted punctuation
 #this removes everything inside brackets, brackets included
 artists_complete$Lyrics <- gsub("\\[.+?\\]", "", 
                                       artists_complete$Lyrics)
@@ -306,16 +300,11 @@ artist_keyword[3] #look at the data frame one at a time otherwise your computer 
 artist_keyword[1:45] #run this from your console to see results more easily
 
 
-#########################################
-#
-##
-############### Check that these are the top artists #### Loop to generate top artists key words World Clouds
-##
-##
-#########################################
-top_artists_df <- artists_complete[artists_complete$Artist %in% c("al-green", "amy-winehouse", "adele", "beiber", "bjork", "cake", "alicia-keys", 
-                                                                        "joni-mitchell", "paul-simon"), ]
-top_artists_df #check check check !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+######## Loop to generate top Music Artists key words World Clouds
+top_artists_df <- artists_complete[artists_complete$Artist %in% c("amy-winehouse", "nickelback", "cake", "adele", 
+                                                                  "joni-mitchell", "bob-dylan", "bob-marley", 
+                                                                  "leonard-cohen", "britney-spears" ,"blink-182"), ]
+top_artists_df 
 
 for(i in 1:nrow(top_artists_df)){
   
@@ -359,7 +348,7 @@ for(i in 1:nrow(top_artists_df)){
   
   #word cloud generation for artist 
   artistName <- top_artists_df$Artist[i]
-  wc_Filename <- paste0("_assets/", artistName, "_KeyWord_WordCloud1.png")
+  wc_Filename <- paste0("_assets/", artistName, "_KeyWord_WordCloud4.png")
   
   png(wc_Filename, width=1920, height=1080, pointsize=35)
   
@@ -373,27 +362,18 @@ for(i in 1:nrow(top_artists_df)){
   dev.off()
 }
 
-
-
-
-###########################
-
-
-
-
-
-
-
-
-##################
-#Sentiment Analysis for the Sonnets
+##############################################################
+#                 Sentiment Analysis
+##############################################################
+# Sentiment Analysis for Shakespears Sonnets
+#############################################
 emotions <- data.frame(matrix(ncol=10,nrow=0, dimnames=list(NULL, 
       c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
         "surprise", "trust", "negative", "positive"))))
 
 n <- 154
 
-#ran a for loop to conduct sentiment analysis to each individual sonnet
+# Loop to conduct sentiment analysis to each individual sonnet
 for (i in 1:n) {
   emotions[i,]<- get_nrc_sentiment(og_sonnets[i,1])
   rbind(emotions[i,])
@@ -408,7 +388,7 @@ ss <- s[c("anger", "anticipation", "disgust", "fear", "joy", "sadness",
         "surprise", "trust")]
 sss <- s[c("negative", "positive")]
 
-
+# exporting plots as png 
 png("_assets/Barplot_Sonnets_8_Emotions.png", width=1920, height=1080, pointsize=35)
 plot.new()
 
@@ -430,14 +410,19 @@ barplot(sss,
 
 
 dev.off()
+######################################################################
+
 
 #IMPORTANT: need to change the colors so they're not that bold/glaring
 
 
-#####################
-#dominiques sentiment code 
+#############################################################################
 
 
+
+##################################
+#  Music Artist Sentient Analysis 
+####################################
 sent_scores<- get_sentiment(artists_complete$Lyrics) #returns overall sentiment value
 summary(sent_scores)
 
