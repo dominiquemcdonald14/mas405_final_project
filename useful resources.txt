@@ -10,6 +10,14 @@ For Learning NLP:
 	- (detailed) https://www.sciencedirect.com/topics/mathematics/term-matrix#:~:text=Sparsity%20is%20the%20proportion%20of,is%20the%20term%2Dfrequency%20weighting.
 	- (package list) https://rdrr.io/rforge/tm/man/
 - Kmeans Clustering - https://towardsdatascience.com/k-means-clustering-algorithm-applications-evaluation-methods-and-drawbacks-aa03e644b48a
+
+Applications of NLP to Music:
+- Basic Pipeline Structure: https://www.tandfonline.com/doi/pdf/10.1080/09298215.2018.1488878?casa_token=qT4wtALWx4sAAAAA:AQScsz5aiyRYkLTYoogHW1P4gn0hfNwER7DCI1N1pxagR7mKycocuA7IgQ72zrur9qo3VoSQb7G97g
+- Similarity Searches: https://dl.acm.org/doi/pdf/10.1145/1101149.1101255?casa_token=XbR0Fh9KJCwAAAAA:vgveslkoD-WlIaYaluHG-cAF-BHLWE1UInfuKaaiF9lHWyZsauYJUeHM_Y43fhY6mCnzXK9irpjyzA
+	- uses cosine distance measure where we use euclidean distance
+
+
+
 For Learning Github:
 - Github: https://www.youtube.com/watch?v=k5D37W6h56o
 - Github Desktop: https://www.youtube.com/watch?v=0nzJXJAhlsk
