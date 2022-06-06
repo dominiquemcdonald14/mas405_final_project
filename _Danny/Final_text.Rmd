@@ -271,7 +271,7 @@ for(i in 1:length(artists_complete[,2])){
 ```
 
 ```{r}
-table_word <- artist_keyword[order(artist_keyword$word, decreasing = TRUE),] %>%
+table_word <- artist_keyword[order(artist_keyword$word,-rank(artist_keyword$freq_df), decreasing = TRUE),] %>%
   mutate(rank_word = 1:nrow(artist_keyword))
 table_sent <- artist_keyword[order(artist_keyword$sent),]  %>%
   mutate(rank_sent = 1:nrow(artist_keyword))
@@ -281,6 +281,8 @@ rank_table <- table_word %>%
   select(artist, rank_word, rank_sent) %>%
   mutate(rank = rank_word + rank_sent)
 
+table_word
+table_sent
 rank_table[order(rank_table$rank),]
 ```
 
