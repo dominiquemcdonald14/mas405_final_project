@@ -143,7 +143,6 @@ artists_complete$Lyrics <- gsub("\\[.+?\\]", "",
 artists_complete$Lyrics <- gsub("\\s*\\([^\\)]+\\)","", 
                                         artists_complete$Lyrics)
 
-
 #This replaces everything that's not alphanumeric signs, space or apostrophe with an empty string
 artists_complete$Lyrics <- gsub("[^[:alnum:][:space:]']", "", 
                                       artists_complete$Lyrics)
@@ -225,8 +224,7 @@ wordcloud(words = dtm_d$word,
 
 dev.off()
 
-
-##### proportion calculation 
+##### proportion calculation for Shakespear
 head(dtm_d)
 num_terms <- length(x_text_dtm$i); num_terms #total number of terms - 7611
 nTerms(x_text_dtm) # unique terms in sonnets - 3089
@@ -235,23 +233,6 @@ head(Terms(x_text_dtm)) #just a list of all the terms that show up
 prop_terms<-  dtm_d$freq/num_terms; head(prop_terms)
 
 dtm_prop <- cbind(dtm_d, prop_terms)
-
-
-
-#############################do we need this???############################################
-# Extracting Shakespears sentiments from the 154 sonets 
-# regular sentiment score using get_sentiment() function and method of your choice
-# please note that different methods may have different scales
-#### NOTE YOU DO NOT HAVE TO USE A CORPUS FOR THE SYUZHET PACKAGE HERE. THIS IS JUST THE VECTOR OF SONNETS
-s_vector <- get_sentiment(og_sonnets$Sonnets, method="syuzhet") 
-# see the first row of the vector
-head(s_vector, n = 10)
-# see summary statistics of the vector
-summary(s_vector)
-hist(s_vector, col = "pink", main = "Sentiments Scores for each Sonnet", xlab = "Sentiment Scores") #normal distribution 
-
-###########################################################################################
-
 
 ##########################################
 # Music Artist Key Word Extraction
@@ -317,10 +298,11 @@ for(i in 1:length(artists_complete[,2])){
   
   art_num_terms <- length(art_doc_dtm$i); art_num_terms #total number of terms
   artist_keyword[[i]]$proportion[1:10] <- artist_dtm_d$freq[1:10]/art_num_terms #populating proportions
-}
+
+  }
 
 names(artist_keyword) <- artists_complete$artist_names
-artist_keyword[28] #look at the data frame one at a time otherwise your computer won't like you
+artist_keyword[3] #look at the data frame one at a time otherwise your computer won't like you
 artist_keyword[1:45] #run this from your console to see results more easily
 
 
@@ -330,37 +312,61 @@ artist_keyword[1:45] #run this from your console to see results more easily
 ############### Check that these are the top artists #### Loop to generate top artists key words World Clouds
 ##
 ##
+#########################################
 top_artists_df <- artists_complete[artists_complete$Artist %in% c("al-green", "amy-winehouse", "adele", "beiber", "bjork", "cake", "alicia-keys", 
                                                                         "joni-mitchell", "paul-simon"), ]
 top_artists_df #check check check !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 for(i in 1:nrow(top_artists_df)){
-  song_doc <- Corpus(VectorSource(top_artists_df[i,2])) #convert the artists songs into document
   
-  song_doc <- tm_map(song_doc, removeWords, stopwords("english"))
-  # Remove your own stop word
-  # specify your custom stopwords as a character vector
-  song_doc <- tm_map(song_doc, removePunctuation)
-  #remove Stop words 
-  song_doc <- tm_map(song_doc, removeWords, c("aint", "ooh", "and", "but", "never", "yeah", "hey", "though", "just", "will",  "dont", "gonna", "can", "let", "thing", "every", "cause", "Since", "along",  "always", "many" , "eighteen", "hundred", 
-                                              "upon", "from", "nah", "aint", "now", "one", "two", "cant", "dont", "wont", "like", "much")) 
-  # make term matrix 
-  song_doc_dtm <- TermDocumentMatrix(song_doc)
-  song_mat_dtm <- as.matrix(song_doc_dtm)
+  art_doc <- Corpus(VectorSource(top_artists_df[i,2])) 
+  
+  #Replacing "/", "@" and "|" with space
+  toSpace <- content_transformer(function (y , pattern ) gsub(pattern, " ", y))
+  art_doc <- tm_map(art_doc, toSpace, "/")
+  art_doc <- tm_map(art_doc, toSpace, "@")
+  art_doc <- tm_map(art_doc, toSpace, "\\|")
+  #art_doc <- tm_map(art_doc, to_e, "â???T")
+  
+  # Convert the text to lower case
+  art_doc <- tm_map(art_doc, content_transformer(tolower))
+  
+  # Remove numbers
+  art_doc <- tm_map(art_doc, removeNumbers)
+  
+  # Remove common English stop words
+  art_doc <- tm_map(art_doc, removeWords, stopwords("english"))
+  
+  # Removing custom stop words, specify stop words as a character vector
+  art_doc <- tm_map(art_doc, removeWords, c("aint", "ooh", "thou", "never", "yeah", "hey", "though", "just", "will", "dont", "gonna", "can",                                                            "let", "thing", "every", "cause", "Since", "along",  "always", "many" , "eighteen", "hundred",
+                                            "upon", "from", "nah", "aint", "now", "one", "two", "cant", "dont", "wont", "like", "much")) 
+  # Remove punctuation
+  art_doc <- tm_map(art_doc, removePunctuation)
+  
+  # Eliminate extra white spaces
+  art_doc <- tm_map(art_doc, stripWhitespace)
+  
+  #art_doc #NO DOCUMENTS DROPPED
+  
+  #number of total terms is the non sparse entries
+  art_doc_dtm <- TermDocumentMatrix(art_doc)
+  artist_mat_dtm <- as.matrix(art_doc_dtm)
   
   # Sort by decreasing value of frequency
-  song_dtm_v <- sort(rowSums(song_mat_dtm),decreasing=TRUE)
-  song_dtm_d <- data.frame(word = names(song_dtm_v),freq=song_dtm_v)
-
+  artisit_dtm_v <- sort(rowSums(artist_mat_dtm),decreasing=TRUE)
+  artist_dtm_d <- data.frame(word = names(artisit_dtm_v),freq=artisit_dtm_v)
+  artist_dtm_d
+  
   #word cloud generation for artist 
   artistName <- top_artists_df$Artist[i]
-  wc_Filename <- paste0("_assets/", artistName, "_KeyWord_WordCloud.png")
+  wc_Filename <- paste0("_assets/", artistName, "_KeyWord_WordCloud1.png")
+  
   png(wc_Filename, width=1920, height=1080, pointsize=35)
   
   plot.new()
   
   set.seed(314)
-  wordcloud(words = song_dtm_d$word, freq = song_dtm_d$freq, min.freq = 5,
+  wordcloud(words = artist_dtm_d$word, freq = artist_dtm_d$freq, min.freq = 5,
             max.words=100, random.order=FALSE, rot.per=0.20, 
             colors=brewer.pal(8, "Dark2"))
   
@@ -370,6 +376,7 @@ for(i in 1:nrow(top_artists_df)){
 
 
 
+###########################
 
 
 
