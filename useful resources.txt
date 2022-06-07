@@ -18,6 +18,13 @@ Applications of NLP to Music: (https://scholar.google.com/scholar?hl=en&as_sdt=0
 - Similarity Searches: https://dl.acm.org/doi/pdf/10.1145/1101149.1101255?casa_token=XbR0Fh9KJCwAAAAA:vgveslkoD-WlIaYaluHG-cAF-BHLWE1UInfuKaaiF9lHWyZsauYJUeHM_Y43fhY6mCnzXK9irpjyzA
 	- uses cosine distance measure where we use euclidean distance
 - Knowledge Graphs: http://ai.stanford.edu/blog/introduction-to-knowledge-graphs/
+- NLP Adele:https://medium.com/mlearning-ai/adeles-lyrics-analysis-in-r-dbca81a80487
+
+
+Shakespeare Info
+- Sonnet Themes:https://www.languagehumanities.org/what-are-the-most-common-shakespearean-sonnet-themes.htm
+- Sonnet_Time_Motif: file:///C:/Users/19517/Downloads/55910064.pdf 
+	-->backup link: https://www.google.com/search?q=shakespearean+sonnet+themes&rlz=1C1CHBF_enUS891US891&oq=shakespearean+sonnet&aqs=chrome.3.69i59j0i512j0i131i433i512j0i20i263i512j0i512l2j69i61l2.4266j0j4&sourceid=chrome&ie=UTF-8
 
 
 
@@ -32,5 +39,6 @@ For Finding Data:
 ####################################
 ADD NEW CITATION TO BIB HERE
 1)- NRC Sentiments - https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm (nrc-sentiments)
+2)- NLP Adele - https://medium.com/mlearning-ai/adeles-lyrics-analysis-in-r-dbca81a80487
 
 
