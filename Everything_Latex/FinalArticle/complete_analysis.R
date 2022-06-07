@@ -157,8 +157,12 @@ artists_complete
 # Shakespeare Key Word Extraction
 ##########################################
 # Further data cleaning before keyword extraction
+
+#the pattern for the special character may vary from computer to computer
+# here are other patterns incase is the one bellow wont work
+# ????T, â???T, 
 og_sonnets <- og_sonnets %>% 
-  mutate_at("Sonnets", str_replace_all, "????T", "\'") #the pattern for the special character may vary from computer to computer
+  mutate_at("Sonnets", str_replace_all, "â???T", "\'") #the pattern for the special character may vary from computer to computer
 
 # need to load vector of text objects as a corpus. VectorSource() interprets each element of a vec as a document
 x_text <- Corpus(VectorSource(og_sonnets$Sonnets))
@@ -405,12 +409,6 @@ barplot(shake_8sent_sents,
         col = brewer.pal(3, "Set1"))
 
 dev.off()
-######################################################################
-
-#IMPORTANT: need to change the colors so they're not that bold/glaring
-
-
-#############################################################################
 
 ##################################
 #  Music Artist Sentient Analysis 
@@ -508,15 +506,21 @@ fviz_cluster(kfit8, data = prop_8sent[,2:9],
              )
 dev.off()
 
+#this is the plot we decided to use for final article
 png("_assets/ClusterAnalysis_Fit10.png", width=1920, height=1080, pointsize=35)
 plot.new()
 fviz_cluster(kfit10, data = prop_8sent[,2:9],
              palette = brewer.pal(10, "Paired"),
              geom = c("point", "text"),
              ellipse = F,
-             ellipse.type = "t", 
-             ggtheme = theme_bw()
-)
+             ellipse.type = "t",
+             labelsize = 35 ,
+             ggtheme = theme_bw()) + ggtitle("Cluster Analysis of all Artist and Shakespeare") + theme(plot.title = element_text(size = 40), 
+                                                                                                       legend.title = element_text(size = 30), 
+                                                                                                       legend.text=element_text(size=30), 
+                                                                                                       axis.title = element_text(size = 30),
+                                                                                                       axis.text = element_text(size = 20)) 
+
 dev.off()
 
 
@@ -532,6 +536,16 @@ fviz_cluster(kfit12, data = prop_8sent[,2:9],
 dev.off()
 
 }
+
+
+
+##########################################################
+#test for making font bigger 
+#########################################################
+
+
+
+
 
 test <- cbind (all_8sent, kfit$cluster) #Appended the clusters to all artists sentiments to get table of artist in same group
 #need to check which cluster shakespeare is in each time, because different groups might be formed each time you run the cluster analysis
