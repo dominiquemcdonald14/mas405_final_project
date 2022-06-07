@@ -36,17 +36,42 @@
 
 \section{Overview}
 
-As a prominent music label, you care about artists that are truly outstanding and stand the trial of time. Out of 45 top artists, Amy Winehouse, Joni Mitchell, and Cake are those artists due to the similarity between their work and Shakespeare's timeless sonnets. By leveraging Natural Language Processing algorithms, your label can predict future success based on the proven success of the past. 
+As a prominent music label, we care about artists that are truly outstanding and stand the trial of time. Out of 45 top artists, Nickelback, Amy Winehouse, and Cake are those artists due to the similarity between their work and Shakespeare's timeless sonnets. By leveraging Natural Language Processing algorithms, our label can predict future success based on the proven success of the past. 
 
-%[Insert Final Ranking #1]
+\begin{table}[ht]
+\centering
+\resizebox{4cm}{2cm}{%
+\begin{tabular}{lrrr}
+  \hline
+Artist & Overall Rank \\ 
+  \hline
+  nickelback &   1 \\ 
+  amy-winehouse &   1\\ 
+  cake &   3 \\ 
+  adele &   4 \\ 
+  joni-mitchell &  4 \\ 
+  leonard-cohen &   6 \\ 
+  paul-simon &  7\\ 
+  blink-182 &  7\\ 
+  bob-marley &  9 \\ 
+  rihanna &  10 \\ 
+   \hline
+\end{tabular}%
+}
+\caption{Ranked Top 10 Most Similar Music Artist to Shakespeare} 
+\label{tab:overallranktable}
+\end{table}
+
 
 \section{Methodology}
 
-Before employing Natural Language Processing methods such as Keyword Extraction and Sentiment Analysis, we first obtained our data containing 154 Shakespeare's sonnets and songs of 45 modern top artists. The unit of observation is an artist and their work.
+Before employing Natural Language Processing methods such as Keyword Extraction and Sentiment Analysis, we first obtained our data containing 154 Shakespeare's sonnets and songs of 45 modern top artists. The unit of observation is an artist and their work. The data is stored on AWS RDS for portability.
 
 \subsection{Keyword Extraction}
 
-One of the NLP methods we used is Keyword Extraction. This algorithm returns the most frequently used keywords from Shakespeare and the 45 artists. Here's an example using Keyword Extraction to detect top 10 most used keyword by Shakespeare:
+One of the NLP methods we used is Keyword Extraction. This algorithm returns the most frequently used keywords from Shakespeare and the 45 artists. Figure 1 provides an example of using Keyword Extraction to create a word cloud using the most used keyword by Shakespeare.
+
+We compared the similarity between keywords for Shakespeare and the artists using first the number of similar words and then the Euclidean distance of frequency of these words. The result ranking is shown in Table 2.
 
 \begin{table}
 	\begin{minipage}{0.5\linewidth}
@@ -75,7 +100,7 @@ One of the NLP methods we used is Keyword Extraction. This algorithm returns the
 	\begin{minipage}{0.45\linewidth}
 		\centering
 		\includegraphics[width=9cm]{_assets/Shakespeare_Keywords_WordCloud.png}
-		%\captionof{figure}{2-D scatterplot of the Student Database}
+		\captionof{figure}{Shakespeare Top Keywords Wordcloud}
 		\label{ }
 	\end{minipage}
 \end{table}
@@ -85,33 +110,7 @@ One of the NLP methods we used is Keyword Extraction. This algorithm returns the
 %\includegraphics[width=12cm]{_assets/Shakespeare_Keywords_WordCloud.png}
 %\end{center}
 
-We compared the similarity between keywords for Shakespeare and the artists using first the number of similar words and then the Euclidean distance of frequency of these words. The result ranking is following:
-
-%\begin{table}[ht]
-%\centering
-%\resizebox{\columnwidth}{!}{%
-%\begin{tabular}{lrrlr}
-  %\hline
-%Word Rank & Artist & Word Count & Frequency & Keyword \\ 
- % \hline
- % 1 &  adele &   3 & 626.00 &  love time heart\\ 
-  %2 &  nickelback &   3 & 11349.00 &  love time yet \\ 
-  %3 &  bieber &   2 & 648.00 &  love time\\ 
-  %4 &  dolly-parton &   2 & 685.00 &  love time \\ 
-  %5 &  dj-khaled &   2 & 928.00 &  mine time \\ 
-  %6 &  amy-winehouse &   2 & 3700.00 &  love time \\ 
-  %7 &  bjork &   2 & 5341.00 &  love yet \\ 
-  %8 &  leonard-cohen &   2 & 5972.00 &  love time \\ 
-  %9 &  cake &   2 & 7690.00 &  love time \\ 
-  %10 &  paul-simon &   2 & 8464.00 &  love time \\ 
-   %\hline
-%\end{tabular}%
-%}
-%\caption{Ranked Top 10 Most Similar Music Artist to Shakespeare Based on Keywords} 
-%\label{tab:wordranktable}
-%\end{table}
-
-Based on this table, Adele, Nickelback and Bieber are the top 3 artists most similar to Shakespeare based on keywords.
+Based on this table, Adele, Nickelback and Bieber are the top 3 artists most similar to Shakespeare.
 
 \subsection{Sentiment Analysis}
 
@@ -119,13 +118,14 @@ Another NLP method we used is Sentiment Analysis. More specifically, we analyzed
 
 \begin{center}
 \includegraphics[width=12cm]{_assets/ClusterAnalysis_Fit10.png}
+\captionof{figure}{Cluster Analysis using 8 Emotions from 45 Artists and Shakespeare}
 \end{center}
 
 Using Euclidean distance on the proportion of emotions, we found that Shakespeare's emotions through sonnets are most similar to the following artists:
 
 \begin{table}[ht]
 \centering
-%\resizebox{\columnwidth}{!}{%
+\resizebox{6cm}{1.7cm}{%
 \begin{tabular}{lrr}
   \hline
 Artist & Sent. Euclidean Distance & Sentiment Rank \\ 
@@ -142,7 +142,7 @@ eminem & 0.00 &   1 \\
   rihanna & 0.00 &  10 \\ 
    \hline
 \end{tabular}%
-%}
+}
 \caption{Ranked Top 10 Most Similar Music Artist to Shakespeare Based on Sentiments} 
 \label{tab:wordranktable}
 \end{table}
@@ -155,6 +155,7 @@ Combining the rankings obtained by Keyword Extraction and Sentiment Analysis, ou
 
 \begin{table}[ht]
 \centering
+\resizebox{8cm}{2cm}{%
 \begin{tabular}{lrrr}
   \hline
 Artist & Word Rank & Sentiment Rank & Overall Rank \\ 
@@ -170,13 +171,14 @@ nickelback &   2 &   8 &  10 \\
   bob-marley &  27 &   6 &  33 \\ 
   rihanna &  25 &  10 &  35 \\ 
    \hline
-\end{tabular}
+\end{tabular} %
+}
 \caption{Ranked Top 10 Most Similar Music Artist to Shakespeare} 
 \label{tab:overallranktable}
 \end{table}
 
 
-We show that Amy Winehouse, Joni Mitchell, Cake, Nickelback, and Bob Dylan are closest with Shakespeare using the two NLP methods. Some interesting results follow:
+We show that Nickelback, Amy Winehouse, Cake, Adele, and Joni Mitchell are top 5 closest with Shakespeare using the two NLP methods. More interesting findings include:
 
 \begin{itemize}
 
@@ -191,9 +193,8 @@ We show that Amy Winehouse, Joni Mitchell, Cake, Nickelback, and Bob Dylan are c
 \section{Limitations \& Recommendations}
 \begin{itemize}
 
-\item The R package for analyzing sentiment offers different results when used differently. We would get more accurate results analyzing each song for the artist but do not have such data.
-\item Shakespeare’s language usage is different from the modern day language, we would improve our result using modern translation of Shakepeare’s sonnets.
-\item While the analysis suggest the top ranking artists are outstanding, this does not conclude that the bottom artists are not. Beatles are ranked 43 out of 45, but are successful in their own ways and own style. We need to thus be careful when using the metric to determine which artist is not good.
+\item The R package for analyzing sentiment offers different results when collapse the sonnets into a single corpus vs not collapsing the sonnets. We would get more accurate results not collapsing, but more consistent result collapsing. In this case, we collapsed all the sonnets into one single corpus, but recognize that the result might differ if we analyze sonnets and songs without collapsing.
+\item The 45 artists we chose are already outstanding. Therefore, we could look into each individual songs or more artists to derive further results.
 
 \end{itemize}
 
