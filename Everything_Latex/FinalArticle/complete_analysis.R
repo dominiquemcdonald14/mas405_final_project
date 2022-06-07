@@ -520,7 +520,6 @@ fviz_cluster(kfit10, data = prop_8sent[,2:9],
                                                                                                        legend.text=element_text(size=30), 
                                                                                                        axis.title = element_text(size = 30),
                                                                                                        axis.text = element_text(size = 20)) 
-
 dev.off()
 
 
@@ -536,17 +535,6 @@ fviz_cluster(kfit12, data = prop_8sent[,2:9],
 dev.off()
 
 }
-
-
-
-##########################################################
-#test for making font bigger 
-#########################################################
-
-
-
-
-
 test <- cbind (all_8sent, kfit$cluster) #Appended the clusters to all artists sentiments to get table of artist in same group
 #need to check which cluster shakespeare is in each time, because different groups might be formed each time you run the cluster analysis
 
@@ -595,9 +583,12 @@ dtm_prop <- cbind(dtm_d, prop_terms)
 sonnet_data <- head(dtm_prop, 10); sonnet_data
 
 #data cleanup using dplyr
+# #the pattern for the special character may vary from computer to computer
+# here are other patterns incase is the one bellow wont work
+# ????T, â???T,
 sonnets <- 
   og_sonnets %>% 
-  mutate_at("Sonnets", str_replace, "????T", "\'") 
+  mutate_at("Sonnets", str_replace, "â???T", "\'") 
 
 sonnets_df1 <- data.frame(matrix(ncol=1,nrow=154, 
                                  dimnames=list(NULL, "Sonnets")))
@@ -758,6 +749,6 @@ t3 <- table_sent %>% select(artist, sent, rank_sent)
 t3 <- t3[1:10,]
 names(t3) <- c('Artist', 'Sent. Euclidean Distance', 'Sentiment Rank')
 
-xttbl <- xtable(t3, caption="Ranked Top 10 Most Similar Music Artist to Shakespeare Based on Sentiments", label="tab:wordranktable")
+xttbl <- xtable(t3, digits = 6, caption="Ranked Top 10 Most Similar Music Artist to Shakespeare Based on Sentiments", label="tab:wordranktable")
 xxx <- print(xttbl, include.rownames=FALSE)
 writeLines( xxx, file.path("_assets", "sent_rankTable_top10_Similar.tex") )
