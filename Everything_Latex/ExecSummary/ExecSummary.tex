@@ -1,12 +1,29 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[top=30pt,bottom=30pt,left=48pt,right=46pt]{geometry}
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{caption}
+\usepackage{tipx}
+\usepackage{tipa}
+\usepackage{breakcites}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{color}
+\usepackage[fleqn]{amsmath}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{authblk}
+\usepackage{booktabs}
+\usepackage{a4wide}
+
 
 \title{Executive Summary}
 \author[*]{Mariana Gonzalez Castro}
 \author[*]{Carina Kalaydjian}
-\author[*]{Dominique McDonal}
+\author[*]{Dominique McDonald}
 \author[*]{Angel Sierra}
 \author[*]{DuoDuo Ying}
 \affil[*]{Department of Statistics, UCLA}
@@ -19,17 +36,147 @@
 
 \section{Overview}
 
-We hypothesize that we can detect outstanding and timeless modern-day artists by comparing their music with Shakespearian sonnets. Using 154 sonnets and Natural Language Processing, we found Amy Winehouse, Joni Mitchell, and Cake to be the top 3 artists most similar to Shakespeare out of our sample of 45 artists. Therefore, we encourage more attention and investment for these artists and their works for hundreds of years.
+As a prominent music label, you care about artists that are truly outstanding and stand the trial of time. Out of 45 top artists, Amy Winehouse, Joni Mitchell, and Cake are those artists due to the similarity between their work and Shakespeare's timeless sonnets. By leveraging Natural Language Processing algorithms, your label can predict future success based on the proven success of the past. 
 
-\section{The Problem}
+%[Insert Final Ranking #1]
 
-The music industry has been growing in popularity over the last few decades. In 2021, worldwide recorded music revenues totaled \$25.9 billion, up 18.5 percent from 2020. [citation] There are more and more artists representing different genres, different styles, and different personalities within these styles. As a prominent music label, how do you which artist is outstanding, and more importantly, consistent? How can we tell apart the cultural fads from timeless classics? What are some metrics we can use to measure and predict the outstanding and timelessness of music artists? [insert music trend graph here]
+\section{Methodology}
 
-\section{The Solution}
+Before employing Natural Language Processing methods such as Keyword Extraction and Sentiment Analysis, we first obtained our data containing 154 Shakespeare's sonnets and songs of 45 modern top artists. The unit of observation is an artist and their work.
 
-In this project, we proposed a method for measuring artists’ timelessness using their relevancy with Shakespeare. Our theory is that because of William Shakespeare’s relevancy and impact as a Literary Artist if a modern-day artist’s work is close to that of William Shakespeare’s, there’s a high likelihood that the artist will have relevance and impact long into the future as well.
+\subsection{Keyword Extraction}
 
-After comparing songs of 45 artists with Shakespeare's 154 sonnets, we found that Amy Winehouse, Joni Mitchell, Cake, Nickelback, and Bob Dylan are closest with Shakespeare using Natural Langauge Processing. We derived our result using text extraction and sentiment analysis. A more detailed result is following:
+One of the NLP methods we used is Keyword Extraction. This algorithm returns the most frequently used keywords from Shakespeare and the 45 artists. Here's an example using Keyword Extraction to detect top 10 most used keyword by Shakespeare:
+
+\begin{table}
+	\begin{minipage}{0.5\linewidth}
+		\centering
+		\resizebox{\columnwidth}{!}{%
+		\begin{tabular}{lrrlr}
+ 		 \hline
+			Word Rank & Artist & Word Count & Frequency & Keyword \\ 
+ 		 \hline
+  			1 &  adele &   3 & 626.00 &  love time heart\\ 
+  			2 &  nickelback &   3 & 11349.00 &  love time yet \\ 
+  			3 &  bieber &   2 & 648.00 &  love time\\ 
+  			4 &  dolly-parton &   2 & 685.00 &  love time \\ 
+  			5 &  dj-khaled &   2 & 928.00 &  mine time \\ 
+  			6 &  amy-winehouse &   2 & 3700.00 &  love time \\ 
+  			7 &  bjork &   2 & 5341.00 &  love yet \\ 
+  			8 &  leonard-cohen &   2 & 5972.00 &  love time \\ 
+  			9 &  cake &   2 & 7690.00 &  love time \\ 
+ 			 10 &  paul-simon &   2 & 8464.00 &  love time \\ 
+   		\hline
+		\end{tabular}%	
+		}
+		\caption{Ranked Top 10 Most Similar Music Artist to Shakespeare Based on Keywords}
+		\label{tab:wordranktable}
+	\end{minipage}\hfill
+	\begin{minipage}{0.45\linewidth}
+		\centering
+		\includegraphics[width=9cm]{_assets/Shakespeare_Keywords_WordCloud.png}
+		%\captionof{figure}{2-D scatterplot of the Student Database}
+		\label{ }
+	\end{minipage}
+\end{table}
+
+
+%\begin{center}
+%\includegraphics[width=12cm]{_assets/Shakespeare_Keywords_WordCloud.png}
+%\end{center}
+
+We compared the similarity between keywords for Shakespeare and the artists using first the number of similar words and then the Euclidean distance of frequency of these words. The result ranking is following:
+
+%\begin{table}[ht]
+%\centering
+%\resizebox{\columnwidth}{!}{%
+%\begin{tabular}{lrrlr}
+  %\hline
+%Word Rank & Artist & Word Count & Frequency & Keyword \\ 
+ % \hline
+ % 1 &  adele &   3 & 626.00 &  love time heart\\ 
+  %2 &  nickelback &   3 & 11349.00 &  love time yet \\ 
+  %3 &  bieber &   2 & 648.00 &  love time\\ 
+  %4 &  dolly-parton &   2 & 685.00 &  love time \\ 
+  %5 &  dj-khaled &   2 & 928.00 &  mine time \\ 
+  %6 &  amy-winehouse &   2 & 3700.00 &  love time \\ 
+  %7 &  bjork &   2 & 5341.00 &  love yet \\ 
+  %8 &  leonard-cohen &   2 & 5972.00 &  love time \\ 
+  %9 &  cake &   2 & 7690.00 &  love time \\ 
+  %10 &  paul-simon &   2 & 8464.00 &  love time \\ 
+   %\hline
+%\end{tabular}%
+%}
+%\caption{Ranked Top 10 Most Similar Music Artist to Shakespeare Based on Keywords} 
+%\label{tab:wordranktable}
+%\end{table}
+
+Based on this table, Adele, Nickelback and Bieber are the top 3 artists most similar to Shakespeare based on keywords.
+
+\subsection{Sentiment Analysis}
+
+Another NLP method we used is Sentiment Analysis. More specifically, we analyzed Shakepeare's and artists' work using 8 emotions such as anger, anticipation, disgust, fear, joy, sadness, surprise, and trust to observe similarities and differences. Using k means clustering with 10 clusters, we observed clear trends between the artists:
+
+\begin{center}
+\includegraphics[width=12cm]{_assets/ClusterAnalysis_Fit10.png}
+\end{center}
+
+Using Euclidean distance on the proportion of emotions, we found that Shakespeare's emotions through sonnets are most similar to the following artists:
+
+\begin{table}[ht]
+\centering
+%\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrr}
+  \hline
+Artist & Sent. Euclidean Distance & Sentiment Rank \\ 
+  \hline
+eminem & 0.00 &   1 \\ 
+  nirvana & 0.00 &   2 \\ 
+  cake & 0.00 &   3 \\ 
+  amy-winehouse & 0.00 &   4 \\ 
+  bob-dylan & 0.00 &   5 \\ 
+  bob-marley & 0.00 &   6 \\ 
+  johnny-cash & 0.00 &   7 \\ 
+  nickelback & 0.00 &   8 \\ 
+  britney-spears & 0.00 &   9 \\ 
+  rihanna & 0.00 &  10 \\ 
+   \hline
+\end{tabular}%
+%}
+\caption{Ranked Top 10 Most Similar Music Artist to Shakespeare Based on Sentiments} 
+\label{tab:wordranktable}
+\end{table}
+
+Based on this table, Eminem, Nirvana, and Cake are the top 3 artists most similar to Shakespeare based on sentiment.
+
+\section{Results}
+
+Combining the rankings obtained by Keyword Extraction and Sentiment Analysis, our final ranking is following:
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrr}
+  \hline
+Artist & Word Rank & Sentiment Rank & Overall Rank \\ 
+  \hline
+nickelback &   2 &   8 &  10 \\ 
+  amy-winehouse &   6 &   4 &  10 \\ 
+  cake &   9 &   3 &  12 \\ 
+  adele &   1 &  21 &  22 \\ 
+  joni-mitchell &  11 &  11 &  22 \\ 
+  leonard-cohen &   8 &  17 &  25 \\ 
+  paul-simon &  10 &  22 &  32 \\ 
+  blink-182 &  18 &  14 &  32 \\ 
+  bob-marley &  27 &   6 &  33 \\ 
+  rihanna &  25 &  10 &  35 \\ 
+   \hline
+\end{tabular}
+\caption{Ranked Top 10 Most Similar Music Artist to Shakespeare} 
+\label{tab:overallranktable}
+\end{table}
+
+
+We show that Amy Winehouse, Joni Mitchell, Cake, Nickelback, and Bob Dylan are closest with Shakespeare using the two NLP methods. Some interesting results follow:
 
 \begin{itemize}
 
@@ -50,19 +197,6 @@ After comparing songs of 45 artists with Shakespeare's 154 sonnets, we found tha
 
 \end{itemize}
 
-\begin{table}[ht]
-\centering
-\begin{tabular}{ll}
-  \hline
-Name & GameVenue \\ 
-  \hline
-Klay Thompson & United Center, Chicago, Illinois \\ 
-  Stephen Curry & Oracle Arena, Oakland, California \\ 
-  Zach LaVine & Spectrum Center, Charlotte, North Carolina \\ 
-   \hline
-\end{tabular}
-\caption{Venues where Players Made more than 12 Three-Point Shots.} 
-\label{tab:nbaTable}
-\end{table}
+
 
 \end{document}
