@@ -140,16 +140,22 @@ s <- colSums(emotions)
 ss <- s[c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
         "surprise", "trust")]
 sss <- s[c("negative", "positive")]
-barplot(ss,
+
+#shake_8sent is from Dominique's code
+shake_8sent_emotions <-shake_8sent[1:8]
+shake_8sent_sents <- shake_8sent[9:10]
+
+shake_8sent_emotions <- as.matrix(shake_8sent_emotions)
+shake_8sent_sents <- as.matrix(shake_8sent_sents)
+
+barplot(shake_8sent_emotions,
         main = "Frequency of Each Emotion",
         las = 2,
-        col = terrain.colors(15),
-        ylim = c(0,700))
-barplot(sss,
+        col = brewer.pal(8,"RdYlGn"))
+barplot(shake_8sent_sents,
         main = "Frequency of Positive and Negative Sentiments",
         las = 2,
-        col = rainbow(15),
-        ylim = c(0, 1200))
+        col = brewer.pal(3, "Spectral"))
 
 
 ```
@@ -158,15 +164,17 @@ barplot(sss,
 #visualize what words fell under the 8 emotion categories
 
 all = c(
-  paste(og_sonnets[emotions$anger > 0,], collapse=" "),
-  paste(og_sonnets[emotions$anticipation > 0,], collapse=" "),
-  paste(og_sonnets[emotions$disgust > 0,], collapse=" "),
-  paste(og_sonnets[emotions$fear > 0,], collapse=" "),
-  paste(og_sonnets[emotions$joy > 0,], collapse=" "),
-  paste(og_sonnets[emotions$sadness > 0,], collapse=" "),
-  paste(og_sonnets[emotions$surprise > 0,], collapse=" "),
-  paste(og_sonnets[emotions$trust > 0,], collapse=" ")
+  paste(all_sonnets[shake_8sent$anger > 0], collapse=" "),
+  paste(all_sonnets[shake_8sent$anticipation > 0], collapse=" "),
+  paste(all_sonnets[shake_8sent$disgust > 0], collapse=" "),
+  paste(all_sonnets[shake_8sent$fear > 0], collapse=" "),
+  paste(all_sonnets[shake_8sent$joy > 0], collapse=" "),
+  paste(all_sonnets[shake_8sent$sadness > 0], collapse=" "),
+  paste(all_sonnets[shake_8sent$surprise > 0], collapse=" "),
+  paste(all_sonnets[shake_8sent$trust > 0], collapse=" ")
 )
+
+all <- all_sonnets
 
 all <- removeWords(all, stopwords("english"))
 
@@ -190,11 +198,12 @@ tdm = as.matrix(tdm)
 colnames(tdm) = c('anger', 'anticipation', 'disgust', 'fear', 'joy', 'sadness', 
                   'surprise', 'trust')
 comparison.cloud(tdm, random.order=F,
-                 title.colors = c("#00B2FF", "red", "#FF0099", "#6600CC", 
+                 title.size=1, max.words=400,scale=c(2, 0.4),rot.per=0.5)
+
+title.colors = c("#00B2FF", "red", "#FF0099", "#6600CC", 
                                   "green", "orange", "blue", "brown"), 
                  colors = c("#00B2FF", "red", "#FF0099", "#6600CC", "green", 
                             "orange", "blue", "brown"),
-                 title.size=1, max.words=400,scale=c(2, 0.4),rot.per=0.5)
 
 ```
 
@@ -334,7 +343,7 @@ for (i in 1:45) {
                                             artists_complete$Lyrics[i]))))
 }
 
-head(df) 
+#head(df) 
 
 
 #############

@@ -16,6 +16,7 @@ library(stringr)
 library(tm)
 library(syuzhet)
 library(wordcloud)
+library(RColorBrewer)
 
 library(cluster)
 library(factoextra)
@@ -157,7 +158,7 @@ artists_complete
 ##########################################
 # Further data cleaning before keyword extraction
 og_sonnets <- og_sonnets %>% 
-  mutate_at("Sonnets", str_replace_all, "â???T", "\'") #the pattern for the special character may vary from computer to computer
+  mutate_at("Sonnets", str_replace_all, "????T", "\'") #the pattern for the special character may vary from computer to computer
 
 # need to load vector of text objects as a corpus. VectorSource() interprets each element of a vec as a document
 x_text <- Corpus(VectorSource(og_sonnets$Sonnets))
@@ -203,9 +204,13 @@ dtm_d <- data.frame(word = names(dtm_v),freq=dtm_v)
 head(dtm_d, 50)
 
 ####### Generate word cloud of Shakespeare Keywords from Sonnets and Write it out as a PNG 
-png("_assets/Shakespear_Keywords_WordCloud.png", width=1920, height=1080, pointsize=35)
+png("_assets/Shakespeare_Keywords_WordCloud.png", width=1980, height=1080, pointsize=35)
 
+layout(matrix(c(1, 2), nrow=2), heights=c(1, 4))
+par(mar=rep(0, 4))
 plot.new()
+
+text(x=0.5, y=0.5, "Shakespeare Top Keywords Wordcloud")
 
 set.seed(314)
 wordcloud(words = dtm_d$word, 
@@ -214,11 +219,12 @@ wordcloud(words = dtm_d$word,
           max.words=100, 
           random.order=FALSE, 
           rot.per=0.20, 
-          colors=brewer.pal(8, "Dark2"))
+          colors=brewer.pal(8, "Set1"),
+          main = "Title")
 
 dev.off()
 
-##### proportion calculation for Shakespear
+##### proportion calculation for Shakespeare
 head(dtm_d)
 num_terms <- length(x_text_dtm$i); num_terms #total number of terms - 7611
 nTerms(x_text_dtm) # unique terms in sonnets - 3089
@@ -256,7 +262,7 @@ for(i in 1:length(artists_complete[,2])){
   art_doc <- tm_map(art_doc, toSpace, "/")
   art_doc <- tm_map(art_doc, toSpace, "@")
   art_doc <- tm_map(art_doc, toSpace, "\\|")
-  #art_doc <- tm_map(art_doc, to_e, "â???T")
+  #art_doc <- tm_map(art_doc, to_e, "????T")
   
   # Convert the text to lower case
   art_doc <- tm_map(art_doc, content_transformer(tolower))
@@ -315,7 +321,7 @@ for(i in 1:nrow(top_artists_df)){
   art_doc <- tm_map(art_doc, toSpace, "/")
   art_doc <- tm_map(art_doc, toSpace, "@")
   art_doc <- tm_map(art_doc, toSpace, "\\|")
-  #art_doc <- tm_map(art_doc, to_e, "â???T")
+  #art_doc <- tm_map(art_doc, to_e, "????T")
   
   # Convert the text to lower case
   art_doc <- tm_map(art_doc, content_transformer(tolower))
@@ -365,53 +371,41 @@ for(i in 1:nrow(top_artists_df)){
 ##############################################################
 #                 Sentiment Analysis
 ##############################################################
-# Sentiment Analysis for Shakespears Sonnets
+# Sentiment Analysis for Shakespeare's Sonnets
 #############################################
-emotions <- data.frame(matrix(ncol=10,nrow=0, dimnames=list(NULL, 
-      c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
-        "surprise", "trust", "negative", "positive"))))
-
-n <- 154
-
-# Loop to conduct sentiment analysis to each individual sonnet
-for (i in 1:n) {
-  emotions[i,]<- get_nrc_sentiment(og_sonnets[i,1])
-  rbind(emotions[i,])
-}
-
-head(emotions)
-
-#creating barplots to visualize the sonnets sentiments dataframe
-#gathering the sums of each emotion and sentiment
-s <- colSums(emotions)
-ss <- s[c("anger", "anticipation", "disgust", "fear", "joy", "sadness", 
-        "surprise", "trust")]
-sss <- s[c("negative", "positive")]
 
 # exporting plots as png 
+all_sonnets <- paste(og_sonnets$Sonnets[1:154], collapse = " ") #the collapse argument allows you to create a single string by concatenating ea element of the vector
+all_sonnets
+
+shake_8sent <- get_nrc_sentiment(all_sonnets) #getting shakespeare sentiments
+shake_8sent
+
+shake_8sent_emotions <-shake_8sent[1:8]
+shake_8sent_sents <- shake_8sent[9:10]
+
+shake_8sent_emotions <- as.matrix(shake_8sent_emotions)
+shake_8sent_sents <- as.matrix(shake_8sent_sents)
+
 png("_assets/Barplot_Sonnets_8_Emotions.png", width=1920, height=1080, pointsize=35)
 plot.new()
 
-barplot(ss,
+barplot(shake_8sent_emotions,
         main = "Frequency of Each Emotion",
         las = 2,
-        col = terrain.colors(15),
-        ylim = c(0,700))
+        col = brewer.pal(8, "Set1"))
 
 dev.off()
 
 png("_assets/Barplot_Sonnets_2_Sentiments.png", width=1920, height=1080, pointsize=35)
 plot.new()
-barplot(sss,
+barplot(shake_8sent_sents,
         main = "Frequency of Positive and Negative Sentiments",
         las = 2,
-        col = rainbow(15),
-        ylim = c(0, 1200))
-
+        col = brewer.pal(3, "Set1"))
 
 dev.off()
 ######################################################################
-
 
 #IMPORTANT: need to change the colors so they're not that bold/glaring
 
@@ -471,7 +465,8 @@ vpc
 #writing plot out as a png 
 png("_assets/Variance_Explained_VS_Number_Clusters.png", width=1920, height=1080, pointsize=35)
 plot.new()
-plot(1:k, vpc, xlab = "# of clusters", ylab = "explained variance")
+plot(1:k, vpc, xlab = "# of clusters", ylab = "explained variance", main = "Explained Variance Based on Number of Clusters")
+
 dev.off()
 
 kfit7 <- kmeans(prop_8sent[,2:9], 7)
@@ -494,7 +489,7 @@ row.names(prop_8sent) <- all_8sent$names_8sent
 png("_assets/ClusterAnalysis_Fit7.png", width=1920, height=1080, pointsize=35)
 plot.new()
 fviz_cluster(kfit7, data = prop_8sent[,2:9],
-             palette = c("deepskyblue", "cyan3", "violet", "pink3", "red", "purple", "green3", "lightpink", "salmon3", "gray", "orange3", "olivedrab3"), 
+             palette = brewer.pal(7, "Set1"), 
              geom = c("point", "text"),
              ellipse = F,
              ellipse.type = "t", 
@@ -502,33 +497,34 @@ fviz_cluster(kfit7, data = prop_8sent[,2:9],
              )
 dev.off()
 
-png("_assets/ClusterAnalysis_Fit.png", width=1920, height=1080, pointsize=35)
+png("_assets/ClusterAnalysis_Fit8.png", width=1920, height=1080, pointsize=35)
 plot.new()
-fviz_cluster(kfit, data = prop_8sent[,2:9],
-             palette = c("deepskyblue", "cyan3", "violet", "pink3", "red", "purple", "green3", "lightpink", "salmon3", "gray", "orange3", "olivedrab3"), 
-             geom = c("point", "text"),
+fviz_cluster(kfit8, data = prop_8sent[,2:9],
+             palette = brewer.pal(8, "Set1"),
+              geom = c("point", "text"),
              ellipse = F,
              ellipse.type = "t", 
              ggtheme = theme_bw()
              )
 dev.off()
 
-png("_assets/ClusterAnalysis_Fit10png", width=1920, height=1080, pointsize=35)
+png("_assets/ClusterAnalysis_Fit10.png", width=1920, height=1080, pointsize=35)
 plot.new()
 fviz_cluster(kfit10, data = prop_8sent[,2:9],
-             palette = c("deepskyblue", "cyan3", "violet", "pink3", "red", "purple", "green3", "lightpink", "salmon3", "gray", "orange3", "olivedrab3"), 
+             palette = brewer.pal(10, "Paired"),
              geom = c("point", "text"),
              ellipse = F,
              ellipse.type = "t", 
              ggtheme = theme_bw()
-             )
+)
 dev.off()
+
 
 png("_assets/ClusterAnalysis_Fit12.png", width=1920, height=1080, pointsize=35)
 plot.new()
 fviz_cluster(kfit12, data = prop_8sent[,2:9],
-             palette = c("deepskyblue", "cyan3", "violet", "pink3", "red", "purple", "green3", "lightpink", "salmon3", "gray", "orange3", "olivedrab3"), 
-             geom = c("point", "text"),
+             palette = brewer.pal(12, "Paired"),
+              geom = c("point", "text"),
              ellipse = F,
              ellipse.type = "t", 
              ggtheme = theme_bw()
@@ -587,7 +583,7 @@ sonnet_data <- head(dtm_prop, 10); sonnet_data
 #data cleanup using dplyr
 sonnets <- 
   og_sonnets %>% 
-  mutate_at("Sonnets", str_replace, "â???T", "\'") 
+  mutate_at("Sonnets", str_replace, "????T", "\'") 
 
 sonnets_df1 <- data.frame(matrix(ncol=1,nrow=154, 
                                  dimnames=list(NULL, "Sonnets")))
@@ -595,7 +591,7 @@ sonnets_df1 <- data.frame(matrix(ncol=1,nrow=154,
 #I manually removed the punctuation except for apostrophes
 n <- 154
 for (i in 1:n) {
-  sonnets_df1[i,]<- gsub("[,.;:?!]", "", sonnets[i,1])
+  sonnets_df1[i,]<- gsub("[,.;:?!]", "", og_sonnets[i,1])
   rbind(sonnets_df1[i,])
 } 
 
@@ -695,29 +691,59 @@ for(i in 1:length(artists_complete[,2])){
   artist_keyword[i,]$sent <- sum((s_prop - emotions_prop)^2)
 }
 
-table_word <- artist_keyword[order(artist_keyword$word, decreasing = TRUE),] %>%
+table_word <- artist_keyword[order(artist_keyword$word,-rank(artist_keyword$freq_df), decreasing = TRUE),] %>%
   mutate(rank_word = 1:nrow(artist_keyword))
 table_sent <- artist_keyword[order(artist_keyword$sent),]  %>%
   mutate(rank_sent = 1:nrow(artist_keyword))
-
+  
 rank_table <- table_word %>%
   left_join(table_sent, by = "artist") %>%
   select(artist, rank_word, rank_sent) %>%
   mutate(rank = rank_word + rank_sent)
-  rank_table[order(rank_table$rank),]
   
+table_word
+table_sent
+
 ## Writing resulting top 10 most similar artist to Shakespeare out as a write able .tex file 
 t <- rank_table[order(rank_table$rank),]
 #selecting top ten
 t1 <- t[1:10,]
 
-####make bottom 5 least similar to shakespear 
+####make bottom 5 least similar to shakespeare 
 
 t1 <- as.data.frame(t1)
 #rename column name so table looks nice in latex
-names(t1) <- c('Artist', 'Word Rank', 'Sent. Rank', 'Overall Rank') 
+names(t1) <- c('Artist', 'Word Rank', 'Sentiment Rank', 'Overall Rank') 
 #making xtable to .tex file 
-xttbl <- xtable(t1, caption="Ranked Top 10 Most Similar Music Artist to Shakespear", label="tab:ranktable")
+xttbl <- xtable(t1, caption="Ranked Top 10 Most Similar Music Artist to Shakespeare", label="tab:overallranktable")
 xxx <- print(xttbl, include.rownames=FALSE)
-writeLines( xxx, file.path("_assets", "rankTable_top10_Similar.tex") )
+writeLines( xxx, file.path("_assets", "overall_rankTable_top10_Similar.tex") )
 
+##writing bottom 5 just in case we want to use it
+
+b_t1 <- t[40:45,]
+names(b_t1) <- c('Artist', 'Word Rank', 'Sentiment Rank', 'Overall Rank')
+
+xttbl <- xtable(b_t1, caption="Ranked Bottom 5 Least Similar Music Artist to Shakespeare", label="tab:bottom5_ranktable")
+xxx <- print(xttbl, include.rownames=FALSE)
+writeLines( xxx, file.path("_assets", "bottom5_rankTable_top10_Similar.tex") )
+
+##Writing top 10 Keyword Rankings
+
+t2 <- table_word %>% select(artist, word, freq_df, keyword, rank_word)
+t2 <- t2[1:10,]
+names(t2) <- c('Artist', 'Word Count', 'Frequency', 'Keyword', 'Word Rank')
+
+xttbl <- xtable(t2, caption="Ranked Top 10 Most Similar Music Artist to Shakespeare Based on Keywords", label="tab:wordranktable")
+xxx <- print(xttbl, include.rownames=FALSE)
+writeLines( xxx, file.path("_assets", "word_rankTable_top10_Similar.tex") )
+
+##Writing top 10 Sentiment Rankings
+
+t3 <- table_sent %>% select(artist, sent, rank_sent)
+t3 <- t3[1:10,]
+names(t3) <- c('Artist', 'Sent. Euclidean Distance', 'Sentiment Rank')
+
+xttbl <- xtable(t3, caption="Ranked Top 10 Most Similar Music Artist to Shakespeare Based on Sentiments", label="tab:wordranktable")
+xxx <- print(xttbl, include.rownames=FALSE)
+writeLines( xxx, file.path("_assets", "sent_rankTable_top10_Similar.tex") )
