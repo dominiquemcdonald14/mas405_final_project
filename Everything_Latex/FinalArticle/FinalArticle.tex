@@ -9,12 +9,9 @@
 \usepackage{tipa} % imports greek characters and other random letters heres a cool cheat sheet! https://ptmartins.info/tex/tipacheatsheet.pdf
 \usepackage{tipx} % additional font comands for the tipa package. not 100%
 \usepackage{breakcites} % an asthetics feather that makes a line break after citations 
-
-
 \usepackage{makeidx}
 \usepackage[hyperpageref]{backref}
 
-%%%%%%%%%
 \usepackage{color}
 \definecolor{MyDarkGreen}{rgb}{0.0,0.4,0.0}
 \definecolor{MyDarkRed}{rgb}{0.4,0.0,0.0} 
@@ -23,12 +20,10 @@
 
 \usepackage[colorlinks=true, urlcolor= MyBlue, linkcolor= MyBlue, citecolor=MyDarkGreen ]{hyperref}
 
-%
 \setcounter{secnumdepth}{3}
 \setcounter{tocdepth}{3}
 \makeindex
 
-%graphics rule found from prof zes code from previous workshop. i added it thinking it can help when were ready for graphics input ? 
 \DeclareCaptionLabelSeparator{space}
 
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
@@ -42,15 +37,11 @@
 \parskip = 0.2in
 \parindent = 0.0in
 
-%%%%%%%%%%
 % defining thorems corollarys and definitions 
 \newtheorem{theorem}{Theorem}
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{definition}{Definition}
 
-%%%%%
-%this was the abstract defining code i got form the overleaf template document i sent. it seems too make it look 
-% more alligned than just defining the abstract after \beging{document}
 \setlength{\parindent}{1cm}
 \newcommand{\abstractinenglishname}{Abstract}
 \newenvironment{abstractinenglish}{
@@ -60,7 +51,6 @@
         \end{abstract}
 }
 
-%%%%%%%%%%%
 %title, author, date defineing
 \title {Which Modern-Day Music Artist is William Shakespeare Most Similar too\\[1ex]}
 \author{
@@ -71,8 +61,6 @@ Danny Ying,
 and Carina Kalaydjian \\[1ex]
 }
 \date{June 7th, 2022}
-
-
 %%%%%%%%%%%%%%%%%
 %	HELPFUL BIBLIOGRAPHY KEY
 % Here im going to list all the bibliography entries refnrece names and a short description of what the refrence is refrencing. 
@@ -95,11 +83,10 @@ and Carina Kalaydjian \\[1ex]
 % NLP-for-music - Natural language processing for music knowledge discovery, article 
 % NLP-for-lyrics - Natural language processing of lyrics, article
 % knowledge-graphs - An Introduction to Knowledge Graphs, from standord AI labs 
+% nrc-sentiment - NRC Word-Emotion Association Lexicon
 %%%%%%%%%%%%%%%%%%
 
-
 \begin{document}
-
 
 \maketitle
 \vspace{6pt}
@@ -109,8 +96,10 @@ and Carina Kalaydjian \\[1ex]
 \end{abstractinenglish}
 
 \section{Introduction}
-test to make sure all the citations work 
-here we cite \cite{web1} our glorius leader \cite{web2} yeah yeah cool cool \cite{briney2015data} and this too \cite{monkey} this as well \cite{sonnetsData} woohooo!!! \cite{musicData} and \cite{syuzhet} and \cite{tm} and \cite{shakeFacts} sdljdj \cite{k-means} , \cite{NLP-for-music} and  \cite{NLP-for-lyrics}, \cite{knowledge-graphs}
+
+%%%%%%%% Remove tester before submitting 
+here we cite \cite{web1} our glorius leader \cite{web2} yeah yeah cool cool \cite{briney2015data} and this too \cite{monkey} this as well \cite{sonnetsData} woohooo!!! \cite{musicData} and \cite{syuzhet} and \cite{tm} and \cite{shakeFacts} sdljdj \cite{k-means} , \cite{NLP-for-music} and  \cite{NLP-for-lyrics}, \cite{knowledge-graphs}, \cite{nrc-sentiment}
+%%%%%%%%%%%%%%%%%%
 
 William Shakespeare is a world-renowned poet from 16th-century England. In his lifetime of 52 years, he wrote 37 plays, 154 sonnets, and many poems\cite{shakeFacts}. William Shakespeare has recognition for being one of the most revolutionary Literarry Artists to this date\cite{shakeFacts}. The Oxford Dictionary of Quotations states that William Shakespeare wrote close to one tenth of the most quoted lines ever written or spoken in English\cite{shakeFacts}. Shakespeare is also the second most quoted English writer after the writers of the bible\cite{shakeFacts}. Through his work, Shakespear introduced almost  3,000 words to the English language, these words can still be found in the Oxford English Dictionary today\cite{shakeFacts}! Shakespeare has an incredible ability to deeply express emotions through his work. Reders have been inspired and moved by his work for centuries. Shakespeare changed the world through his literary works. That is why William Shakespear is the best candidate to analyze and see how his Literary work compares to modern-day music artists song lyrics. 
 
@@ -119,7 +108,52 @@ For this project we will be analzing Shakespeare's words and usage of emotion fr
 In order to answer this question, we are going to use various methods of Text Analysis, analysis of unorganized text data\cite{monkey}. The different forms of Text Analysis that we will be using for this project are Sentiment Analysis and Keyword Extraction. Sentiment Analysis involves analyzing the text and being able to extract the different emotions the text is expressing\cite{monkey}. Keyword Extraction analyzes the text and identifies which words appear most frequently in the text, these words are called Keywords\cite{monkey}. The combination of these two methods will bring the result of which music artist is the most similar to shakespear in therms of types of words used and which music artist is the most similar to Shakespeare in terms of emotion expressed through words.  
 
 \section{Methods}
+There is a growing demand for the application of Natural Language Processing to drive music knowledge discovery \cite{NLP-for-lyrics}. Within song lyrics there is a wealth of information that can be used to gain insights about the song and its listeners. The workflow used to conduct NLP is outlined in Oramas et. Al \cite{NLP-for-music} as the following steps 1. Corpus creation (collection of separated documents), 2. Text mining (accessing desired info and eliminating the excess), 3. Information extraction (word frequency, collocation, word position, etc.), 4. Knowledge graph generation (a directed labeled graph in which we have associated domain specific meanings with nodes and edges \cite{knowledge-graphs}), 5. Sentiment Analysis (Identify feelings and emotions present in a text \cite{monkey}).
+ 
+This NLP pipeline can be applied to music to provide recommendations on what songs a listener might like based on what they already listen to. \cite{NLP-for-lyrics} This information is gathered by performing what’s called a similarity search. Mahedero et al \cite{NLP-for-lyrics} conducts a similarity search for their project by first calculating a similarity measure. The similarity measure used is known as the Standard Cosine Distance (SCD). The calculations of the SCD are beyond the scope of this paper, but something to note is that the SCD relies on the Inverse Document Frequency as a way to measure the prevalence of words in a document and compare that to other documents. 
 
+As previously stated, we relied on Natural Language Processing methods to calculate the similarity between Shakespeare and current artists with the hope of identifying a single artist whose work has similar themes as Shakespeare’s. Our pipeline was structured similarly to that proposed in \cite{NLP-for-music} with the main difference being that we do not rely on knowledge graph generation to store any information or display findings. The methods that were most useful for this research were keyword extraction and sentiment analysis. Both methods of analysis provided us with crucial insights, so the details of each seem pertinent to share. 
+
+\subsection{Keyword Extraction}
+Keyword extraction is largely aimed at identifying the most relevant words in different texts and utilizing those words to understand common theme or popular topics.\cite{monkey} We used the tm library in R to perform keyword extraction\cite{tm} on the sonnets. This process involves first prepping the text by removing unwanted punctuation or numbers, eliminating stop words, changing everything to lower case. These transformations are necessary because when working with strings, you not only have to be precise, but you also must be exact. The cleaning process sometimes includes stemming the words, but we opted not to do that. Once the text is clean the idea is to create a table containing each word used in the text and the frequency with which it is used. To identify the top ten key words we sorted the words in the matrix by their frequency. 
+%%%%%%%%%%% keywords shakespears wordcloud 
+\begin{center}
+\includegraphics[width=14cm]{_assets/Shakespeare_Keywords_WordCloud.png}
+\end{center}
+
+Once Shakespeare’s keywords were identified, the next step was to identify the keywords for each of the 45 music artists. This process mirrored that of extracting keywords from the sonnets except we utilized an algorithm to automate the process for each artist. Once keywords were identified we converted the word frequencies for Shakespeare and all other artists into proportions, in order to standardize for comparison. To find the artists who were most like Shakespeare based on keywords, we checked for artist who had the highest number of matching keywords. Finally, then we ranked those by who used keywords in similar proportions to Shakespeare by calculating the Euclidian distance between the proportions of each of the matching keywords. This is similar to what Mahedero et. Al \cite{NLP-for-lyrics} does for their similarity search except we rely on word proportions and Euclidean distance, while their research utilizes Inverse Document Frequency and the Standard Cosine Distances. 
+
+%%%%%%%%%%%%%% include keyword rankings table here
+ \input{_assets/word_rankTable_top10_Similar.tex}
+
+\subsection{Sentiment Analysis}
+A similar sort of ranking was achieved from Sentiment Analysis, but the process has notable differences. The library syuzhet was used for the analysis. There is a wide variety of paths one could explore when performing sentiment analysis. Two that seemed viable for the purpose of this research were calculating an overall sentiment score and identifying the different emotions present in each text. \cite{syuzhet} The latter option proved to be more fruitful, as the analysis is more detailed. This process of classification based on emotion is known as NRC sentiment analysis. NRC Sentiment Analysis uses the National Research Council (NRC) Word-Emotion Association Lexicon to classify words in a text into eight categories of emotions. \cite{nrc-sentiment} It is important to note that a word may be associated with more than one emotion. The eight emotions are anger, anticipation, disgust, fear, joy, sadness, surprise, trust (include simple equation). \cite{nrc-sentiment} The objective of NRC Sentiment Analysis is to calculate the frequency with which each emotion is conveyed. This is calculated by identifying the emotions associated with the unique words in a text and summing up all the instances of each emotion\cite{syuzhet}. 
+
+%%%%%%%%%%%  sentiment analysis ranking table 
+ \input{_assets/sent_rankTable_top10_Similar.tex} 
+\newpage
+
+Once the NRC sentiments were calculated for both Shakespeare and the music artists, the frequencies were converted to proportions for accurate comparison. Using the proportions of each emotion, Euclidean distance was calculated for between each music artist and Shakespeare. The artists with the shortest distances from Shakespeare were considered the most similar to him, and therefore ranked higher in regard to comparison of the emotions conveyed in their works. 
+
+After comparing results from each analysis method, a final ranking was calculated. This overall ranking was calculated by summing up the rankings from both analysis methods. Because similarity to Shakespeare was assessed using Euclidean distance, lower rankings signify higher similarity to Shakespeare. This meant that the artists with the lowest overall ranking mirrored Shakespeare’s work emotionally more than other artists.
+
+%%%%%%%%%% all rankings table
+\input{_assets/overall_rankTable_top10_Similar.tex}
+
+\subsection{K-Means Clustering}
+The NRC sentiments were utilized even further as predictors in K-Means Cluster Analysis. The objective of cluster analysis within the scope of this research is to utilize an unsupervised learning model \cite{k-means} to assess commonalities between the work of each music artist and Shakespeare. K-Means clustering is an iterative method that categorizes each data point into one of k predefined groups, or clusters. The process is driven by two objectives. The first being maximizing the distance between clusters, so that they are distinct. The second is minimizing the data points within a cluster, so the clusters themselves are homogenous. \cite{k-means} By employing K-means Clustering we were able to identify a group of artists that whose work most closely matches Shakespeare’s. 
+
+%%%%%%%% (include cluster analysis plot)
+\begin{center}
+\includegraphics[width=14cm]{_assets/ClusterAnalysis_Fit10.png}
+\end{center}
+
+\subsection{Data Management}
+Before discussing the results of our various methods, it is important to address what made such an undertaking possible: data management.  The size of this project necessitated multiple team members using multiple platforms. The data was stored in a relational database and then hosted on  Amazon Web Services(AWS) service called Relational Database Services(RDS). Using RDS preserves the database from alterations, each memeber each member provided the read only user credentials to their database to enable the team to access data without making changes to the database itself. Once we had the data it the next steps were to process and analyze it. 
+
+Again, with so many contributors working to advance the project it was necessary to have an avenue for efficient and organized sharing of code. For this aspect of the project, GitHub was utilized and it allowed team members to work on the same files from different locations and share them as frequently as necessary. Along with our code we are also able to store and share important information that aided us in our research. The different information sharing structures employed allowed for efficient progression and ultimately valuable results. 
+
+\section{Results}
 % Example of how to refrence name of a code file in apendix 
 % Examine and run \texttt{\char`_code\char`_A.R}
 %
@@ -128,15 +162,14 @@ In order to answer this question, we are going to use various methods of Text An
 % install ccrypt
 % \end{verbatim}
 
-
-\section{Results}
-
 %example of how to insert a picture
 %\begin{center}
 %\includegraphics[width=14cm]{_assets/*some name*.png}
 %\end{center}
 
 \section{Conclusions}
+
+
 
 \include{appendicitis}
 

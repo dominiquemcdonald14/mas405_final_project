@@ -23,6 +23,11 @@
   \url{https://www.udacity.com/blog/2020/10/natural-language-processing-with-r.html}.
 \newblock Accessed May 20, 2022.
 
+\bibitem{nrc-sentiment}
+{NRC Word-Emotion Association Lexicon}.
+\newblock \url{https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm}.
+\newblock Accessed June 3, 2022.
+
 \bibitem{syuzhet}
 {Syuzhet Package Documentation in R}.
 \newblock \url{https://www.rdocumentation.org/packages/syuzhet/versions/1.0.6}.
