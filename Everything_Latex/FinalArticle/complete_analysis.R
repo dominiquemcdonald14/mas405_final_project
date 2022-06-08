@@ -330,66 +330,68 @@ artist_keyword[1:45] #run this from your console to see results more easily
 
 
 ######## Loop to generate top Music Artists key words World Clouds
-top_artists_df <- artists_complete[artists_complete$Artist %in% c("amy-winehouse", "nickelback", "cake", "adele", 
-                                                                  "joni-mitchell", "bob-dylan", "bob-marley", 
-                                                                  "leonard-cohen", "britney-spears" ,"blink-182"), ]
-top_artists_df 
+#however loop is not working properly but we tried! 
+# top_artists_df <- artists_complete[artists_complete$Artist %in% c("amy-winehouse", "nickelback", "cake", "adele", 
+#                                                                   "joni-mitchell", "bob-dylan", "bob-marley", 
+#                                                                   "leonard-cohen", "britney-spears" ,"blink-182"), ]
+# top_artists_df 
+# 
+# for(i in 1:nrow(top_artists_df)){
+#   
+#   art_doc <- Corpus(VectorSource(top_artists_df[i,2])) 
+#   
+#   #Replacing "/", "@" and "|" with space
+#   toSpace <- content_transformer(function (y , pattern ) gsub(pattern, " ", y))
+#   art_doc <- tm_map(art_doc, toSpace, "/")
+#   art_doc <- tm_map(art_doc, toSpace, "@")
+#   art_doc <- tm_map(art_doc, toSpace, "\\|")
+#   #art_doc <- tm_map(art_doc, to_e, "????T")
+#   
+#   # Convert the text to lower case
+#   art_doc <- tm_map(art_doc, content_transformer(tolower))
+#   
+#   # Remove numbers
+#   art_doc <- tm_map(art_doc, removeNumbers)
+#   
+#   # Remove common English stop words
+#   art_doc <- tm_map(art_doc, removeWords, stopwords("english"))
+#   
+#   # Removing custom stop words, specify stop words as a character vector
+#   art_doc <- tm_map(art_doc, removeWords, c("aint", "ooh", "thou", "never", "yeah", "hey", "though", "just", "will", "dont", "gonna", "can",                                                            "let", "thing", "every", "cause", "Since", "along",  "always", "many" , "eighteen", "hundred",
+#                                             "upon", "from", "nah", "aint", "now", "one", "two", "cant", "dont", "wont", "like", "much")) 
+#   # Remove punctuation
+#   art_doc <- tm_map(art_doc, removePunctuation)
+#   
+#   # Eliminate extra white spaces
+#   art_doc <- tm_map(art_doc, stripWhitespace)
+#   
+#   #art_doc #NO DOCUMENTS DROPPED
+#   
+#   #number of total terms is the non sparse entries
+#   art_doc_dtm <- TermDocumentMatrix(art_doc)
+#   artist_mat_dtm <- as.matrix(art_doc_dtm)
+#   
+#   # Sort by decreasing value of frequency
+#   artisit_dtm_v <- sort(rowSums(artist_mat_dtm),decreasing=TRUE)
+#   artist_dtm_d <- data.frame(word = names(artisit_dtm_v),freq=artisit_dtm_v)
+#   artist_dtm_d
+#   
+#   #word cloud generation for artist 
+#   artistName <- top_artists_df$Artist[i]
+#   wc_Filename <- paste0("_assets/", artistName, "_KeyWord_WordCloud4.png")
+#   
+#   png(wc_Filename, width=1920, height=1080, pointsize=35)
+#   
+#   plot.new()
+#   
+#   set.seed(314)
+#   wordcloud(words = artist_dtm_d$word, freq = artist_dtm_d$freq, min.freq = 5,
+#             max.words=100, random.order=FALSE, rot.per=0.20, 
+#             colors=brewer.pal(8, "Dark2"))
+#   
+#   dev.off()
+# }
 
-for(i in 1:nrow(top_artists_df)){
-  
-  art_doc <- Corpus(VectorSource(top_artists_df[i,2])) 
-  
-  #Replacing "/", "@" and "|" with space
-  toSpace <- content_transformer(function (y , pattern ) gsub(pattern, " ", y))
-  art_doc <- tm_map(art_doc, toSpace, "/")
-  art_doc <- tm_map(art_doc, toSpace, "@")
-  art_doc <- tm_map(art_doc, toSpace, "\\|")
-  #art_doc <- tm_map(art_doc, to_e, "????T")
-  
-  # Convert the text to lower case
-  art_doc <- tm_map(art_doc, content_transformer(tolower))
-  
-  # Remove numbers
-  art_doc <- tm_map(art_doc, removeNumbers)
-  
-  # Remove common English stop words
-  art_doc <- tm_map(art_doc, removeWords, stopwords("english"))
-  
-  # Removing custom stop words, specify stop words as a character vector
-  art_doc <- tm_map(art_doc, removeWords, c("aint", "ooh", "thou", "never", "yeah", "hey", "though", "just", "will", "dont", "gonna", "can",                                                            "let", "thing", "every", "cause", "Since", "along",  "always", "many" , "eighteen", "hundred",
-                                            "upon", "from", "nah", "aint", "now", "one", "two", "cant", "dont", "wont", "like", "much")) 
-  # Remove punctuation
-  art_doc <- tm_map(art_doc, removePunctuation)
-  
-  # Eliminate extra white spaces
-  art_doc <- tm_map(art_doc, stripWhitespace)
-  
-  #art_doc #NO DOCUMENTS DROPPED
-  
-  #number of total terms is the non sparse entries
-  art_doc_dtm <- TermDocumentMatrix(art_doc)
-  artist_mat_dtm <- as.matrix(art_doc_dtm)
-  
-  # Sort by decreasing value of frequency
-  artisit_dtm_v <- sort(rowSums(artist_mat_dtm),decreasing=TRUE)
-  artist_dtm_d <- data.frame(word = names(artisit_dtm_v),freq=artisit_dtm_v)
-  artist_dtm_d
-  
-  #word cloud generation for artist 
-  artistName <- top_artists_df$Artist[i]
-  wc_Filename <- paste0("_assets/", artistName, "_KeyWord_WordCloud4.png")
-  
-  png(wc_Filename, width=1920, height=1080, pointsize=35)
-  
-  plot.new()
-  
-  set.seed(314)
-  wordcloud(words = artist_dtm_d$word, freq = artist_dtm_d$freq, min.freq = 5,
-            max.words=100, random.order=FALSE, rot.per=0.20, 
-            colors=brewer.pal(8, "Dark2"))
-  
-  dev.off()
-}
 
 ##############################################################
 #                 Sentiment Analysis
@@ -731,10 +733,10 @@ table_sent
 
 ## Writing resulting top 10 most similar artist to Shakespeare out as a write able .tex file 
 t <- rank_table[order(rank_table$rank),]
-
+t
 #selecting top ten
 t1 <- t[1:10,]
-
+t1
 ####make bottom 5 least similar to shakespeare 
 
 t1 <- as.data.frame(t1)
@@ -759,6 +761,7 @@ writeLines( xxx, file.path("_assets", "bottom5_rankTable_top10_Similar.tex") )
 t2 <- table_word %>% select(artist, word, freq_df, keyword, rank_word)
 t2 <- t2[1:10,]
 names(t2) <- c('Artist', 'Word Count', 'Frequency', 'Keyword', 'Word Rank')
+t2
 
 xttbl <- xtable(t2, caption="Ranked Top 10 Most Similar Music Artist to Shakespeare Based on Keywords", label="tab:wordranktable")
 xxx <- print(xttbl, include.rownames=FALSE)
@@ -769,7 +772,7 @@ writeLines( xxx, file.path("_assets", "word_rankTable_top10_Similar.tex") )
 t3 <- table_sent %>% select(artist, sent, rank_sent)
 t3 <- t3[1:10,]
 names(t3) <- c('Artist', 'Sent. Euclidean Distance', 'Sentiment Rank')
-
+t3
 xttbl <- xtable(t3, digits = 6, caption="Ranked Top 10 Most Similar Music Artist to Shakespeare Based on Sentiments", label="tab:wordranktable")
 xxx <- print(xttbl, include.rownames=FALSE)
 writeLines( xxx, file.path("_assets", "sent_rankTable_top10_Similar.tex") )
