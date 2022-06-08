@@ -228,6 +228,25 @@ wordcloud(words = dtm_d$word,
 
 dev.off()
 
+#### world coud no title
+png("_assets/Shakespeare_Keywords_WordCloud_No_title.png", width=1980, height=1080, pointsize=35)
+
+layout(matrix(c(1, 2), nrow=2), heights=c(1, 4))
+par(mar=rep(0, 4))
+plot.new()
+
+set.seed(314)
+wordcloud(words = dtm_d$word, 
+          freq = dtm_d$freq, 
+          min.freq = 5,
+          max.words=100, 
+          random.order=FALSE, 
+          rot.per=0.20, 
+          colors=brewer.pal(8, "Set1"),
+          main = "Title")
+
+dev.off()
+
 ##### proportion calculation for Shakespeare
 head(dtm_d)
 num_terms <- length(x_text_dtm$i); num_terms #total number of terms - 7611
@@ -705,12 +724,14 @@ rank_table <- table_word %>%
   left_join(table_sent, by = "artist") %>%
   select(artist, rank_word, rank_sent) %>%
   mutate(rank = rank_word + rank_sent)
-  
+
+rank_table  
 table_word
 table_sent
 
 ## Writing resulting top 10 most similar artist to Shakespeare out as a write able .tex file 
 t <- rank_table[order(rank_table$rank),]
+
 #selecting top ten
 t1 <- t[1:10,]
 

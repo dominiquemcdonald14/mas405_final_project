@@ -86,6 +86,8 @@ and Carina Kalaydjian \\[1ex]
 % nrc-sentiment - NRC Word-Emotion Association Lexicon
 %%%%%%%%%%%%%%%%%%
 
+%Testing space 
+
 \begin{document}
 
 \maketitle
@@ -96,6 +98,18 @@ and Carina Kalaydjian \\[1ex]
 \end{abstractinenglish}
 
 \section{Introduction}
+% Example of how to refrence name of a code file in apendix 
+% Examine and run \texttt{\char`_code\char`_A.R}
+%
+% Example of how to make latex print texts that looks like terminal commands 
+% \begin{verbatim}
+% install ccrypt
+% \end{verbatim}
+
+%example of how to insert a picture
+%\begin{center}
+%\includegraphics[width=14cm]{_assets/*some name*.png}
+%\end{center}
 
 %%%%%%%% Remove tester before submitting 
 here we cite \cite{web1} our glorius leader \cite{web2} yeah yeah cool cool \cite{briney2015data} and this too \cite{monkey} this as well \cite{sonnetsData} woohooo!!! \cite{musicData} and \cite{syuzhet} and \cite{tm} and \cite{shakeFacts} sdljdj \cite{k-means} , \cite{NLP-for-music} and  \cite{NLP-for-lyrics}, \cite{knowledge-graphs}, \cite{nrc-sentiment}
@@ -116,6 +130,7 @@ There is a growing demand for the application of Natural Language Processing to 
 
 \subsection{Keyword Extraction}
 Keyword extraction is largely aimed at identifying the most relevant words in different texts and utilizing those words to understand common theme or popular topics.\cite{monkey} We used the tm library in R to perform keyword extraction\cite{tm} on the sonnets. This process involves first prepping the text by removing unwanted punctuation or numbers, eliminating stop words, changing everything to lower case. These transformations are necessary because when working with strings, you not only have to be precise, but you also must be exact. The cleaning process sometimes includes stemming the words, but we opted not to do that. Once the text is clean the idea is to create a table containing each word used in the text and the frequency with which it is used. To identify the top ten key words we sorted the words in the matrix by their frequency. 
+
 %%%%%%%%%%% keywords shakespears wordcloud 
 \begin{center}
 \includegraphics[width=14cm]{_assets/Shakespeare_Keywords_WordCloud.png}
@@ -159,34 +174,33 @@ Before discussing the results of our various methods, it is important to address
 %%%%%%%%%%%%%% include keyword rankings table here
 \input{_assets/word_rankTable_top10_Similar.tex}
 
-% Example of how to refrence name of a code file in apendix 
-% Examine and run \texttt{\char`_code\char`_A.R}
-%
-% Example of how to make latex print texts that looks like terminal commands 
-% \begin{verbatim}
-% install ccrypt
-% \end{verbatim}
 
-%example of how to insert a picture
-%\begin{center}
-%\includegraphics[width=14cm]{_assets/*some name*.png}
-%\end{center}
+
+
+
+
 
 \section{Conclusions}
 
 
 
-\newpage
+
+
+
+
+
+
 \section{Appendix}
-Here's our code for the project
-%\VerbatimInput{complete_analysis.R}
-
+Here's our code for the project Here's our code from \texttt{\char`complete\char`_analysis.R}
+% inputting the R script 
+\UseRawInputEncoding
+\VerbatimInput{complete_analysis.R}
 \newpage
 
+%generating bibliography 
 \bibliographystyle{plain}
 \bibliography{FinalArticle} 
 
-\newpage{}
 \include{appendicitis}
 
 
