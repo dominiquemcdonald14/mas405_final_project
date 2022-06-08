@@ -20,7 +20,7 @@
 \usepackage{a4wide}
 
 
-\title{Executive Summary}
+\title{Executive Summary: Applications of Natural Language Processing to Compare Shakespearean Sonnets to Modern Musical Artists}
 \author[*]{Mariana Gonzalez Castro}
 \author[*]{Carina Kalaydjian}
 \author[*]{Dominique McDonald}
@@ -28,7 +28,7 @@
 \author[*]{DuoDuo Ying}
 \affil[*]{Department of Statistics, UCLA}
 
-\date{June 2022}
+\date{June 7, 2022}
 
 \begin{document}
 
@@ -65,7 +65,7 @@ Artist & Overall Rank \\
 
 \section{Methodology}
 
-Before employing Natural Language Processing methods such as Keyword Extraction and Sentiment Analysis, we first obtained our data containing 154 Shakespeare's sonnets and songs of 45 modern top artists. The unit of observation is an artist and their work. The data is stored on AWS RDS for portability.
+Before employing Natural Language Processing methods such as Keyword Extraction and Sentiment Analysis, we first obtained our data containing 154 Shakespeare's sonnets and songs of 45 modern top artists. The unit of observation is an artist and a subset of their discography. The data is stored on AWS RDS for portability.
 
 \subsection{Keyword Extraction}
 
@@ -99,7 +99,7 @@ We compared the similarity between keywords for Shakespeare and the artists usin
 	\end{minipage}\hfill
 	\begin{minipage}{0.45\linewidth}
 		\centering
-		\includegraphics[width=9cm]{_assets/Shakespeare_Keywords_WordCloud.png}
+		\includegraphics[width=5cm]{_assets/Shakespeare_Keywords_WordCloud.png}
 		\captionof{figure}{Shakespeare Top Keywords Wordcloud}
 		\label{ }
 	\end{minipage}
@@ -117,12 +117,13 @@ Based on this table, Adele, Nickelback and Bieber are the top 3 artists most sim
 Another NLP method we used is Sentiment Analysis. More specifically, we analyzed Shakepeare's and artists' work using 8 emotions such as anger, anticipation, disgust, fear, joy, sadness, surprise, and trust to observe similarities and differences. Using k means clustering with 10 clusters, we observed clear trends between the artists:
 
 \begin{center}
-\includegraphics[width=12cm]{_assets/ClusterAnalysis_Fit10.png}
+\includegraphics[width=10cm]{_assets/ClusterAnalysis_Fit10.png}
 \captionof{figure}{Cluster Analysis using 8 Emotions from 45 Artists and Shakespeare}
 \end{center}
 
 Using Euclidean distance on the proportion of emotions, we found that Shakespeare's emotions through sonnets are most similar to the following artists:
 
+   
 \begin{table}[ht]
 \centering
 \resizebox{6cm}{1.7cm}{%
@@ -130,16 +131,16 @@ Using Euclidean distance on the proportion of emotions, we found that Shakespear
   \hline
 Artist & Sent. Euclidean Distance & Sentiment Rank \\ 
   \hline
-eminem & 0.00 &   1 \\ 
-  nirvana & 0.00 &   2 \\ 
-  cake & 0.00 &   3 \\ 
-  amy-winehouse & 0.00 &   4 \\ 
-  bob-dylan & 0.00 &   5 \\ 
-  bob-marley & 0.00 &   6 \\ 
-  johnny-cash & 0.00 &   7 \\ 
-  nickelback & 0.00 &   8 \\ 
-  britney-spears & 0.00 &   9 \\ 
-  rihanna & 0.00 &  10 \\ 
+amy-winehouse & 0.001227 &       1 \\ 
+  eminem & 0.001237 &       2 \\ 
+  cake & 0.001304 &       3 \\ 
+  nirvana & 0.001365 &       4 \\ 
+  bob-dylan & 0.001471 &       5 \\ 
+  bob-marley & 0.001492 &       6 \\ 
+  johnny-cash & 0.001589 &       7 \\ 
+  nickelback & 0.001827 &       8 \\ 
+  britney-spears & 0.002097 &       9 \\ 
+  rihanna & 0.002249 &      10 \\ 
    \hline
 \end{tabular}%
 }
@@ -147,7 +148,9 @@ eminem & 0.00 &   1 \\
 \label{tab:wordranktable}
 \end{table}
 
-Based on this table, Eminem, Nirvana, and Cake are the top 3 artists most similar to Shakespeare based on sentiment.
+
+
+Based on this table, Amy Winehouse, Eminem, and Cake are the top 3 artists most similar to Shakespeare based on sentiment.
 
 \section{Results}
 
@@ -182,10 +185,8 @@ We show that Nickelback, Amy Winehouse, Cake, Adele, and Joni Mitchell are top 5
 
 \begin{itemize}
 
-\item Using Key Word extraction, we compared the top 10 most frequent key words in both Shakepeare sonnets and artist songs. We found that Adele and Disney both share 3 same key words: “love”, “time”, and “heart”
-\item Using Sentiment Analysis, we compared emotions such as anger, anticipation, disgust, fear, joy, sadness, surprise, and trust within the sonnets and songs. We found that Bob Dylan is the closest in emotions with Shakespeare. Some of Dylan’s famous songs include “Like a Rolling Stone” and “A Hard Rain’s A-Gonna-Fall”. Dylan was also the first musician to win Nobel Prize in Literature "for having created new poetic expressions within the great American song tradition".
-\item Despite being number one on keyword, Adele was not amongst the top 10 closest artists to Shakespeare because Adele’s use of love is more of a fear and trust while Shakespeare uses love in a fear and sadness way.
-\item Amy Winehouse and Joni Mithcell are tied for number one spot closest to Shakespeare. Amy Winehouse scored 4th in Word Extraction and 5th in Sentiment, while Joni Mitchell socred 5th in Word Extraction and 4th in Sentiment.  [insert the 3 ranking tables]
+\item Despite being number one on keyword, Adele was listed 21 closest artists to Shakespeare in terms of sentiment, therefore Adele was not amongst top 3 closest artists to Shakespeare in the final ranking.
+\item Using Sentiment Analysis, we compared emotions such as anger, anticipation, disgust, fear, joy, sadness, surprise, and trust within the sonnets and songs. We found that Bob Dylan is one of the closest in emotions with Shakespeare. Dylan was also the first musician to win Nobel Prize in Literature "for having created new poetic expressions within the great American song tradition". [citation]
 
 \end{itemize}
 
@@ -195,6 +196,7 @@ We show that Nickelback, Amy Winehouse, Cake, Adele, and Joni Mitchell are top 5
 
 \item The R package for analyzing sentiment offers different results when collapse the sonnets into a single corpus vs not collapsing the sonnets. We would get more accurate results not collapsing, but more consistent result collapsing. In this case, we collapsed all the sonnets into one single corpus, but recognize that the result might differ if we analyze sonnets and songs without collapsing.
 \item The 45 artists we chose are already outstanding. Therefore, we could look into each individual songs or more artists to derive further results.
+\item Shakespeare’s language usage is different from the modern day language, and we would improve our result using modern translation of Shakespeare's sonnets.
 
 \end{itemize}
 
