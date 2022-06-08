@@ -1,4 +1,4 @@
-\documentclass[11pt]{article}
+\documentclass[10pt,a4paper]{article}
 
 \usepackage{graphicx} % for inputing graphics
 \usepackage{epstopdf} % Helper Package to graphix package
@@ -11,6 +11,15 @@
 \usepackage{breakcites} % an asthetics feather that makes a line break after citations 
 \usepackage{makeidx}
 \usepackage[hyperpageref]{backref}
+\usepackage{graphics}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{booktabs}
+\usepackage{a4wide}
+
 
 \usepackage{color}
 \definecolor{MyDarkGreen}{rgb}{0.0,0.4,0.0}
@@ -51,15 +60,14 @@
         \end{abstract}
 }
 
-%title, author, date defineing
-\title {Which Modern-Day Music Artist is William Shakespeare Most Similar to\\[1ex]}
-\author{
-Angel Sierra, 
-Dominique McDonald,
-Mariana Gonzalez Castro, \\
-Danny Ying,
-and Carina Kalaydjian \\[1ex]
-}
+\title{Applications of Natural Language Processing to Compare Shakespearean Sonnets to Modern Musical Artists}
+\author[*]{Mariana Gonzalez Castro}
+\author[*]{Carina Kalaydjian}
+\author[*]{Dominique McDonald}
+\author[*]{Angel Sierra}
+\author[*]{DuoDuo Ying}
+\affil[*]{Department of Statistics, UCLA}
+
 \date{June 7th, 2022}
 %%%%%%%%%%%%%%%%%
 %	HELPFUL BIBLIOGRAPHY KEY
@@ -100,7 +108,7 @@ and Carina Kalaydjian \\[1ex]
 \vspace{6pt}
 
 \begin{abstractinenglish}
-\emph{abstract text goes here here here here here here here here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!}
+\emph{We seek to detect artists that are truly outstanding and stand the trial of time. In this paper, we introduced a metric to predict 45 artists’ success based on the similarity between a subset of their discography and Shakespeare’s 154 sonnets. We used Natural Language Processing, specially Keyword Extraction and Sentiment Analysis, to measure such similarities. For Keyword Extraction, we measured the number of similar top 10 keywords used between artists and Shakespeare and the Euclidean distance of the frequencies. For Sentiment Analysis, we performed a cluster analysis and measured the Euclidean distance for 8 emotions within the text of artists and Shakespeare. We combined the result for the two methodologies and their rankings to obtain an overall ranking. Out of 45 top artists, Nickelback, Amy Winehouse, and Cake are the most similar artists to Shakespeare using the combined ranking. We conclude that by leveraging Natural Language Processing algorithms, we can predict future success based on the proven success of the past. }
 \end{abstractinenglish}
 
 \section{Introduction}
