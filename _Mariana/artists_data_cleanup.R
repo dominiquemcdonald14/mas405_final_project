@@ -39,7 +39,7 @@ dbDisconnect(con)
 #############
 #*sigh* idk why dbWriteTable creates a column of row numbers
 #table is loaded with an extra and useless column
-artists_complete <- select(artists_complete,-c(1))
+#artists_complete <- select(artists_complete,-c(1))
 
 ###this code will take all the non-lyrical strings contained in a set of 
 #parenthesis and compile it into some vector of lists thing...trust me, you'll see
