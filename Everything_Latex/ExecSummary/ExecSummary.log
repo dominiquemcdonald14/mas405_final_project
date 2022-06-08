@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.6)  8 JUN 2022 09:37
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.5.6)  8 JUN 2022 09:38
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -285,7 +285,14 @@ File: l3backend-pdftex.def 2022-02-07 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count286
 \l__pdf_internal_box=\box55
 )
-(./ExecSummary.aux)
+(./ExecSummary.aux
+
+LaTeX Warning: Label `tab:wordranktable' multiply defined.
+
+
+LaTeX Warning: Label `tab:overallranktable' multiply defined.
+
+)
 \openout1 = `ExecSummary.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 33.
@@ -372,41 +379,35 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 35.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-<_assets/Shakespeare_Keywords_WordCloud.png, id=1, 1987.425pt x 1084.05pt>
+<_assets/Shakespeare_Keywords_WordCloud.png, id=1, 294.09875pt x 265.49188pt>
 File: _assets/Shakespeare_Keywords_WordCloud.png Graphic file (type png)
 <use _assets/Shakespeare_Keywords_WordCloud.png>
 Package pdftex.def Info: _assets/Shakespeare_Keywords_WordCloud.png  used on in
 put line 102.
-(pdftex.def)             Requested size: 256.0748pt x 139.6743pt.
-
-Overfull \hbox (65.0123pt too wide) in paragraph at lines 102--103
- [][] 
- []
-
-[1
+(pdftex.def)             Requested size: 142.26378pt x 128.42715pt.
+ [1
 
 {/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-<_assets/ClusterAnalysis_Fit10.png, id=13, 1927.2pt x 1084.05pt>
+<_assets/ClusterAnalysis_Fit10.png, id=14, 1927.2pt x 1084.05pt>
 File: _assets/ClusterAnalysis_Fit10.png Graphic file (type png)
 <use _assets/ClusterAnalysis_Fit10.png>
 Package pdftex.def Info: _assets/ClusterAnalysis_Fit10.png  used on input line 
 120.
-(pdftex.def)             Requested size: 341.43306pt x 192.0439pt.
+(pdftex.def)             Requested size: 284.52756pt x 160.03659pt.
+ [2 <./_assets/Shakespeare_Keywords_WordCloud.png> <./_assets/ClusterAnalysis_F
+it10.png (PNG copy)>] [3] (./ExecSummary.aux)
 
-[2 <./_assets/Shakespeare_Keywords_WordCloud.png (PNG copy)> <./_assets/Cluster
-Analysis_Fit10.png (PNG copy)>] [3] (./ExecSummary.aux)
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 6869 strings out of 478268
- 111483 string characters out of 5846348
- 398411 words of memory out of 5000000
- 24965 multiletter control sequences out of 15000+600000
+ 6868 strings out of 478268
+ 111469 string characters out of 5846348
+ 398583 words of memory out of 5000000
+ 24964 multiletter control sequences out of 15000+600000
  482628 words of font info for 66 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 70i,11n,81p,525b,379s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 70i,11n,81p,437b,379s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
 }{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}<
 /usr/local/texlive/2022/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></u
@@ -415,10 +416,10 @@ sr/local/texlive/2022/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr
 ocal/texlive/2022/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/loc
 al/texlive/2022/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local
 /texlive/2022/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb>
-Output written on ExecSummary.pdf (3 pages, 341133 bytes).
+Output written on ExecSummary.pdf (3 pages, 356545 bytes).
 PDF statistics:
- 51 PDF objects out of 1000 (max. 8388607)
- 30 compressed objects within 1 object stream
+ 53 PDF objects out of 1000 (max. 8388607)
+ 31 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  11 words of extra memory for PDF output out of 10000 (max. 10000000)
 
