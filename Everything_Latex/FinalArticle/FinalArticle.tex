@@ -134,13 +134,23 @@ The music industry has been growing in popularity over the last few decades. In 
 
 \noindent In this paper, we propose a method for measuring artists’ timelessness using their similarities with Shakespeare. William Shakespeare is a world-renowned poet from 16th-century England. He has recognition for being one of the most revolutionary Literary Artists to this date. Not only has Shakespeare close to one-tenth of the most quoted lines ever written or spoken in English, second-most quoted after the writers of the bible, but his ability to deeply express emotions also has influenced for hundreds of years.\cite{shakeFacts} We assume that, given William Shakespeare’s success, if modern artists’ work is similar to that of William Shakespeare’s in terms of word choice and sentiment, then they are likely to be successful as well.
 
-\noindent For our data, we use Shakespeare's 154 sonnets from the Gutenberg Project. \cite{sonnetsData} We obtained a subset of 45 top modern artists’ discography through a Kaggle competition. We will use Natural Language Processing, specifically Keyword Extraction and Sentiment Analysis, to measure similarities between the work of 45 artists and 154 sonnets of Shakespeare. The rest of the paper is structured as follows: Section 2 introduces the methodology, both the front-end analysis and back-end data management. Section 3 provides results and plots from our analysis. Section 4 concludes. Our code and Appendix can be found in Section 5. 
+\noindent For our data, we use Shakespeare's 154 sonnets from the Gutenberg Project. \cite{sonnetsData} We obtained a subset of 45 top modern artists’ discography through a Kaggle competition. We will use Natural Language Processing, specifically Keyword Extraction and Sentiment Analysis, to measure similarities between the work of 45 artists and 154 sonnets of Shakespeare. The rest of the paper is structured as follows: Section 2 introduces the methodology, both the front-end analysis and back-end data management. Section 3 provides results and plots from our analysis. Section 4 concludes. Appendix can be found in Section 5. 
 
 %%%%%%%%%%%%%%%%%%%
 %      methods 
 %%%%%%%%%%%%%%%%%%%
 \section{Methods}
-There is a growing demand for the application of Natural Language Processing to drive music knowledge discovery \cite{NLP-for-lyrics}. Within song lyrics there is a wealth of information that can be used to gain insights about the song and its listeners. The workflow used to conduct NLP is outlined in Oramas et. Al \cite{NLP-for-music} as the following steps 1. Corpus creation (collection of separated documents), 2. Text mining (accessing desired info and eliminating the excess), 3. Information extraction (word frequency, collocation, word position, etc.), 4. Knowledge graph generation (a directed labeled graph in which we have associated domain specific meanings with nodes and edges \cite{knowledge-graphs}), 5. Sentiment Analysis (Identify feelings and emotions present in a text \cite{monkey}).
+There is a growing demand for the application of Natural Language Processing to drive music knowledge discovery \cite{NLP-for-lyrics}. Within song lyrics there is a wealth of information that can be used to gain insights about the song and its listeners. The workflow used to conduct NLP is outlined in Oramas et. Al \cite{NLP-for-music} as the following steps 
+
+\begin{enumerate}
+
+\item Corpus creation (collection of separated documents), 
+\item Text mining (accessing desired info and eliminating the excess), 
+\item Information extraction (word frequency, collocation, word position, etc.), 
+\item Knowledge graph generation (a directed labeled graph in which we have associated domain specific meanings with nodes and edges \cite{knowledge-graphs}), 
+\item Sentiment Analysis (Identify feelings and emotions present in a text \cite{monkey}).
+
+\end{enumerate}
  
 \noindent This NLP pipeline can be applied to music to provide recommendations on what songs a listener might like based on what they already listen to. \cite{NLP-for-lyrics} This information is gathered by performing what’s called a similarity search. Mahedero et al \cite{NLP-for-lyrics} conducts a similarity search for their project by first calculating a similarity measure. The similarity measure used is known as the Standard Cosine Distance (SCD). The calculations of the SCD are beyond the scope of this paper, but something to note is that the SCD relies on the Inverse Document Frequency as a way to measure the prevalence of words in a document and compare that to other documents. 
 
@@ -152,6 +162,7 @@ Keyword extraction is largely aimed at identifying the most relevant words in di
 %%%%%%%%%%% keywords shakespears wordcloud 
 \begin{center}
 \includegraphics[width=14cm]{_assets/Shakespeare_Keywords_WordCloud.png}
+\captionof{figure}{Shakespeare Top Keywords Wordcloud}
 \end{center}
 
 \noindent Once Shakespeare’s keywords were identified, the next step was to identify the keywords for each of the 45 music artists. This process mirrored that of extracting keywords from the sonnets except we utilized an algorithm to automate the process for each artist. Once keywords were identified we converted the word frequencies for Shakespeare and all other artists into proportions, in order to standardize for comparison. To find the artists who were most like Shakespeare based on keywords, we checked for artist who had the highest number of matching keywords. Finally, then we ranked those by who used keywords in similar proportions to Shakespeare by calculating the Euclidian distance between the proportions of each of the matching keywords. This is similar to what Mahedero et. Al \cite{NLP-for-lyrics} does for their similarity search except we rely on word proportions and Euclidean distance, while their research utilizes Inverse Document Frequency and the Standard Cosine Distances. 
@@ -197,6 +208,7 @@ Natural Learning Process requires the creation of a corpus to perform keyword ex
 %%%%% cluster analysis table 
 \begin{center}
 \includegraphics[width=14cm]{_assets/ClusterAnalysis_Fit10.png}
+\captionof{figure}{Cluster Analysis using 8 Emotions from 45 Artists and Shakespeare}
 \end{center}
 
 %%%%%%%%%%%%%%%
