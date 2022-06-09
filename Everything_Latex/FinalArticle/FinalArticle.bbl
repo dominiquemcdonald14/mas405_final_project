@@ -1,0 +1,102 @@
+\begin{thebibliography}{10}
+
+\bibitem{shakeFacts}
+{56 Fun Facts about William Shakespear}.
+\newblock \url{https://nosweatshakespeare.com/resources/shakespeare-facts/}.
+\newblock Accessed May 31, 2022.
+
+\bibitem{knowledge-graphs}
+{An Introduction to Knowledge Graphs}.
+\newblock \url{http://ai.stanford.edu/blog/introduction-to-knowledge-graphs/}.
+\newblock Accessed June 3, 2022.
+
+\bibitem{k-means}
+{K-means Clustering: Algorithm, Applications, Evaluation Methods, and
+  Drawbacks}.
+\newblock
+  \url{https://towardsdatascience.com/k-means-clustering-algorithm-applications-evaluation-methods-and-drawbacks-aa03e644b48a}.
+\newblock Accessed May 31, 2022.
+
+\bibitem{web1}
+{Natural Language Processing With R}.
+\newblock
+  \url{https://www.udacity.com/blog/2020/10/natural-language-processing-with-r.html}.
+\newblock Accessed May 20, 2022.
+
+\bibitem{nrc-sentiment}
+{NRC Word-Emotion Association Lexicon}.
+\newblock \url{https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm}.
+\newblock Accessed June 3, 2022.
+
+\bibitem{music-world}
+{Streaming Drives Global Music Industry Resurgence}.
+\newblock
+  \url{https://www.statista.com/chart/4713/global-recorded-music-industry-revenues/\#:~:text=Apr\%208\%2C\%202022-,Music\%20in\%20the\%20U.S.,year\%27s\%20total\%20of\%20\%2421.9\%20billion.}
+\newblock Accessed June 3, 2022.
+
+\bibitem{syuzhet}
+{Syuzhet Package Documentation in R}.
+\newblock \url{https://www.rdocumentation.org/packages/syuzhet/versions/1.0.6}.
+\newblock Accessed May 20, 2022.
+
+\bibitem{web2}
+{Text Mining and Sentiment Analysis: Analysis with R}.
+\newblock
+  \url{https://www.red-gate.com/simple-talk/databases/sql-server/bi-sql-server/text-mining-and-sentiment-analysis-with-r/}.
+\newblock Accessed May 20, 2022.
+
+\bibitem{tm}
+{Tm: Text Mining Package Documentation in R}.
+\newblock \url{https://rdrr.io/rforge/tm/man/}.
+\newblock Accessed May 20, 2022.
+
+\bibitem{monkey}
+{What is Text Analysis? A Beginner's Guide}.
+\newblock \url{https://monkeylearn.com/text-analysis/}.
+\newblock Accessed May 20, 2022.
+
+\bibitem{briney2015data}
+Kristin Briney.
+\newblock {\em Data Management for Researchers: Organize, maintain and share
+  your data for research success}.
+\newblock Pelagic Publishing Ltd, 2015.
+
+\bibitem{bio-article2}
+{Katie Ovens, Farhad Maleki, B. Frank Eames and Ian McQuillan}.
+\newblock {Juxtapose: a gene‑embedding approach for comparing co‑expression
+  networks}.
+\newblock {\em BMC Bioinformatics}, 2021.
+
+\bibitem{NLP-for-lyrics}
+Jose P.~G. Mahedero, \'{A}lvaro Mart\'{I}nez, Pedro Cano, Markus Koppenberger,
+  and Fabien Gouyon.
+\newblock Natural language processing of lyrics.
+\newblock In {\em Proceedings of the 13th Annual ACM International Conference
+  on Multimedia}, MULTIMEDIA '05, page 475–478, New York, NY, USA, 2005.
+  Association for Computing Machinery.
+
+\bibitem{bio-article1}
+{Mart{\'{i}}n Nicol{\'{a}}s Fasanelli, Pablo S. Milla Carmona, Ignacio
+  Mar{\'{i}}a Soto, Diego Tom{\'{a}}s Tuero}.
+\newblock Allometry, sexual selection and evolutionary lines of least
+  resistance shaped the evolution of exaggerated sexual traits within the genus
+  tyrannus.
+\newblock {\em Journal of Evolutionary Biology}, pages 669--679, 2022.
+
+\bibitem{NLP-for-music}
+Sergio Oramas, Luis Espinosa-Anke, Francisco Gómez, and Xavier Serra.
+\newblock Natural language processing for music knowledge discovery.
+\newblock {\em Journal of New Music Research}, 47(4):365--382, 2018.
+
+\bibitem{musicData}
+{Paul Mooney}.
+\newblock {Song Lyrics: Poetry and Lyric (TXT files)}.
+\newblock Accessed May 20, 2022.
+
+\bibitem{sonnetsData}
+{William Shakespear}.
+\newblock {Shakespear's Sonnets}.
+\newblock Project Gutenberg, 1997 [Online].
+\newblock EBook-No. 1041, Accessed May 20, 2022.
+
+\end{thebibliography}
