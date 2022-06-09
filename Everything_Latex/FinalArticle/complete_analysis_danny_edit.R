@@ -160,9 +160,8 @@ artists_complete
 
 #the pattern for the special character may vary from computer to computer
 # here are other patterns incase is the one bellow wont work
-# ????T, ????T, 
 og_sonnets <- og_sonnets %>% 
-  mutate_at("Sonnets", str_replace_all, "????T", "\'") #the pattern for the special character may vary from computer to computer
+  mutate_at("Sonnets", str_replace_all, "â???T", "\'") #the pattern for the special character may vary from computer to computer
 
 # need to load vector of text objects as a corpus. VectorSource() interprets each element of a vec as a document
 x_text <- Corpus(VectorSource(og_sonnets$Sonnets))
