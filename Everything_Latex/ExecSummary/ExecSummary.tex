@@ -36,7 +36,7 @@
 
 \section{Overview}
 
-As a prominent music label, we care about artists that are truly outstanding and stand the trial of time. Out of 45 top artists, Nickelback, Amy Winehouse, and Cake are those artists due to the similarity between their work and Shakespeare's timeless sonnets. By leveraging Natural Language Processing algorithms, our label can predict future success based on the proven success of the past. 
+As a prominent music label, we care about artists that are truly outstanding and stand the trial of time. Out of 45 top artists, Amy Winehouse, Nickelback, and Cake are those artists due to the similarity between their work and Shakespeare's timeless sonnets. By leveraging Natural Language Processing algorithms, our label can predict future success based on the proven success of the past. 
 
 \begin{table}[ht]
 \centering
@@ -45,8 +45,8 @@ As a prominent music label, we care about artists that are truly outstanding and
   \hline
 Artist & Overall Rank \\ 
   \hline
-  nickelback &   1 \\ 
   amy-winehouse &   1\\ 
+  nickelback &   2 \\ 
   cake &   3 \\ 
   adele &   4 \\ 
   joni-mitchell &  4 \\ 
@@ -156,32 +156,12 @@ Based on this table, Amy Winehouse, Eminem, and Cake are the top 3 artists most 
 
 Combining the rankings obtained by Keyword Extraction and Sentiment Analysis, our final ranking is following:
 
-\begin{table}[ht]
-\centering
-\resizebox{8cm}{2cm}{%
-\begin{tabular}{lrrr}
-  \hline
-Artist & Word Rank & Sentiment Rank & Overall Rank \\ 
-  \hline
-nickelback &   2 &   8 &  10 \\ 
-  amy-winehouse &   6 &   4 &  10 \\ 
-  cake &   9 &   3 &  12 \\ 
-  adele &   1 &  21 &  22 \\ 
-  joni-mitchell &  11 &  11 &  22 \\ 
-  leonard-cohen &   8 &  17 &  25 \\ 
-  paul-simon &  10 &  22 &  32 \\ 
-  blink-182 &  18 &  14 &  32 \\ 
-  bob-marley &  27 &   6 &  33 \\ 
-  rihanna &  25 &  10 &  35 \\ 
-   \hline
-\end{tabular} %
-}
-\caption{Ranked Top 10 Most Similar Music Artist to Shakespeare} 
-\label{tab:overallranktable}
-\end{table}
+\begin{table}[ht]\centering
+\resizebox{8cm}{2cm}{%\begin{tabular}{lrrr}  \hlineArtist & Word Rank & Sentiment Rank & Overall Rank \\   \hlineamy-winehouse &   6 &   1 &   7 \\   nickelback &   2 &   8 &  10 \\   cake &   9 &   3 &  12 \\   adele &   1 &  21 &  22 \\   joni-mitchell &  11 &  11 &  22 \\   leonard-cohen &   8 &  15 &  23 \\   paul-simon &  10 &  22 &  32 \\   blink-182 &  18 &  14 &  32 \\   bob-marley &  27 &   6 &  33 \\   rihanna &  25 &  10 &  35 \\    \hline\end{tabular} %
+}\caption{Ranked Top 10 Most Similar Music Artist to Shakespeare} \label{tab:overallranktable}\end{table}
 
 
-We show that Nickelback, Amy Winehouse, Cake, Adele, and Joni Mitchell are top 5 closest with Shakespeare using the two NLP methods. More interesting findings include:
+We show that Amy Winehouse, Nickelback, Cake, Adele, and Joni Mitchell are top 5 closest with Shakespeare using the two NLP methods. More interesting findings include:
 
 \begin{itemize}
 
