@@ -144,7 +144,7 @@ Here, we have the table summarizing Shakepeare's top 10 most used words.
 #data cleanup using dplyr
 sonnets <- 
   data %>% 
-  mutate_at("Sonnets", str_replace, "â€™", "\'") 
+  mutate_at("Sonnets", str_replace, "�", "\'") 
 
 sonnets_df1 <- data.frame(matrix(ncol=1,nrow=154, 
                                  dimnames=list(NULL, "Sonnets")))
