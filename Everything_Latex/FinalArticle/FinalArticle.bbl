@@ -28,6 +28,12 @@
 \newblock \url{https://saifmohammad.com/WebPages/NRC-Emotion-Lexicon.htm}.
 \newblock Accessed June 3, 2022.
 
+\bibitem{music-world}
+{Streaming Drives Global Music Industry Resurgence}.
+\newblock
+  \url{https://www.statista.com/chart/4713/global-recorded-music-industry-revenues/\#:~:text=Apr\%208\%2C\%202022-,Music\%20in\%20the\%20U.S.,year\%27s\%20total\%20of\%20\%2421.9\%20billion.}
+\newblock Accessed June 3, 2022.
+
 \bibitem{syuzhet}
 {Syuzhet Package Documentation in R}.
 \newblock \url{https://www.rdocumentation.org/packages/syuzhet/versions/1.0.6}.
@@ -55,6 +61,12 @@ Kristin Briney.
   your data for research success}.
 \newblock Pelagic Publishing Ltd, 2015.
 
+\bibitem{bio-article2}
+{Katie Ovens, Farhad Maleki, B. Frank Eames and Ian McQuillan}.
+\newblock {Juxtapose: a gene‑embedding approach for comparing co‑expression
+  networks}.
+\newblock {\em BMC Bioinformatics}, 2021.
+
 \bibitem{NLP-for-lyrics}
 Jose P.~G. Mahedero, \'{A}lvaro Mart\'{I}nez, Pedro Cano, Markus Koppenberger,
   and Fabien Gouyon.
@@ -62,6 +74,14 @@ Jose P.~G. Mahedero, \'{A}lvaro Mart\'{I}nez, Pedro Cano, Markus Koppenberger,
 \newblock In {\em Proceedings of the 13th Annual ACM International Conference
   on Multimedia}, MULTIMEDIA '05, page 475–478, New York, NY, USA, 2005.
   Association for Computing Machinery.
+
+\bibitem{bio-article1}
+{Mart{\'{i}}n Nicol{\'{a}}s Fasanelli, Pablo S. Milla Carmona, Ignacio
+  Mar{\'{i}}a Soto, Diego Tom{\'{a}}s Tuero}.
+\newblock Allometry, sexual selection and evolutionary lines of least
+  resistance shaped the evolution of exaggerated sexual traits within the genus
+  tyrannus.
+\newblock {\em Journal of Evolutionary Biology}, pages 669--679, 2022.
 
 \bibitem{NLP-for-music}
 Sergio Oramas, Luis Espinosa-Anke, Francisco Gómez, and Xavier Serra.
